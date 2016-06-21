@@ -4,6 +4,8 @@
 		<info compressed="false">https://raw.github.com/msousinha/myhome-repository/master/addons.xml</info>
 		<checksum>https://raw.github.com/msousinha/myhome-repository/master/addons.xml.md5</checksum>
 		<datadir zip="true">https://raw.github.com/msousinha/myhome-repository/master/repo/</datadir>
+		
+		 <datadir zip="true">http://repoms.net16.net/repo/.myhome-repository/</datadir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary>MyHome Addon</summary>
