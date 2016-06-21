@@ -1,0 +1,4 @@
+
+*.pyo
+
+sftp-config.json
