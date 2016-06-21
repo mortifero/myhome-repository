@@ -474,7 +474,6 @@ SEND E MAIL: tvsupertuga@gmail.com[/B][/COLOR]</description>
        version="3.0.1"
        provider-name="rwparris2, Team Kodi">
   <requires>
-    <import addon="xbmc.python" version="2.25.0"/>
   </requires>
   <extension point="xbmc.python.script"
              library="default.py" />
