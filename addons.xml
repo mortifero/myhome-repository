@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="myhome-repository" name="MyHome Repository" version="0.0.1" provider-name="mortifero">
+<addon id="myhome-repository" name="MyHome Repository" version="0.0.1" provider-name="sousinha">
 	<extension point="xbmc.addon.repository" name="MyHome Add-on Repository">
-		<info compressed="false">https://raw.github.com/mortifero/myhome-repository/master/addons.xml</info>
-		<checksum>https://raw.github.com/mortifero/myhome-repository/master/addons.xml.md5</checksum>
-		<datadir zip="true">https://raw.github.com/mortifero/myhome-repository/master/repo/</datadir>
+		<info compressed="false">https://raw.github.com/msousinha/myhome-repository/master/addons.xml</info>
+		<checksum>https://raw.github.com/msousinha/myhome-repository/master/addons.xml.md5</checksum>
+		<datadir zip="true">https://raw.github.com/msousinha/myhome-repository/master/repo/</datadir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary>MyHome Addon</summary>
