@@ -368,7 +368,7 @@ Gracias por su preferencia [COLOR cyan][B]BassFox[/B][/COLOR] based on Livetream
 	</extension>
 </addon>
 
-<addon id="plugin.video.tvdireto" name="LiveTV" version="1.0.7" provider-name="TV Direto">
+<addon id="plugin.video.tvdireto" name="LiveTV" version="1.0.8" provider-name="TV Direto">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.beautifulsoup" version="3.2.1"/>
