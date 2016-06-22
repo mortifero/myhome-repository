@@ -1,0 +1,49 @@
+0.1.1
+- removed mako, its now included in sickrage
+
+0.1.0
+- added lxml for couchpotato
+
+0.0.9
+- added transmissionrpc
+- addon now requires helix or above
+
+0.0.8
+- revert to unrar 5.21 for sabnzbd
+- added 7za 9.38.1
+
+0.0.7
+- fix unrar and par2
+
+0.0.6
+- added mako 1.0.1 for sickrage
+- removed 32bit binaries(contact me if you're stuck on a 32bit install)
+- update to pyOpenSSL-0.13
+- modified configobj for nzbget
+- updated to unrar 5.30 beta4
+- added distutils python module
+
+0.0.5
+- fix ssl on RPi2 and other armv7 devices
+
+0.0.4
+- temp fix for SSL issues with kodi
+- added openssl 1.0.1h libs
+- pyopenssl 0.11
+
+0.0.3
+- unrar - 5.2.2
+
+0.0.2
+- removed bytecode for multiple interpreter compatibility
+- added binaries for armv7l devices
+- removed openelec requirement should work on all linux xbmc installs
+
+0.0.1
+- initial Release
+- Cheetah - 2.4.4
+- yenc - 0.4.0
+- configobj - 4.7.2
+- openssl - 1.0.1e
+- unrar - 5.0.1
+- par2 - 0.4

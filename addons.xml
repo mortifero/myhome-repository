@@ -517,6 +517,23 @@ SEND E MAIL: tvsupertuga@gmail.com[/B][/COLOR]</description>
   </extension>
 </addon>
 
+<addon id="script.module.audo-dependencies"
+       name="audo-dependencies"
+       version="0.1.1"
+       provider-name="lsellens">
+  <requires>
+    <import addon="xbmc.addon" version="14.0.0"/>
+    <import addon="xbmc.python" version="2.19.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <summary>Dependencies for audo</summary>
+    <description>This is a package of dependancies for audo. Containes multi architecture files of Cheetah, Openssl, configobj, yenc, unrar, par2, and distutils</description>
+    <platform>linux</platform>
+  </extension>
+</addon>
+
 <addon id="script.module.liveresolver"
      name="LiveResolver"
      version="0.1.41"
