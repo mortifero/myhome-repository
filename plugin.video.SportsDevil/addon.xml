@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon
   id="plugin.video.SportsDevil"
-  version="2"
+  version="2200016.06.14"
   name="SportsDevil"
   provider-name="SportsDevil">
   <requires>
@@ -19,7 +19,7 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary>Play videos of different sports streaming sites</summary>
-    <description>Play videos of different sports streaming sites</description>
+    <description>Play videos of different Channels streaming sites Updated DMO: 14/06/2016 (from HUBBA3´s Version 06/06/2016)... +Info in Change Log - +Info en Registro de Cambios (Gracias Goldonx, Quequeq, Nano, JairoX y JxxxxxX!!)... Soporte para p2p con Plugin p2p-Streams</description>
     <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
     <platform>all</platform>
   </extension>
