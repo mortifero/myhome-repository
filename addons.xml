@@ -593,7 +593,7 @@ Gracias por su preferencia [COLOR cyan][B]BassFox[/B][/COLOR] based on Livetream
 <addon
    id="service.subtitles.legendastv"
    name="Legendas.TV"
-   version="2.2.5"
+   version="2.3.0"
    provider-name="gfjardim">
   <requires>
     <import addon="xbmc.python" version="2.14.0"/>
