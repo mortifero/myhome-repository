@@ -80,9 +80,9 @@ class source:
 
             cookie = client.request(login, post=post, output='cookie', close=False)
 
-            r = client.request(login, post=post, cookie=cookie, output='extended')
+            result, headers, content, cookie = client.request(login, post=post, cookie=cookie, output='extended')
 
-            headers = {'User-Agent': r[3]['User-Agent'], 'Cookie': r[4]}
+            headers = {'User-Agent': headers['User-Agent'], 'Cookie': cookie}
 
 
             if not str(url).startswith('http'):

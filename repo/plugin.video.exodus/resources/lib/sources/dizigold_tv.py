@@ -89,20 +89,13 @@ class source:
             result = client.request(query, headers={'Referer': url})
 
             try:
-                url = client.parseDOM(result, 'iframe', ret='src')[-1]
+                url = client.parseDOM(result, 'iframe', ret='src')[0]
 
-                if 'openload' in url:
-                    host = 'openload.co' ; direct = False ; url = [{'url': url, 'quality': 'HD'}]
-
-                elif 'ok.ru' in url:
-                    host = 'vk' ; direct = True ; url = directstream.odnoklassniki(url)
-
-                elif 'vk.com' in url:
-                    host = 'vk' ; direct = True ; url = directstream.vk(url)
-
+                if 'ok.ru' in url: host = 'vk' ; url = directstream.odnoklassniki(url)
+                elif 'vk.com' in url: host = 'vk' ; url = directstream.vk(url)
                 else: raise Exception()
 
-                for i in url: sources.append({'source': host, 'quality': i['quality'], 'provider': 'Dizigold', 'url': i['url'], 'direct': direct, 'debridonly': False})
+                for i in url: sources.append({'source': host, 'quality': i['quality'], 'provider': 'Dizigold', 'url': i['url'], 'direct': True, 'debridonly': False})
             except:
                 pass
 

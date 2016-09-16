@@ -203,7 +203,7 @@ class sources:
                     break
 
             items = json.loads(source)
-            items = [i for i in items+next+prev][:40]
+            items = [i for i in items+next+prev][:20]
 
             header = control.addonInfo('name')
             header2 = header.upper()
@@ -587,9 +587,6 @@ class sources:
             filter = [i for i in self.sources if i['source'].lower() in self.hostcapDict and not 'debrid' in i]
             self.sources = [i for i in self.sources if not i in filter]
 
-        filter = [i for i in self.sources if i['source'].lower() in self.hostblockDict and not 'debrid' in i]
-        self.sources = [i for i in self.sources if not i in filter]
-
         self.sources = self.sources[:2000]
 
         for i in range(len(self.sources)):
@@ -611,13 +608,11 @@ class sources:
             else: label = '%02d | [B]%s[/B] | ' % (int(i+1), p)
 
             if q in ['1080p', 'HD']: label += '%s | %s | [B][I]%s [/I][/B]' % (s.rsplit('.', 1)[0], f, q)
-            elif q == 'SD': label += '%s | %s' % (s.rsplit('.', 1)[0], f)
             else: label += '%s | %s | [I]%s [/I]' % (s.rsplit('.', 1)[0], f, q)
             label = label.replace('| 0 |', '|').replace(' | [I]0 [/I]', '')
             label = label.replace('[I]HEVC [/I]', 'HEVC')
             label = re.sub('\[I\]\s+\[/I\]', ' ', label)
             label = re.sub('\|\s+\|', '|', label)
-            label = re.sub('\|(?:\s+|)$', '', label)
 
             self.sources[i]['label'] = label.upper()
 
@@ -691,7 +686,7 @@ class sources:
             prev = [y for x,y in enumerate(items) if x < select][::-1]
 
             items = [items[select]]
-            items = [i for i in items+next+prev][:40]
+            items = [i for i in items+next+prev][:20]
 
             header = control.addonInfo('name')
             header2 = header.upper()
@@ -772,9 +767,6 @@ class sources:
         filter = [i for i in items if i['source'].lower() in self.hostcapDict and i['debrid'] == '']
         items = [i for i in items if not i in filter]
 
-        filter = [i for i in items if i['source'].lower() in self.hostblockDict and i['debrid'] == '']
-        items = [i for i in items if not i in filter]
-
         items = [i for i in items if ('autoplay' in i and i['autoplay'] == True) or not 'autoplay' in i]
 
         if control.setting('autoplay.sd') == 'true':
@@ -835,9 +827,7 @@ class sources:
 
         self.hostprDict = ['oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'ul.to', 'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net']
 
-        self.hostcapDict = ['hugefiles.net', 'kingfiles.net', 'torba.se']
-
-        self.hostblockDict = ['thevideo.me']
+        self.hostcapDict = ['hugefiles.net', 'kingfiles.net']
 
         self.debridDict = debrid.debridDict()
 
