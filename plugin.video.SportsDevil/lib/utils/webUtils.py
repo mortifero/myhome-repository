@@ -34,7 +34,7 @@ class BaseRequest(object):
         self.s = requests.Session()
         if fileExists(self.cookie_file):
             self.s.cookies = self.load_cookies_from_lwp(self.cookie_file)
-        self.s.headers.update({'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'})
+        self.s.headers.update({'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.92 Safari/537.36'})
         self.s.headers.update({'Accept-Language' : 'en-US,en;q=0.5'})
         self.url = ''
     
@@ -96,6 +96,8 @@ class BaseRequest(object):
         
         if 'cndhlsstream.pw' in urlparse.urlsplit(url).netloc:
             del self.s.headers['Accept-Encoding']
+        if 'skstream.tv' in urlparse.urlsplit(url).netloc:
+            del self.s.headers['Accept-Encoding']
         
         if form_data:
             #zo**tv
@@ -145,6 +147,9 @@ class BaseRequest(object):
         if len(response) > 10:
             if self.cookie_file:
                 self.save_cookies_lwp(self.s.cookies, self.cookie_file)
+        
+        if 'setCurrentQuality' in response:
+            response = response.replace("""' + '""",'')
 
         return HTMLParser().unescape(response)
 
@@ -208,6 +213,8 @@ class CachedWebRequest(DemystifiedWebRequest):
             parsed_link = urlparse.urlsplit(url)
             parsed_link = parsed_link._replace(netloc=parsed_link.netloc.replace('.r.de.a2ip.ru','').decode('rot13'))
             url = parsed_link.geturl()
+        if 'calls/get/source' in url:
+            ignoreCache = True
             
         if url == self.getLastUrl() and not ignoreCache:
             data = self.__getCachedSource()

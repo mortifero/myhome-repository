@@ -12,7 +12,7 @@ item_info_name=rtmp
 item_info_from=pageUrl
 item_info_convert=getInfo('%s','.*?streamer:\s*['"]([^'"]+)','http://vipracing.us/')
 item_info_convert=replace('%s','\','')
-#item_info_convert=resolve
+item_info_convert=resolve
 item_info_build=%s
 
 item_info_name=file
