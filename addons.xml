@@ -442,48 +442,6 @@ Gracias por su preferencia [COLOR cyan][B]BassFox[/B][/COLOR] based on Livetream
 	</extension>
 </addon>
 
-<addon id="plugin.video.tugaflix" name="TugaFlix" provider-name="Rodrigo Lopes" version="0.2.0">
- <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.urlresolver"/>
-    <import addon="script.module.simplejson" version="3.3.0"/>
-    <import addon="script.module.t0mm0.common" />
- </requires>
- <extension library="addon.py" point="xbmc.python.pluginsource">
-  <provides>video</provides>
- </extension>
- <extension point="xbmc.addon.metadata">
-  <language>en</language>
-  <platform>all</platform>
-  <summary lang="en">TugaFlix</summary>
-  <description lang="en">TugaFlix UnOfficial</description>
-  <platform>all</platform>
- </extension>
-</addon>
-
-<addon id="plugin.video.tvdireto" name="LiveTV" version="1.0.8" provider-name="TV Direto">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.beautifulsoup" version="3.2.1"/>
-    <import addon="script.module.simple.downloader" version="0.9.4"/>
-    <import addon="script.module.beautifulsoup4"/>
-    <import addon="script.module.requests"/>
-    <import addon="script.module.httplib2"/>
-    <import addon="script.module.youtube.dl" optional="true"/>
-    <import addon="plugin.video.youtube"/>
-    <import addon="script.module.urlresolver" optional="true"/>
-    <import addon="script.module.simplejson"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary lang="en">TV Direto</summary>
-    <description lang="en">LIVE TV</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
 <addon id="plugin.video.TVsupertuga" name="[COLOR cyan]TV[/COLOR]-[COLOR red]SUPERTUGA[/COLOR]" version="0.0.5" provider-name="TVsupertuga">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
