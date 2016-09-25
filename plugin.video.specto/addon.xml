@@ -5,7 +5,6 @@
 		<import addon="script.module.requests" version="1.0.0" />
 		<import addon="script.module.metahandler" version="2.9.0" />
 		<import addon="plugin.video.youtube" optional="true" />
-		<import addon="script.mrknow.urlresolver" />
 
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="default.py">
