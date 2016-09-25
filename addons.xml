@@ -340,6 +340,25 @@ Gracias por su preferencia [COLOR cyan][B]BassFox[/B][/COLOR] based on Livetream
   </extension>
 </addon>
 
+<addon id="plugin.video.morepower" name="MorePower" version="1.0.6" provider-name="Mucky Duck/MorePower">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+	<import addon="script.module.urlresolver"  version="2.1.2"/>
+	<import addon="script.module.addon.common" />
+	<import addon="script.module.metahandler" version="2.5.1"/>
+	<import addon="script.module.requests" />
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">A Standalone Add-on For The Excellent Play-list From MorePower.</summary>
+    <description lang="en">A Standalone Add-on For The Excellent Play-list From MorePower.  Thank you very much for stopping by. You will find i have a very wide selection of movies. I strive to have only the BEST quality.</description>
+	<disclaimer lang="en">The author does not host or distribute any of the content displayed by this add-on</disclaimer>
+    <platform>all</platform>
+  </extension>
+</addon>
+
 <addon id="plugin.video.movie4k"
 	name="Movie4K.to"
 	version="1.4.5"
