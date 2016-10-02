@@ -450,7 +450,7 @@ Gracias por su preferencia [COLOR cyan][B]BassFox[/B][/COLOR] based on Livetream
 
 <addon
   id="plugin.video.SportsDevil"
-  version="2016.09.11"
+  version="2016.09.24"
   name="SportsDevil"
   provider-name="SportsDevil">
   <requires>
