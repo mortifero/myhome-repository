@@ -7,7 +7,7 @@
 6. [License][5]
 
 ### Url else: SOURCES = get-addon [] ###
-[{"url":"https://dl.dropbox.com/s/gahkl9t82kygyto/bassfox.index.1.6.0.indexprincipalnocopiar.xml","fanart":"https://dl.dropbox.com/s/ax36jts2qdwd8c3/bassfox-hd-wallpapers2.jpg","}]
+[{"url":"https://dl.dropbox.com/s/l0utl4mc5lxpb2l/bassfox.index.1.6.2.indexprincipalnocopiar.xml","fanart":"https://dl.dropbox.com/s/ax36jts2qdwd8c3/bassfox-hd-wallpapers2.jpg","}]
 
 ### Installation ###
 1. Must have [Kodi][GetKodi] installed

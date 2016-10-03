@@ -54,7 +54,7 @@ icon = os.path.join(home, 'icon.png')
 FANART = os.path.join(home, 'fanart.jpg')
 wattv_py = os.path.join(home, 'wattv_py')
 functions_dir = profile
-
+communityfiles = os.path.join(profile, 'LivewebTV')
 downloader = downloader.SimpleDownloader()
 debug = addon.getSetting('debug')
 if os.path.exists(favorites)==True:
@@ -64,7 +64,7 @@ if os.path.exists(wattv_py)==True:
     SOURCES = open(wattv_py).read()
 else: SOURCES = []
 
-SOURCES = [{"title": "BassFox ", "fanart": "https://dl.dropbox.com/s/038p1oo392w3mor/fanart.jpg", "genre": "Tv Live", "date": "25.02.2016", "credits": "BassFox", "thumbnail": "http://i2.minus.com/j5HeempSScdjg.png", "url": "https://dl.dropbox.com/s/dgyqvy9w6zujtrk/bassfox.index.1.6.0.indexprincipalnocopiar.xml"}]
+SOURCES = [{"title": "BassFox ", "fanart": "https://dl.dropbox.com/s/038p1oo392w3mor/fanart.jpg", "genre": "Tv Live", "date": "17.08.2016", "credits": "BassFox", "thumbnail": "http://i2.minus.com/j5HeempSScdjg.png", "url": "https://dl.dropbox.com/s/dgyqvy9w6zujtrk/bassfox.index.1.6.2.indexprincipalnocopiar.xml"}]
 
 def addon_log(string):
     if debug == 'true':
@@ -74,7 +74,23 @@ def addon_log(string):
 def makeRequest(url, headers=None):
         try:
             if headers is None:
-                headers = {'User-agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0'}
+                headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
+                
+            if '|' in url:
+                url,header_in_page=url.split('|')
+                header_in_page=header_in_page.split('&')
+                
+                for h in header_in_page:
+                    if len(h.split('='))==2:
+                        n,v=h.split('=')
+                    else:
+                        vals=h.split('=')
+                        n=vals[0]
+                        v='='.join(vals[1:])
+                        #n,v=h.split('=')
+                    print n,v
+                    headers[n]=v
+                    
             req = urllib2.Request(url,None,headers)
             response = urllib2.urlopen(req)
             data = response.read()
@@ -84,12 +100,11 @@ def makeRequest(url, headers=None):
             addon_log('URL: '+url)
             if hasattr(e, 'code'):
                 addon_log('We failed with error code - %s.' % e.code)
-                xbmc.executebuiltin("XBMC.Notification(bassfox,We failed with error code - "+str(e.code)+",10000,"+icon+")")
+                xbmc.executebuiltin("XBMC.Notification(BassFox,We failed with error code - "+str(e.code)+",10000,"+icon+")")
             elif hasattr(e, 'reason'):
                 addon_log('We failed to reach a server.')
                 addon_log('Reason: %s' %e.reason)
-                xbmc.executebuiltin("XBMC.Notification(bassfox,We failed to reach a server. - "+str(e.reason)+",10000,"+icon+")")
-
+                xbmc.executebuiltin("XBMC.Notification(BassFox,We failed to reach a server. - "+str(e.reason)+",10000,"+icon+")")
 
 def getSources():
         try:
@@ -335,6 +350,8 @@ def getSoup(url,data=None):
 
 
 def getData(url,fanart, data=None):
+    import checkbad
+    checkbad.do_block_check(False)
     soup = getSoup(url,data)
     #print type(soup)
     if isinstance(soup,BeautifulSOAP):
@@ -412,8 +429,7 @@ def getData(url,fanart, data=None):
             getItems(soup('item'),fanart)
     else:
         parse_m3u(soup)
-# borrow from https://github.com/enen92/P2P-Streams-XBMC/blob/master/plugin.video.p2p-streams/resources/core/livestreams.py
-# This will not go through the getItems functions ( means you must have ready to play url, no regex)
+
 def parse_m3u(data):
     content = data.rstrip()
     match = re.compile(r'#EXTINF:(.+?),(.*?)[\n\r]+([^\r\n]+)').findall(content)
@@ -746,11 +762,13 @@ def getItems(items,fanart,dontLink=False):
                 if len(url) > 1:
                     alt = 0
                     playlist = []
+                    ignorelistsetting=True if '$$LSPlayOnlyOne$$' in url[0] else False
+                    
                     for i in url:
-                            if  add_playlist == "false":
+                            if  add_playlist == "false" and not ignorelistsetting:
                                 alt += 1
                                 addLink(i,'%s) %s' %(alt, name.encode('utf-8', 'ignore')),thumbnail,fanArt,desc,genre,date,True,playlist,regexs,total)
-                            elif  add_playlist == "true" and  ask_playlist_items == 'true':
+                            elif  (add_playlist == "true" and  ask_playlist_items == 'true') or ignorelistsetting:
                                 if regexs:
                                     playlist.append(i+'&regexs='+regexs)
                                 elif  any(x in i for x in resolve_url) and  i.startswith('http'):
@@ -759,7 +777,9 @@ def getItems(items,fanart,dontLink=False):
                                     playlist.append(i)
                             else:
                                 playlist.append(i)
+                    
                     if len(playlist) > 1:
+                        
                         addLink('', name,thumbnail,fanArt,desc,genre,date,True,playlist,regexs,total)
                 else:
                     
@@ -767,13 +787,13 @@ def getItems(items,fanart,dontLink=False):
                         return name,url[0],regexs
                     if isXMLSource:
                             if not regexs == None: #<externallink> and <regex>
-                                addDir(name.encode('utf-8'),ext_url[0].encode('utf-8'),1,thumbnail,fanart,desc,genre,date,None,'!!update',regexs,url[0].encode('utf-8'))
+                                addDir(name.encode('utf-8'),ext_url[0].encode('utf-8'),1,thumbnail,fanArt,desc,genre,date,None,'!!update',regexs,url[0].encode('utf-8'))
                                 #addLink(url[0],name.encode('utf-8', 'ignore')+  '[COLOR yellow]build XML[/COLOR]',thumbnail,fanArt,desc,genre,date,True,None,regexs,total)
                             else:
-                                addDir(name.encode('utf-8'),ext_url[0].encode('utf-8'),1,thumbnail,fanart,desc,genre,date,None,'source',None,None)
+                                addDir(name.encode('utf-8'),ext_url[0].encode('utf-8'),1,thumbnail,fanArt,desc,genre,date,None,'source',None,None)
                                 #addDir(name.encode('utf-8'),url[0].encode('utf-8'),1,thumbnail,fanart,desc,genre,date,None,'source')
                     elif isJsonrpc:
-                        addDir(name.encode('utf-8'),ext_url[0],53,thumbnail,fanart,desc,genre,date,None,'source')
+                        addDir(name.encode('utf-8'),ext_url[0],53,thumbnail,fanArt,desc,genre,date,None,'source')
                         #xbmc.executebuiltin("Container.SetViewMode(500)")
                     else:
                         
@@ -940,6 +960,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                     cookieJarParam=m['cookiejar']
                     if  '$doregex' in cookieJarParam:
                         cookieJar=getRegexParsed(regexs, m['cookiejar'],cookieJar,True, True,cachedPages)
+                        
                         cookieJarParam=True
                     else:
                         cookieJarParam=True
@@ -965,7 +986,10 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
 #                        print 'complete_path',complete_path
                         saveCookieJar(cookieJar,cookie_jar_file)
                 if  m['page'] and '$doregex' in m['page']:
-                    m['page']=getRegexParsed(regexs, m['page'],cookieJar,recursiveCall=True,cachedPages=cachedPages)
+                    pg=getRegexParsed(regexs, m['page'],cookieJar,recursiveCall=True,cachedPages=cachedPages)
+                    if len(pg)==0:
+                        pg='http://regexfailed'
+                    m['page']=pg
 
                 if 'setcookie' in m and m['setcookie'] and '$doregex' in m['setcookie']:
                     m['setcookie']=getRegexParsed(regexs, m['setcookie'],cookieJar,recursiveCall=True,cachedPages=cachedPages)
@@ -990,6 +1014,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
 
                 link=''
                 if m['page'] and m['page'] in cachedPages and not 'ignorecache' in m and forCookieJarOnly==False :
+                    #print 'using cache page',m['page']
                     link = cachedPages[m['page']]
                 else:
                     if m['page'] and  not m['page']=='' and  m['page'].startswith('http'):
@@ -1017,7 +1042,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                         current_proxies=urllib2.ProxyHandler(urllib2.getproxies())
         
         
-                        
+                        #print 'getting pageUrl',pageUrl
                         req = urllib2.Request(pageUrl)
                         if 'proxy' in m:
                             proxytouse= m['proxy']
@@ -1065,7 +1090,13 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                         if header_in_page:
                             header_in_page=header_in_page.split('&')
                             for h in header_in_page:
-                                n,v=h.split('=')
+                                if h.split('=')==2:
+                                    n,v=h.split('=')
+                                else:
+                                    vals=h.split('=')
+                                    n=vals[0]
+                                    v='='.join(vals[1:])
+                                #n,v=h.split('=')
                                 req.add_header(n,v)
                         
                         if not cookieJar==None:
@@ -1116,12 +1147,20 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                             #       post=post.replace('$LiveStreamRecaptcha','&manual_recaptcha_challenge_field='+captcha_challenge+'&recaptcha_response_field='+catpcha_word+'&id='+idfield)
                         link=''
                         try:
+                            
                             if post:
                                 response = urllib2.urlopen(req,post)
                             else:
                                 response = urllib2.urlopen(req)
-
-                            link = response.read()
+                            if response.info().get('Content-Encoding') == 'gzip':
+                                from StringIO import StringIO
+                                import gzip
+                                buf = StringIO( response.read())
+                                f = gzip.GzipFile(fileobj=buf)
+                                link = f.read()
+                            else:
+                                link=response.read()
+                            
                         
                         
                             if 'proxy' in m and not current_proxies is None:
@@ -1141,7 +1180,8 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                             addon_log(cookieJar )
 
                             response.close()
-                        except: pass
+                        except: 
+                            pass
                         cachedPages[m['page']] = link
                         #print link
                         #print 'store link for',m['page'],forCookieJarOnly
@@ -1161,6 +1201,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                     setresolved=False
                 if  '$doregex' in m['expres']:
                     m['expres']=getRegexParsed(regexs, m['expres'],cookieJar,recursiveCall=True,cachedPages=cachedPages)
+                  
                 if not m['expres']=='':
                     #print 'doing it ',m['expres']
                     if '$LiveStreamCaptcha' in m['expres']:
@@ -1170,11 +1211,19 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
 
                     elif m['expres'].startswith('$pyFunction:') or '#$pyFunction' in m['expres']:
                         #print 'expeeeeeeeeeeeeeeeeeee',m['expres']
+                        val=''
                         if m['expres'].startswith('$pyFunction:'):
                             val=doEval(m['expres'].split('$pyFunction:')[1],link,cookieJar,m)
                         else:
                             val=doEvalFunction(m['expres'],link,cookieJar,m)
                         if 'ActivateWindow' in m['expres']: return
+                        if forCookieJarOnly:
+                            return cookieJar# do nothing
+                        if 'listrepeat' in m:
+                            listrepeat=m['listrepeat']                            
+                            #ret=re.findall(m['expres'],link)
+                            #print 'ret',val
+                            return listrepeat,eval(val), m,regexs,cookieJar
 #                        print 'url k val',url,k,val
                         #print 'repr',repr(val)
                         
@@ -1184,17 +1233,22 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                     else:
                         if 'listrepeat' in m:
                             listrepeat=m['listrepeat']
+                            #print 'listrepeat',m['expres']
+                            #print m['expres']
+                            #print 'aaaa'
+                            #print link
                             ret=re.findall(m['expres'],link)
-                            return listrepeat,ret, m,regexs
+                            #print 'ret',ret
+                            return listrepeat,ret, m,regexs,cookieJar
                              
+                        val=''
                         if not link=='':
                             #print 'link',link
-                            reg = re.compile(m['expres']).search(link)
-                            val=''
+                            reg = re.compile(m['expres']).search(link)                            
                             try:
                                 val=reg.group(1).strip()
                             except: traceback.print_exc()
-                        else:
+                        elif m['page']=='' or m['page']==None:
                             val=m['expres']
                             
                         if rawPost:
@@ -1207,6 +1261,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                         try:
                             url = url.replace("$doregex[" + k + "]", val)
                         except: url = url.replace("$doregex[" + k + "]", val.decode("utf-8"))
+                        #print 'ur',url
                         #return val
                 else:
                     url = url.replace("$doregex[" + k + "]",'')
@@ -1762,6 +1817,7 @@ def getCookieJar(COOKIEFILE):
 
 def doEval(fun_call,page_data,Cookie_Jar,m):
     ret_val=''
+    #print fun_call
     if functions_dir not in sys.path:
         sys.path.append(functions_dir)
 
@@ -1787,8 +1843,11 @@ def doEvalFunction(fun_call,page_data,Cookie_Jar,m):
     ret_val=''
     if functions_dir not in sys.path:
         sys.path.append(functions_dir)
-    f=open(functions_dir+"/LSProdynamicCode.py","w")
-    f.write(fun_call);
+        
+    f=open(os.path.join(functions_dir,'LSProdynamicCode.py'),"wb")
+    f.write("# -*- coding: utf-8 -*-\n")
+    f.write(fun_call.encode("utf-8"));
+    
     f.close()
     import LSProdynamicCode
     ret_val=LSProdynamicCode.GetLSProData(page_data,Cookie_Jar,m)
@@ -2133,35 +2192,158 @@ def urlsolver(url):
         xbmc.executebuiltin("XBMC.Notification(BassFox,Urlresolver donot support this domain. - ,5000)")
         resolver=url
     return resolver
+
+def tryplay(url,listitem,pdialogue=None):    
+
+    if url.lower().startswith('plugin'):
+        print 'playing via runplugin'
+        xbmc.executebuiltin('XBMC.RunPlugin('+url+')') 
+        for i in range(8):
+            xbmc.sleep(500) ##sleep for 10 seconds, half each time
+            try:
+                #print 'condi'
+                if xbmc.getCondVisibility("Player.HasMedia") and xbmc.Player().isPlaying():
+                    return True
+            except: pass
+        return False
+    import  CustomPlayer,time
+
+    player = CustomPlayer.MyXBMCPlayer()
+    player.pdialogue=pdialogue
+    start = time.time() 
+    #xbmc.Player().play( liveLink,listitem)
+    print 'going to play'
+    import time
+    beforestart=time.time()
+    player.play( url, listitem)
+    xbmc.sleep(1000)
+    
+    try:
+        while player.is_active:
+            xbmc.sleep(400)
+           
+            if player.urlplayed:
+                print 'yes played'
+                return True
+            if time.time()-beforestart>4: return False
+            #xbmc.sleep(1000)
+    except: pass
+    print 'not played',url
+    return False
 def play_playlist(name, mu_playlist,queueVideo=None):
         playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-
-        if addon.getSetting('ask_playlist_items') == 'true' and not queueVideo :
+        #print 'mu_playlist',mu_playlist
+        if '$$LSPlayOnlyOne$$' in mu_playlist[0]:
+            mu_playlist[0]=mu_playlist[0].replace('$$LSPlayOnlyOne$$','')
             import urlparse
             names = []
+            iloop=0
+            progress = xbmcgui.DialogProgress()
+            progress.create('Progress', 'Trying Multiple Links')
             for i in mu_playlist:
-                d_name=urlparse.urlparse(i).netloc
-                if d_name == '':
-                    names.append(name)
+
+                if '$$lsname=' in i:
+                    d_name=i.split('$$lsname=')[1].split('&regexs')[0]
+                    names.append(d_name)                                       
+                    mu_playlist[iloop]=i.split('$$lsname=')[0]+('&regexs'+i.split('&regexs')[1] if '&regexs' in i else '')                    
                 else:
-                    names.append(d_name)
-            dialog = xbmcgui.Dialog()
-            index = dialog.select('Choose a video source', names)
-            if index >= 0:
+                    d_name=urlparse.urlparse(i).netloc
+                    if d_name == '':
+                        names.append(name)
+                    else:
+                        names.append(d_name)
+                index=iloop
+                iloop+=1
+                
+                playname=names[index]
+                if progress.iscanceled(): return 
+                progress.update( iloop/len(mu_playlist)*100,"", "Link#%d"%(iloop),playname  )
+                print 'auto playnamexx',playname
                 if "&mode=19" in mu_playlist[index]:
-                    #playsetresolved (urlsolver(mu_playlist[index].replace('&mode=19','')),name,iconimage,True)
-                    xbmc.Player().play(urlsolver(mu_playlist[index].replace('&mode=19','').replace(';','')))
+                        #playsetresolved (urlsolver(mu_playlist[index].replace('&mode=19','')),name,iconimage,True)
+                    liz = xbmcgui.ListItem(playname, iconImage=iconimage)
+                    liz.setInfo(type='Video', infoLabels={'Title':playname})
+                    liz.setProperty("IsPlayable","true")
+                    urltoplay=urlsolver(mu_playlist[index].replace('&mode=19','').replace(';',''))
+                    liz.setPath(urltoplay)
+                    #xbmc.Player().play(urltoplay,liz)
+                    played=tryplay(urltoplay,liz)
                 elif "$doregex" in mu_playlist[index] :
 #                    print mu_playlist[index]
                     sepate = mu_playlist[index].split('&regexs=')
 #                    print sepate
                     url,setresolved = getRegexParsed(sepate[1], sepate[0])
                     url2 = url.replace(';','')
-                    xbmc.Player().play(url2)
+                    liz = xbmcgui.ListItem(playname, iconImage=iconimage)
+                    liz.setInfo(type='Video', infoLabels={'Title':playname})
+                    liz.setProperty("IsPlayable","true")
+                    liz.setPath(url2)
+                    #xbmc.Player().play(url2,liz)
+                    played=tryplay(url2,liz)
 
                 else:
                     url = mu_playlist[index]
-                    xbmc.Player().play(url)
+                    url=url.split('&regexs=')[0]
+                    liz = xbmcgui.ListItem(playname, iconImage=iconimage)
+                    liz.setInfo(type='Video', infoLabels={'Title':playname})
+                    liz.setProperty("IsPlayable","true")
+                    liz.setPath(url)
+                    #xbmc.Player().play(url,liz)
+                    played=tryplay(url,liz)
+                    print 'played',played
+                print 'played',played
+                if played: return
+            return     
+        if addon.getSetting('ask_playlist_items') == 'true' and not queueVideo :
+            import urlparse
+            names = []
+            iloop=0
+            for i in mu_playlist:
+                if '$$lsname=' in i:
+                    d_name=i.split('$$lsname=')[1].split('&regexs')[0]
+                    names.append(d_name)                                       
+                    mu_playlist[iloop]=i.split('$$lsname=')[0]+('&regexs'+i.split('&regexs')[1] if '&regexs' in i else '')                    
+                else:
+                    d_name=urlparse.urlparse(i).netloc
+                    if d_name == '':
+                        names.append(name)
+                    else:
+                        names.append(d_name)
+                    
+                iloop+=1
+            dialog = xbmcgui.Dialog()
+            index = dialog.select('Choose a video source', names)
+            if index >= 0:
+                playname=names[index]
+                print 'playnamexx',playname
+                if "&mode=19" in mu_playlist[index]:
+                        #playsetresolved (urlsolver(mu_playlist[index].replace('&mode=19','')),name,iconimage,True)
+                    liz = xbmcgui.ListItem(playname, iconImage=iconimage)
+                    liz.setInfo(type='Video', infoLabels={'Title':playname})
+                    liz.setProperty("IsPlayable","true")
+                    urltoplay=urlsolver(mu_playlist[index].replace('&mode=19','').replace(';',''))
+                    liz.setPath(urltoplay)
+                    xbmc.Player().play(urltoplay,liz)
+                elif "$doregex" in mu_playlist[index] :
+#                    print mu_playlist[index]
+                    sepate = mu_playlist[index].split('&regexs=')
+#                    print sepate
+                    url,setresolved = getRegexParsed(sepate[1], sepate[0])
+                    url2 = url.replace(';','')
+                    liz = xbmcgui.ListItem(playname, iconImage=iconimage)
+                    liz.setInfo(type='Video', infoLabels={'Title':playname})
+                    liz.setProperty("IsPlayable","true")
+                    liz.setPath(url2)
+                    xbmc.Player().play(url2,liz)
+
+                else:
+                    url = mu_playlist[index]
+                    url=url.split('&regexs=')[0]
+                    liz = xbmcgui.ListItem(playname, iconImage=iconimage)
+                    liz.setInfo(type='Video', infoLabels={'Title':playname})
+                    liz.setProperty("IsPlayable","true")
+                    liz.setPath(url)
+                    xbmc.Player().play(url,liz)
         elif not queueVideo:
             #playlist = xbmc.PlayList(1) # 1 means video
             playlist.clear()
@@ -2230,7 +2412,11 @@ def _search(url,name):
 
 def addDir(name,url,mode,iconimage,fanart,description,genre,date,credits,showcontext=False,regexs=None,reg_url=None,allinfo={}):
 
-        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&fanart="+urllib.quote_plus(fanart)
+        if regexs and len(regexs)>0:
+            u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&fanart="+urllib.quote_plus(fanart)+"&regexs="+regexs
+        else:
+            u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&fanart="+urllib.quote_plus(fanart)
+        
         ok=True
         if date == '':
             date = None
@@ -2250,9 +2436,9 @@ def addDir(name,url,mode,iconimage,fanart,description,genre,date,credits,showcon
 #            print 'parentalblockedpin',parentalblockedpin
             if len(parentalblockedpin)>0:
                 if parentalblock:
-                    contextMenu.append(('Disable Parental Block - (Desactivar Control Parental)','XBMC.RunPlugin(%s?mode=55&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
+                    contextMenu.append(('Disable Parental Block','XBMC.RunPlugin(%s?mode=55&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
                 else:
-                    contextMenu.append(('Enable Parental Block - (Activar Control Parenal)','XBMC.RunPlugin(%s?mode=56&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
+                    contextMenu.append(('Enable Parental Block','XBMC.RunPlugin(%s?mode=56&name=%s)' %(sys.argv[0], urllib.quote_plus(name))))
                     
             if showcontext == 'source':
             
@@ -2414,7 +2600,7 @@ def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlis
         u=sys.argv[0]+"?"
         play_list = False
         if playlist:
-            if addon.getSetting('add_playlist') == "false":
+            if addon.getSetting('add_playlist') == "false" and '$$LSPlayOnlyOne$$' not in playlist[0] :
                 u += "url="+urllib.quote_plus(url)+"&mode="+mode
             else:
                 u += "mode=13&name=%s&playlist=%s" %(urllib.quote_plus(name), urllib.quote_plus(str(playlist).replace(',','||')))
@@ -2432,9 +2618,9 @@ def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlis
         else:
             description += '\n\nDate: %s' %date
         liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-        if len(allinfo) <1:
+        #if isFolder:
+        if allinfo==None or len(allinfo) <1:
             liz.setInfo(type="Video", infoLabels={ "Title": name, "Plot": description, "Genre": genre, "dateadded": date })
-
         else:
             liz.setInfo(type="Video", infoLabels=allinfo)
         liz.setProperty("Fanart_Image", fanart)
@@ -2457,10 +2643,16 @@ def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlis
                      %(sys.argv[0], urllib.quote_plus(name)))
                      )
             elif not name in FAV:
-                fav_params = (
-                    '%s?mode=5&name=%s&url=%s&iconimage=%s&fanart=%s&fav_mode=0'
-                    %(sys.argv[0], urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(iconimage), urllib.quote_plus(fanart))
-                    )
+                try:
+                    fav_params = (
+                        '%s?mode=5&name=%s&url=%s&iconimage=%s&fanart=%s&fav_mode=0'
+                        %(sys.argv[0], urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(iconimage), urllib.quote_plus(fanart))
+                        )
+                except:
+                    fav_params = (
+                        '%s?mode=5&name=%s&url=%s&iconimage=%s&fanart=%s&fav_mode=0'
+                        %(sys.argv[0], urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(iconimage.encode("utf-8")), urllib.quote_plus(fanart.encode("utf-8")))
+                        )
                 if playlist:
                     fav_params += 'playlist='+urllib.quote_plus(str(playlist).replace(',','||'))
                 if regexs:
@@ -2482,11 +2674,14 @@ def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlis
         return ok
 
         
-def playsetresolved(url,name,iconimage,setresolved=True):
+def playsetresolved(url,name,iconimage,setresolved=True,reg=None):
+    print url
     if setresolved:
         setres=True
         if '$$LSDirect$$' in url:
             url=url.replace('$$LSDirect$$','')
+            setres=False
+        if reg and 'notplayable' in reg:
             setres=False
 
         liz = xbmcgui.ListItem(name, iconImage=iconimage)
@@ -2648,10 +2843,16 @@ if mode==None:
 elif mode==1:
     addon_log("getData")
     data=None
-    if regexs:
-        data=getRegexParsed(regexs, url)
-        url=''
+    
+    if regexs and len(regexs)>0:
+        data,setresolved=getRegexParsed(regexs, url)
+        #print data
+        #url=''
+        if data.startswith('http') or data.startswith('smb') or data.startswith('nfs') or data.startswith('/'):
+            url=data
+            data=None
         #create xml here
+    
     getData(url,fanart,data)
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
@@ -2755,8 +2956,8 @@ elif mode==17 or mode==117:
 
     data=None
     if regexs and 'listrepeat' in urllib.unquote_plus(regexs):
-        listrepeat,ret,m,regexs =getRegexParsed(regexs, url)
-#        print listrepeat,ret,m,regexs
+        listrepeat,ret,m,regexs, cookieJar =getRegexParsed(regexs, url)
+        #print listrepeat,ret,m,regexs
         d=''
 #        print 'm is' , m
 #        print 'regexs',regexs
@@ -2768,6 +2969,7 @@ elif mode==17 or mode==117:
         ln=''
         rnumber=0
         for obj in ret:
+            #print 'obj',obj
             try:
                 rnumber+=1
                 newcopy=copy.deepcopy(regexs)
@@ -2808,23 +3010,21 @@ elif mode==17 or mode==117:
                                         else:
                                             val=None
                                             if isinstance(obj,tuple):
-                                                val=None
-                                                if isinstance(obj,tuple):
-                                                    try:
-                                                         val=obj[i].decode('utf-8') 
-                                                    except:
-                                                        val=obj[i] 
-                                                else:
-                                                    try:
-                                                        val= obj.decode('utf-8') 
-                                                    except:
-                                                        val= obj
-                                                if '[' + regexname+'.param'+str(i+1) + '][DE]' in the_value:
-                                                    #print 'found DE',the_value.replace('[' + regexname+'.param'+str(i+1) + '][DE]', unescape(val))
-                                                    the_value=the_value.replace('[' + regexname+'.param'+str(i+1) + '][DE]', unescape(val))
+                                                try:
+                                                     val=obj[i].decode('utf-8') 
+                                                except:
+                                                    val=obj[i] 
+                                            else:
+                                                try:
+                                                    val= obj.decode('utf-8') 
+                                                except:
+                                                    val= obj
+                                            if '[' + regexname+'.param'+str(i+1) + '][DE]' in the_value:
+                                                #print 'found DE',the_value.replace('[' + regexname+'.param'+str(i+1) + '][DE]', unescape(val))
+                                                the_value=the_value.replace('[' + regexname+'.param'+str(i+1) + '][DE]', unescape(val))
 
-                                                the_valueO[the_key]=the_value.replace('[' + regexname+'.param'+str(i+1) + ']', val)
-                                                #print 'second sec val',the_valueO[the_key]
+                                            the_valueO[the_key]=the_value.replace('[' + regexname+'.param'+str(i+1) + ']', val)
+                                            #print 'second sec val',the_valueO[the_key]
 
                     val=None
                     if isinstance(obj,tuple):
@@ -2842,6 +3042,11 @@ elif mode==17 or mode==117:
                     listrepeatT=listrepeatT.replace('[' + regexname+'.param'+str(i+1) + ']',escape(val))
 #                    print listrepeatT
                 listrepeatT=listrepeatT.replace('[' + regexname+'.param'+str(0) + ']',str(rnumber)) 
+                
+                try:
+                    if cookieJar and '[' + regexname+'.cookies]' in listrepeatT:
+                        listrepeatT=listrepeatT.replace('[' + regexname+'.cookies]',getCookiesString(cookieJar)) 
+                except: pass
                 
                 #newcopy = urllib.quote(repr(newcopy))
     #            print 'new regex list', repr(newcopy), repr(listrepeatT)
@@ -2861,7 +3066,7 @@ elif mode==17 or mode==117:
 #            print newcopy
                 
 #            ln+='</item>'
-        #print 'ln',ln
+        
         addon_log(repr(ln))
         getData('','',ln)
         xbmcplugin.endOfDirectory(int(sys.argv[1]))
@@ -2886,7 +3091,7 @@ elif mode==17 or mode==117:
 
                 playmediawithproxy(url,name,iconimage,proxyip,port, proxyuser,proxypass) #jairox
             else:
-                playsetresolved(url,name,iconimage,setresolved)
+                playsetresolved(url,name,iconimage,setresolved,regexs)
         else:
             xbmc.executebuiltin("XBMC.Notification(BassFox,Failed to extract regex. - "+"this"+",4000,"+icon+")")
 elif mode==18:
