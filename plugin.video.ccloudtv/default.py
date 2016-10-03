@@ -19,13 +19,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 
 import urllib, urllib2, sys, re, os, random, unicodedata, cookielib, shutil
 import xbmc, xbmcgui, xbmcplugin, xbmcaddon, requests, base64
-import checkaddon
+try:
+    import json
+except:
+    import simplejson as json
+
 
 plugin_handle = int(sys.argv[1])
 mysettings = xbmcaddon.Addon(id = 'plugin.video.ccloudtv')
 profile = mysettings.getAddonInfo('profile')
 home = mysettings.getAddonInfo('path')
 getSetting = xbmcaddon.Addon().getSetting
+
 enable_adult_section = mysettings.getSetting('enable_adult_section')
 
 fanart = xbmc.translatePath(os.path.join(home, 'fanart.jpg'))
@@ -41,15 +46,38 @@ eng_regex = '#(.+?),English,(.+)\s*(.+)\s*'
 adult_regex = '#(.+?)group-title="Adult",(.+)\s*(.+)\s*'
 adult_regex2 = '#(.+?)group-title="Public-Adult",(.+)\s*(.+)\s*'
 ondemand_regex = '[ON\'](.*?)[\'nd]'
+ou812=base64.b64decode
 yt = 'http://www.youtube.com'
 m3u = 'WVVoU01HTkViM1pNTTBKb1l6TlNiRmx0YkhWTWJVNTJZbE01ZVZsWVkzVmpSMmgzVURKck9WUlViRWxTYXpWNVZGUmpQUT09'.decode('base64')
 text = 'http://pastebin.com/raw.php?i=Zr0Hgrbw'
-GuideDirectory = xbmc.translatePath('special://home/userdata/addon_data/script.renegadestv/')
-GuideINI = xbmc.translatePath('special://home/userdata/addon_data/script.renegadestv/addons2.ini')
 xbmcplugin.setContent(int(sys.argv[1]), 'movies')
+skin = xbmc.getSkinDir()
+ADDON_NAME = '[COLOR blue][B]cCloud TV[/B][/COLOR]'
+addon_id = 'plugin.video.ccloudtv'
+ADDON = xbmcaddon.Addon(id=addon_id)
+ADDON_PATH = xbmc.translatePath('special://home/addons/'+addon_id)
+ICON = ADDON_PATH + 'icon.png'
+FANART = ADDON_PATH + 'fanart.jpg'
+Dialog = xbmcgui.Dialog()
+addon_data = xbmc.translatePath('special://home/userdata/addon_data/'+addon_id+'/')
+favorites = os.path.join(addon_data, 'favorites.txt')
+debug = ADDON.getSetting('debug')
+if os.path.exists(addon_data)==False:
+    os.makedirs(addon_data)
+if os.path.exists(favorites)==True:
+    FAV = open(favorites).read()
+else: FAV = []
 
-
-					
+def set_view_thumbnail():
+    if skin == 'skin.confluence':
+        xbmc.executebuiltin('Container.SetViewMode(500)')
+    elif skin == 'skin.aeon.nox':
+        xbmc.executebuiltin('Container.SetViewMode(511)')
+    if skin == 'skin.estuary':
+        xbmc.executebuiltin('Container.SetViewMode(511)')
+    else:
+        xbmc.executebuiltin('Container.SetViewMode(500)')
+		
 def read_file(file):
     try:
         f = open(file, 'r')
@@ -78,49 +106,39 @@ def make_request():
 
 			
 def main():
-	text_online2()
+	#text_online2()
 	#checkaddon.do_block_check()
-	addDir('[COLOR royalblue][B]***Latest Announcements***[/B][/COLOR]', yt, 3, '%s/announcements.png'% iconpath, fanart)
-	addDir('[COLOR red][B]Search[/B][/COLOR]', 'searchlink', 99, '%s/search.png'% iconpath, fanart)
+	set_view_thumbnail()
+	addDir('[COLOR white][B]*Announcements*[/B][/COLOR]', yt, 3, '%s/announcements.png'% iconpath, fanart)
+	addDir('[COLOR white][B]*ReadMe*[/B][/COLOR]', yt, 8, '%s/readme.png'% iconpath, fanart)
+	addDir('[COLOR white][B]*Server Status*[/B][/COLOR]', yt, 7, '%s/serverStatus.png'% iconpath, fanart)
+	if os.path.exists(favorites) == True:
+		addDir('[COLOR white][B]*Favorites*[/B][/COLOR]', yt, 6, '%s/favorites.png'% iconpath, fanart)
+	addDir('[COLOR white][B]*Search*[/B][/COLOR]', 'searchlink', 99, '%s/search.png'% iconpath, fanart)
 	if len(CCLOUDTV_SRV_URL) > 0:	
-		addDir('[COLOR yellow][B]All Channels[/B][/COLOR]', yt, 2, '%s/allchannels.png'% iconpath, fanart)
+		addDir('[COLOR white][B]All Channels[/B][/COLOR]', yt, 2, '%s/allchannels.png'% iconpath, fanart)
 	if (len(CCLOUDTV_SRV_URL) < 1 ):		
 		mysettings.openSettings()
 		xbmc.executebuiltin("Container.Refresh")
-	addDir('[COLOR yellow][B]TV Guide[/B][/COLOR]', 'guide', 97, '%s/guide.png'% iconpath, fanart)
-	#addDir('Open TV Guide/Update Channels','INI',95,'%s/guide.png'% iconpath,fanart)
-	addDir('[COLOR royalblue][B]English[/B][/COLOR]', 'english', 62, '%s/english.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]Top 10[/B][/COLOR]', 'top10', 51, '%s/top10.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]Sports[/B][/COLOR]', 'sports', 52, '%s/sports.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]News[/B][/COLOR]', 'news', 53, '%s/news.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]Documentary[/B][/COLOR]', 'documentary', 54, '%s/documentary.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]Entertainment[/B][/COLOR]', 'entertainment', 55, '%s/entertainment.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]Family[/B][/COLOR]', 'family', 56, '%s/family.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]Movies[/B][/COLOR]', 'movie', 57, '%s/movies.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]Music[/B][/COLOR]', 'music', 58, '%s/music.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]Lifestyle[/B][/COLOR]', 'lifestyle', 63, '%s/lifestyle.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]On Demand Movies[/B][/COLOR]', 'ondemandmovies', 59, '%s/ondemandmovies.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]On Demand Shows[/B][/COLOR]', 'ondemandshows', 65, '%s/ondemandshows.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]24/7 Channels[/B][/COLOR]', '24', 60, '%s/twentyfourseven.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]Radio[/B][/COLOR]', 'radio', 61, '%s/radio.png'% iconpath, fanart)
-	addDir('[COLOR royalblue][B]Non-English/International[/B][/COLOR]', 'international', 64,'%s/international.png'% iconpath, fanart)
+	addDir('[COLOR white][B]TV Guide[/B][/COLOR]', 'guide', 97, '%s/guide.png'% iconpath, fanart)
+	addDir('[COLOR white][B]English[/B][/COLOR]', 'english', 62, '%s/english.png'% iconpath, fanart)
+	addDir('[COLOR white]Top 10[/COLOR]', 'top10', 51, '%s/top10.png'% iconpath, fanart)
+	addDir('[COLOR white]Sports[/COLOR]', 'sports', 52, '%s/sports.png'% iconpath, fanart)
+	addDir('[COLOR white]News[/COLOR]', 'news', 53, '%s/news.png'% iconpath, fanart)
+	addDir('[COLOR white]Documentary[/COLOR]', 'documentary', 54, '%s/documentary.png'% iconpath, fanart)
+	addDir('[COLOR white]Entertainment[/COLOR]', 'entertainment', 55, '%s/entertainment.png'% iconpath, fanart)
+	addDir('[COLOR white]Family[/COLOR]', 'family', 56, '%s/family.png'% iconpath, fanart)
+	addDir('[COLOR white]Movies[/COLOR]', 'movie', 57, '%s/movies.png'% iconpath, fanart)
+	addDir('[COLOR white]Music[/COLOR]', 'music', 58, '%s/music.png'% iconpath, fanart)
+	addDir('[COLOR white]Lifestyle[/COLOR]', 'lifestyle', 63, '%s/lifestyle.png'% iconpath, fanart)
+	addDir('[COLOR white]On Demand Movies[/COLOR]', 'ondemandmovies', 59, '%s/ondemandmovies.png'% iconpath, fanart)
+	addDir('[COLOR white]On Demand Shows[/COLOR]', 'ondemandshows', 65, '%s/ondemandshows.png'% iconpath, fanart)
+	addDir('[COLOR white]24/7 Channels[/COLOR]', '24', 60, '%s/twentyfourseven.png'% iconpath, fanart)
+	addDir('[COLOR white]Radio[/COLOR]', 'radio', 61, '%s/radio.png'% iconpath, fanart)
+	addDir('[COLOR white]Non-English/International[/COLOR]', 'international', 64,'%s/international.png'% iconpath, fanart)
 	if getSetting("enable_adult_section") == 'true':	
-		addDir('[COLOR magenta][B]Adult(18+)[/B][/COLOR]', 'adult', 98, '%s/adult.png'% iconpath, fanart)
+		addDir('[COLOR white][B]Adult(18+)[/B][/COLOR]', 'adult', 98, '%s/adult.png'% iconpath, fanart)
 
-def createini():
-	if not os.path.exists(GuideDirectory):
-		dialog.ok(addon_id, 'Please make sure you have TV Guide installed and you have run it at least once then use this function to enable integration')
-		dialog.notification(addonname, 'Please install and run TV Guide at least once', xbmcgui.NOTIFICATION_ERROR );
-	
-	if os.path.exists(GuideDirectory):
-		addonsini = urllib.URLopener()
-		addonsini.retrieve("https://raw.githubusercontent.com/podgod/podgod/master/cCloud_TV_Guide/XML/combined.ini", GuideINI)
-        with open(GuideDirectory+"/addons2.ini", "a") as file:
-            file.write('https://raw.githubusercontent.com/podgod/podgod/master/cCloud_TV_Guide/XML/combined.ini\n')
-        shutil.rmtree(GuideDirectory , ignore_errors=True)
-    	xbmc.executebuiltin("RunAddon(script.renegadestv)")
-        sys.exit()
-		
 def removeAccents(s):
 	return ''.join((c for c in unicodedata.normalize('NFD', s.decode('utf-8')) if unicodedata.category(c) != 'Mn'))
 		
@@ -139,6 +157,8 @@ def search():
 	except:
 		pass
 
+#########CATEGORIES###########
+
 def sports(): 	
 	try:
 		searchText = '(Sports)'
@@ -146,12 +166,11 @@ def sports():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
 	
-
 def top10(): 	
 	try:
 		searchText = '(Top10)'
@@ -159,7 +178,7 @@ def top10():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -171,7 +190,7 @@ def news():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -184,7 +203,7 @@ def documentary():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -197,7 +216,7 @@ def entertainment():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -210,7 +229,7 @@ def family():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -224,7 +243,7 @@ def lifestyle():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -238,7 +257,7 @@ def movie():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -252,7 +271,7 @@ def music():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -265,7 +284,7 @@ def ondemandmovies():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)
 	except:
 		pass
@@ -277,7 +296,7 @@ def ondemandshows():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)
 	except:
 		pass
@@ -291,7 +310,7 @@ def twentyfour7():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -305,7 +324,7 @@ def radio():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -319,13 +338,13 @@ def adult():
 			content = make_request()
 			match = re.compile(adult_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					adult_playlist(name, url, thumb)	
 		if len(CCLOUDTV_SRV_URL) > 0:		
 			content = make_request()
 			match = re.compile(adult_regex2).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					adult_playlist(name, url, thumb)	
 
 	except:
@@ -334,7 +353,7 @@ def adult():
 	
 	
 def english(): 	
-	#addDir('[COLOR yellow][B]cCloud TV Guide[/B][/COLOR] - Click Here! Thanks to Renegades TV', 'guide', 97, '%s/guide.png'% iconpath, fanart)
+	#addDir('[COLOR yellow][B]cCloud TV Guide[/B][/COLOR] - Click Here!', 'guide', 97, '%s/guide.png'% iconpath, fanart)
 	try:
 		searchText = '(English)'
 		if len(CCLOUDTV_SRV_URL) > 0:		
@@ -342,7 +361,7 @@ def english():
 			match = re.compile(m3u_regex).findall(content) 
 			#file.write('\n'.join(match))
 			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchText, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)
 			#outfile.write("\n".join(addontest.ini))
 	except:
@@ -356,7 +375,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchGerman, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchGerman, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -366,7 +385,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchSpanish, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchSpanish, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -376,7 +395,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchFrench, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchFrench, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -386,7 +405,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchHindi, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchHindi, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -396,7 +415,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchArabic, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchArabic, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -406,7 +425,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchUrdu, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchUrdu, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -416,7 +435,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchFarsi, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchFarsi, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -426,7 +445,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchPortuguese, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchPortuguese, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -436,7 +455,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchKurdish, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchKurdish, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -446,7 +465,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchChinese, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchChinese, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -456,7 +475,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchSomali, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchSomali, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -466,7 +485,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchRussian, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchRussian, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -476,7 +495,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchAfrikaans, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchAfrikaans, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -486,7 +505,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchRomanian, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchRomanian, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -496,7 +515,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchItalian, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchItalian, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -506,7 +525,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchIsraeli, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchIsraeli, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -516,7 +535,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchGreek, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchGreek, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -526,7 +545,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchHungarian, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchHungarian, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -536,7 +555,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchTamil, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchTamil, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -546,7 +565,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchMacedonian, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchMacedonian, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -556,7 +575,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchIndian, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchIndian, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -566,7 +585,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchCatalan, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchCatalan, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -576,7 +595,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchJamaica, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchJamaica, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -586,7 +605,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchUkrainian, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchUkrainian, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -596,7 +615,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchVietamese, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchVietamese, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -606,7 +625,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchMaltese, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchMaltese, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -616,7 +635,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchLithuanian, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchLithuanian, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -626,7 +645,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchPolish, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchPolish, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -636,7 +655,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchSlovenian, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchSlovenian, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -646,7 +665,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchDeutsch, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchDeutsch, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -656,7 +675,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchDutch, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchDutch, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -666,7 +685,7 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchFilipino, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchFilipino, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
@@ -676,10 +695,49 @@ def international():
 			content = make_request()
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
-				if re.search(searchFilipino, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+				if re.search(searchFilipino, removeAccents(name.replace('Ð', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
 	except:
 		pass
+
+#########CATEGORIES###########
+		
+def online_status():        
+    text = '[COLOR royalblue][B]**Online Status**[/B][/COLOR]'
+    newstext = 'http://banedorrance.pro/'
+    req = urllib2.Request(newstext)
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+    response = urllib2.urlopen(req)
+    link=response.read()
+    response.close()
+    match=re.compile("<caption>(.*)</tr></tbody>",re.DOTALL).findall(link)
+    for status in match:
+        try:
+                status = status.decode('ascii', 'ignore')
+        except:
+                status = status.decode('utf-8','ignore')
+    status = status.replace('&amp;','').replace("			</tr><tr>","").replace("			<th scope='row'> www.ccld.io </th>","").replace("			<th scope='row'> www.ccloudtv.org </th>","").replace("			<th scope='row'> Kodi Server 1 </th>","").replace("			<th scope='row'> Kodi Server 2 </th>","").replace("			<th scope='row'> Kodi Server 3 </th>","").replace("			<th scope='row'> Kodi Server 4 </th>","").replace("			<th scope='row'> Kodi Server 5 </th>","").replace("			<th scope='row'> Kodi Server 6 </th>","").replace("			<th scope='row'> Kodi Server 7 </th>","").replace("			<th scope='row'> Kodi Server 8 </th>","").replace("			<th scope='row'> Kodi Server 9 </th>","").replace("			<th scope='row'> Kodi Server 10 </th>","").replace("			<th scope='row'> Plex Server 1 </th>","").replace("			<th scope='row'> Plex Server 2 </th>","").replace("			<th scope='row'> Plex Server 3 </th>","").replace("			<td><span id='","").replace("' class='Online'> Online </span></td>"," = [COLOR green]Online[/COLOR]").replace("' class='Offline'> Offline </span></td>"," = [COLOR red]Offline[/COLOR]").replace("	</table></center>","").replace("			</tr></tbody>","").replace("		<thead>","").replace("			<tr>","").replace("			<th scope='col'>Server Type</th>","Scroll down to check the current status of our servers. ").replace("			<th scope='col'>Status</th>","").replace("			</tr>","").replace("		</thead>","").replace("		<tbody><tr>","[COLOR royalblue][B]Server Type  -  Status[/B][/COLOR]").replace("cCloud TV Status</caption>","[B]cCloud TV Status[/B]").replace("","").replace("","").replace("			<th scope='row'> Roku Server 1 </th>","").replace("			<th scope='row'> Roku Server 2 </th>","").replace("			<th scope='row'> Roku Server 3 </th>","").replace("			<th scope='row'> Roku Server 4 </th>","").replace("			<th scope='row'> Roku Server 5 </th>","")
+    text = status
+    showText('[COLOR royalblue][B]***Online Status***[/B][/COLOR]', text)
+
+def readme():		
+	text = '[COLOR royalblue][B]**ReadMe**[/B][/COLOR]'
+	newstext = 'http://ccloudtv.org/readme'
+	req = urllib2.Request(newstext)
+	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+	response = urllib2.urlopen(req)
+	link=response.read()
+	response.close()
+	match=re.compile("<body>(.+?)</body>",re.DOTALL).findall(link)
+	for status in match:
+	    try:
+			    status = status.decode('ascii', 'ignore')
+	    except:
+			    status = status.decode('utf-8','ignore')
+	    status = status.replace('&amp;','').replace('<h1>README</h1>','[B]README[/B]').replace('<p>','').replace('</p>','').replace('<a href="','').replace('https://youtu.be/kz1LHwyWygE""target="_blank">https://youtu.be/kz1LHwyWygE</a>','[COLOR royalblue]https://youtu.be/kz1LHwyWygE[/COLOR]').replace('https://youtu.be/VvXH9OzWKSM""target="_blank">https://youtu.be/VvXH9OzWKSM</a>','[COLOR royalblue]https://youtu.be/VvXH9OzWKSM[/COLOR]').replace('https://youtu.be/C6Q0voXrp88""target="_blank">https://youtu.be/C6Q0voXrp88</a>','[COLOR royalblue]https://youtu.be/C6Q0voXrp88[/COLOR]').replace('http://youtu.be/enipIP2sEWw""target="_blank">http://youtu.be/enipIP2sEWw</a>','[COLOR royalblue]http://youtu.be/enipIP2sEWw[/COLOR]').replace('https://youtu.be/zYIa72b5vyk""target="_blank">https://youtu.be/zYIa72b5vyk</a>','[COLOR royalblue]https://youtu.be/zYIa72b5vyk[/COLOR]').replace('https://youtu.be/nCNF5cXLZts""target="_blank">https://youtu.be/nCNF5cXLZts</a>','[COLOR royalblue]https://youtu.be/nCNF5cXLZts[/COLOR]').replace('http://youtu.be/hvxPg4TE0tc""target="_blank">http://youtu.be/hvxPg4TE0tc</a>','[COLOR royalblue]http://youtu.be/hvxPg4TE0tc[/COLOR]')
+	    text = status
+	showText('[COLOR royalblue][B]**ReadMe**[/B][/COLOR]', text)
+
 	
 def text_online2():		
 	text = '[COLOR royalblue][B]***Latest Announcements***[/B][/COLOR]'
@@ -688,7 +746,7 @@ def text_online2():
 	req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
 	response = urllib2.urlopen(req)
 	link=response.read()
-	response.close()
+	response.close() 
 	match=re.compile("<START>(.+?)___",re.DOTALL).findall(link)
 	for status in match:
 	    try:
@@ -738,7 +796,7 @@ def guide():
 	dialog = xbmcgui.Dialog()
 	ret = dialog.yesno('cCloud TV Guide', '[COLOR yellow]cCloud TV[/COLOR] is now integrated with your favourite TV Guides.','This is currently in beta and not all channels are supported.','[COLOR yellow]>>>>>>>>>>>>>  Choose Your Guide Below  <<<<<<<<<<<<<[/COLOR]','iVue TV Guide','Renegades TV Guide')
 	if ret == 1:
-			xbmc.executebuiltin("RunAddon(script.renegadestv)")
+			xbmc.executebuiltin("RunAddon(plugin.video.ccloudtv)")
 			sys.exit()
 	if ret == 0:
 			xbmc.executebuiltin("RunAddon(script.ivueguide)")
@@ -849,21 +907,7 @@ def get_params():
 				param[splitparams[0]] = splitparams[1]
 	return param
 
-ini = 'YUhSMGNEb3ZMMnR2WkdsbGNHY3VZMk5zWkM1cGJ3PT0='.decode('base64').decode('base64')
-List1 = 'YUhSMGNEb3ZMM2d1WTI4dlpHSmphREF4'.decode('base64').decode('base64')
-List2 = 'YUhSMGNEb3ZMMnR2WkdrdVkyTnNaQzVwYnc9PQ=='.decode('base64').decode('base64')
-List3 = 'YUhSMGNEb3ZMMkZwYnk1alkyeHZkV1IwZGk1dmNtY3ZhMjlrYVE9PQ=='.decode('base64').decode('base64')
-List4 = 'YUhSMGNEb3ZMMmR2TW13dWFXNXJMMnR2WkdrPQ=='.decode('base64').decode('base64')
-List5 = 'YUhSMGNEb3ZMM051YVhBdWJHa3ZhMjlrYVE9PQ=='.decode('base64').decode('base64')
-List6 = 'YUhSMGNEb3ZMMk5rYmk1alkyeHZkV1IwZGk1dmNtY3ZhMjlrYVRFPQ=='.decode('base64').decode('base64')
-List7 = 'YUhSMGNEb3ZMMk5rYmk1alkyeHZkV1IwZGk1dmNtY3ZhMjlrYVRJPQ=='.decode('base64').decode('base64')
-List8 = 'YUhSMGNEb3ZMMk5rYmk1alkyeHZkV1IwZGk1dmNtY3ZhMjlrYVRNPQ=='.decode('base64').decode('base64')
-List9 = 'YUhSMGNEb3ZMMk5rYmk1alkyeHZkV1IwZGk1dmNtY3ZhMjlrYVRRPQ=='.decode('base64').decode('base64')
-List10 = 'YUhSMGNEb3ZMMk5rYmk1alkyeHZkV1IwZGk1dmNtY3ZhMjlrYVRVPQ=='.decode('base64').decode('base64')
-List11= 'YUhSMGNEb3ZMMkZwY2k1alkyeHZkV1IwZGk1dmNtY3ZhMjlrYVE9PQ=='.decode('base64').decode('base64')
-
-CCLOUDTV_SRV_URL = [List1,List2,List3,List4,List5,List6,List7,List8,List9,List10,List11]
-
+exec("import re;import base64");exec((lambda p,y:(lambda o,b,f:re.sub(o,b,f))(r"([0-9a-f]+)",lambda m:p(m,y),ou812("MTEgPSAnNicuMSgnMCcpLjEoJzAnKS4xKCcwJykuMSgnMCcpCjEwID0gJzInLjEoJzAnKS4xKCcwJykuMSgnMCcpLjEoJzAnKQpmID0gJzUnLjEoJzAnKS4xKCcwJykuMSgnMCcpLjEoJzAnKQoxNCA9ICc5Jy4xKCcwJykuMSgnMCcpLjEoJzAnKS4xKCcwJykKZSA9ICdhJy4xKCcwJykuMSgnMCcpLjEoJzAnKS4xKCcwJykKMTMgPSAnNycuMSgnMCcpLjEoJzAnKS4xKCcwJykuMSgnMCcpCjEyID0gJzgnLjEoJzAnKS4xKCcwJykuMSgnMCcpLjEoJzAnKQoxNiA9ICc0Jy4xKCcwJykuMSgnMCcpLjEoJzAnKS4xKCcwJykKMTUgPSAnMycuMSgnMCcpLjEoJzAnKS4xKCcwJykuMSgnMCcpCmQgPSAnYicuMSgnMCcpLjEoJzAnKS4xKCcwJykuMSgnMCcpCgpjID0gWzExLDEwLGYsMTQsZSwxMywxMiwxNiwxNSxkXQ==")))(lambda a,b:b[int("0x"+a.group(1),16)],"base64|decode|V1ZWb1UwMUhUa1ZpTTFwTlRUSmtNVmRVU1RSa2JWWklWMVJHVkZaRk5VcFdSRXBUVjJ4U2JsQlVNRDA9|V1ZWb1UwMUhUa1ZpTTFwTlRUSmtNVmRVU1RSa2JIQlhWMnhrVWxkSFVrMVZNV2hQVmtkR1FsQlVNRDA9|V1ZWb1UwMUhUa1ZpTTFwTlRUSmtNVmRVU1RSa2JWSkpWR3RhVGsxSVFsSmFSV1JoVkcxT2JsQlVNRDA9|V1ZWb1UwMUhUa1ZpTTFwTlRUSmtNVmRVU1RSa2JGcFdaVWR3VGxKRldrOVdSRUkwWW14R00xQlVNRDA9|V1ZWb1UwMUhUa1ZpTTFwTlRUSmtNVmRVU1RSa2JFNUdWbTFHVDFadVFURlpWbFozWWtaYU0xQlVNRDA9|V1ZWb1UwMUhUa1ZpTTFwTlRUSmtNVmRVU1RSa2JVcHpWMjV3YWxZd05YVlhWRXBPVGxkV1VsQlVNRDA9|V1ZWb1UwMUhUa1ZpTTFwTlRUSmtNVmRVU1RSa2JWWkdaVVZTVUZaR1NrZFdiWGhIVFd4a1VsQlVNRDA9|V1ZWb1UwMUhUa1ZpTTFwTlRUSmtNVmRVU1RSa2JVWjFWbXM1VlZaVVZuVmFSRXAzVlZVeFFsQlVNRDA9|V1ZWb1UwMUhUa1ZpTTFwTlRUSmtNVmRVU1RSa2JIQklZMFZPV2xaRldqRmFSM0J6VTBkV2JsQlVNRDA9|V1ZWb1UwMUhUa1ZpTTFwTlRUSmtNVmRVU1RSa2JWWkhVbTVrVTJFelFsbFhha3B6WW0xR2JsQlVNRDA9|CCLOUDTV_SRV_URL|List10|List5|List3|List2|List1|List7|List6|List4|List9|List8".split("|")))####################################################################################################
 ####################################################################################################
 # Gets the data and tests for a valid M3U since a 200 response code can still lead to an empty file 
 # or a different page but not our listing
@@ -906,7 +950,7 @@ def shuffle(mlist):
 		result.append(element)
 	return result
 
-def addDir(name, url, mode, iconimage, fanart):
+def addDir(name, url, mode, iconimage, fanart, showcontext=True,regexs=None):
 	u = sys.argv[0] + "?url=" + urllib.quote_plus(url) + "&mode=" + str(mode) + "&name=" + urllib.quote_plus(name) + "&iconimage=" + urllib.quote_plus(iconimage)
 	ok = True
 	liz = xbmcgui.ListItem(name, iconImage = "DefaultFolder.png", thumbnailImage = iconimage)
@@ -914,25 +958,124 @@ def addDir(name, url, mode, iconimage, fanart):
 	liz.setProperty('fanart_image', fanart)
 	if ('youtube.com/user/' in url) or ('youtube.com/channel/' in url) or ('youtube/user/' in url) or ('youtube/channel/' in url):
 		u = 'plugin://plugin.video.youtube/%s/%s/' % (url.split( '/' )[-2], url.split( '/' )[-1])
-		ok = xbmcplugin.addDirectoryItem(handle = int(sys.argv[1]), url = u, listitem = liz, isFolder = True)
-		return ok		
-	ok = xbmcplugin.addDirectoryItem(handle = int(sys.argv[1]), url = u, listitem = liz, isFolder = True)
+	if showcontext:
+		contextMenu = []
+		if showcontext == 'fav':
+			contextMenu.append(('Remove from '+ADDON_NAME+' Favorites','XBMC.RunPlugin(%s?mode=5&name=%s&url=%s&iconimage=%s&fav_mode=%s)'
+			%(sys.argv[0], urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(iconimage), mode)))
+		if not name in FAV:
+			contextMenu.append(('Add to '+ADDON_NAME+' Favorites','XBMC.RunPlugin(%s?mode=4&name=%s&url=%s&iconimage=%s&fav_mode=%s)'
+				%(sys.argv[0], urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(iconimage), mode)))
+		liz.addContextMenuItems(contextMenu)
+	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
 	return ok
+	xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
-def addLink(name, url, mode, iconimage, fanart):
+def addLink(name, url, mode, iconimage, fanart, showcontext=True,allinfo={}):
 	u = sys.argv[0] + "?url=" + urllib.quote_plus(url) + "&mode=" + str(mode) + "&name=" + urllib.quote_plus(name) + "&iconimage=" + urllib.quote_plus(iconimage)
 	liz = xbmcgui.ListItem(name, iconImage = "DefaultVideo.png", thumbnailImage = iconimage)
 	liz.setInfo( type = "Video", infoLabels = { "Title": name } )
 	liz.setProperty('fanart_image', fanart)
-	liz.setProperty('IsPlayable', 'true') 
-	ok = xbmcplugin.addDirectoryItem(handle = int(sys.argv[1]), url = u, listitem = liz)  
+	liz.setProperty('IsPlayable', 'true')
+	if showcontext:
+		contextMenu = []
+		if showcontext == 'fav':
+			contextMenu.append(('Remove from '+ADDON_NAME+' Favorites','XBMC.RunPlugin(%s?mode=5&name=%s&url=%s&iconimage=%s&fav_mode=%s)'
+			%(sys.argv[0], urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(iconimage), mode)))
+		if not name in FAV:
+			contextMenu.append(('Add to '+ADDON_NAME+' Favorites','XBMC.RunPlugin(%s?mode=4&name=%s&url=%s&iconimage=%s&fav_mode=%s)'
+				%(sys.argv[0], urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(iconimage), mode)))
+		liz.addContextMenuItems(contextMenu)
+        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
+        return ok
+        xbmcplugin.endOfDirectory(int(sys.argv[1]))        
+	
+#############FAV###############
+def addon_log(string):
+    if debug == 'true':
+        xbmc.log("["+ADDON_NAME+"]: %s" %(addon_version, string))
+
+def addFavorite(name,url,iconimage,fanart,mode,playlist=None,regexs=None):
+        favList = []
+        try:
+            # seems that after
+            name = name.encode('utf-8', 'ignore')
+        except:
+            pass
+        if os.path.exists(favorites)==False:
+            addon_log('Making Favorites File')
+            favList.append((name,url,iconimage,fanart,mode,playlist,regexs))
+            a = open(favorites, "w")
+            a.write(json.dumps(favList))
+            a.close()
+        else:
+            addon_log('Appending Favorites')
+            a = open(favorites).read()
+            data = json.loads(a)
+            data.append((name,url,iconimage,fanart,mode))
+            b = open(favorites, "w")
+            b.write(json.dumps(data))
+            b.close()
 		
+
+def getFavorites():
+        if os.path.exists(favorites)==False:
+            favList = []
+            addon_log('Making Favorites File')
+            a = open(favorites, "w")
+            a.write(json.dumps(favList))
+            a.close()        
+        else:
+			items = json.loads(open(favorites).read())
+			total = len(items)
+			for i in items:
+				name = i[0]
+				url = i[1]
+				iconimage = i[2]
+				try:
+					fanArt = i[3]
+					if fanArt == None:
+						raise
+				except:
+					if ADDON.getSetting('use_thumb') == "true":
+						fanArt = iconimage
+					else:
+						fanArt = fanart
+				try: playlist = i[5]
+				except: playlist = None
+				try: regexs = i[6]
+				except: regexs = None
+
+				if i[4] == 1:
+					addLink(name,url,i[4],iconimage,fanart,'fav')
+				else:
+					addDir(name,url,i[4],iconimage,fanart,'fav')
+
+def rmFavorite(name):
+        data = json.loads(open(favorites).read())
+        for index in range(len(data)):
+            if data[index][0]==name:
+                del data[index]
+                b = open(favorites, "w")
+                b.write(json.dumps(data))
+                b.close()
+                break
+        xbmc.executebuiltin("XBMC.Container.Refresh")	
+
 params = get_params()
 url = None
 name = None
 mode = None
 iconimage = None
+fanart=None
+description=None
+fav_mode=None
+channel=None
 
+try:
+    fav_mode=int(params["fav_mode"])
+except:
+    pass
 try:
 	url = urllib.unquote_plus(params["url"])
 except:
@@ -946,14 +1089,48 @@ try:
 except:
 	pass
 try:
-	iconimage = urllib.unquote_plus(params["iconimage"])
+        iconimage=urllib.unquote_plus(params["iconimage"])
 except:
-	pass  
+        pass
+try:        
+        mode=int(params["mode"])
+except:
+        pass
+try:        
+        fanart=urllib.unquote_plus(params["fanart"])
+except:
+        pass
+try:        
+        description=urllib.unquote_plus(params["description"])
+except:
+        pass
+        
 
 print "Mode: " + str(mode)
 print "URL: " + str(url)
 print "Name: " + str(name)
+print "Channel: " + str(channel)
 print "iconimage: " + str(iconimage)		
+
+#If its being requested from a TV Guide;
+if mode == 0:
+	
+	#Get the playlist;
+	content = make_request()
+	match = re.compile(m3u_regex).findall(content)
+	
+	#For each thumb, name and url in matches;
+	for thumb, name, url in match:
+		
+		#If the Channels name is found in the file;
+		if urllib.unquote_plus(params["name"]) in name:
+			
+			#Play the new url;
+			try:
+				play_video(url)
+			except:
+				pass
+				
 
 if mode == None or url == None or len(url) < 1:
 	main()
@@ -966,8 +1143,41 @@ elif mode == 2:
 	
 elif mode == 3:
 	text_online()
+
+elif mode==4:
+    addon_log("addFavorite")
+    try:
+        name = name.split('\\ ')[1]
+    except:
+        pass
+    try:
+        name = name.split('  - ')[0]
+    except:
+        pass
+    addFavorite(name,url,iconimage,fanart,fav_mode)
 	
-	
+elif mode==5:
+    addon_log("rmFavorite")
+    try:
+        name = name.split('\\ ')[1]
+    except:
+        pass
+    try:
+        name = name.split('  - ')[0]
+    except:
+        pass
+    rmFavorite(name)
+
+elif mode==6:
+    addon_log("getFavorites")
+    getFavorites()
+
+elif mode == 7:
+	online_status()
+
+elif mode == 8:
+	readme()
+
 elif mode == 51:
 	top10()
 		
@@ -1013,9 +1223,6 @@ elif mode == 63:
 elif mode == 64:
 	international()
 	
-elif mode==95:
-    createini()
-		
 elif mode == 97:
 	guide()
 	
