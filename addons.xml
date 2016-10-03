@@ -127,7 +127,7 @@ Gracias por su preferencia [COLOR cyan][B]BassFox[/B][/COLOR] based on Livetream
 
 <addon id="plugin.video.DCSports"
        name="DC Sports"
-       version="1.0.2"
+       version="1.0.5"
        provider-name="Darrenc1888">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -151,7 +151,7 @@ Gracias por su preferencia [COLOR cyan][B]BassFox[/B][/COLOR] based on Livetream
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary lang="en">UK Sports Addon</summary>
-    <description lang="en">Work In Progress</description>
+    <description lang="en">@darrenc1888 on Twitter</description>
     <platform>all</platform>
   </extension>
 </addon>
