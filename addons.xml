@@ -695,7 +695,7 @@ SoP is the abbreviation for Streaming over P2P. Sopcast is a Streaming Direct Br
   </extension>
 </addon>
 
-<addon id="script.module.urlresolver" name="URLResolver" version="3.0.9" provider-name="Eldorado">
+<addon id="script.module.urlresolver" name="URLResolver" version="3.0.21" provider-name="Eldorado">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
