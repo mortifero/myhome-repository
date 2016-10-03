@@ -1,5 +1,6 @@
 import xbmc, xbmcgui, xbmcplugin
-import urllib2,urllib,cgi, re, urlresolver  
+import urllib2,urllib,cgi, re
+
 import urlparse
 import HTMLParser
 import xbmcaddon
@@ -10,6 +11,8 @@ import CustomPlayer,uuid
 import checkbad
 from time import time
 import base64
+
+    
 try:
     from lxmlERRRORRRR import etree
     print("running with lxml.etree")
@@ -55,8 +58,15 @@ ZEMCOOKIEFILE='ZemCookieFile.lwp'
 ZEMCOOKIEFILE=os.path.join(profile_path, ZEMCOOKIEFILE)
 S365COOKIEFILE='s365CookieFile.lwp'
 S365COOKIEFILE=os.path.join(profile_path, S365COOKIEFILE)
+
+YPLoginFile='YpCookieFile.lwp'
+YPLoginFile=os.path.join(profile_path, YPLoginFile)
+
+HDCASTCookie='HDCastCookieFile.lwp'
+HDCASTCookie=os.path.join(profile_path, HDCASTCookie)
+
  
-mainurl=base64.b64decode('aHR0cDovL3d3dy56ZW10di5jb20v')
+mainurl=base64.b64decode('aHR0cDovL3d3dy56ZW10di5jb20vY2F0ZWdvcnkvcGFraXN0YW5pLw==')
 liveURL=base64.b64decode('aHR0cDovL3d3dy56ZW10di5jb20vbGl2ZS1wYWtpc3RhbmktbmV3cy1jaGFubmVscy8=')
 
 tabURL =base64.b64decode('aHR0cDovL3d3dy5lYm91bmRzZXJ2aWNlcy5jb206ODg4OC91c2Vycy9yZXgvbV9saXZlLnBocD9hcHA9JXMmc3RyZWFtPSVz')
@@ -81,33 +91,33 @@ def addLink(name,url,iconimage):
 
 
 def addDir(name,url,mode,iconimage,showContext=False,showLiveContext=False,isItFolder=True, linkType=None):
-#	print name
-	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
-	ok=True
-	liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-	liz.setInfo( type="Video", infoLabels={ "Title": name } )
+    #	print name
+    u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
+    ok=True
+    liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz.setInfo( type="Video", infoLabels={ "Title": name } )
 
-	if showContext==True:
-		cmd1 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "DM")
-		cmd2 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "LINK")
-		cmd3 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "Youtube")
-		cmd4 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "PLAYWIRE")
-		cmd5 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "EBOUND")
-		cmd6 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "PLAYWIRE")
-		cmd7 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "VIDRAIL")
+    if showContext==True:
+        cmd1 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "DM")
+        cmd2 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "LINK")
+        cmd3 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "Youtube")
+        cmd4 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "PLAYWIRE")
+        cmd5 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "EBOUND")
+        cmd6 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "PLAYWIRE")
+        cmd7 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "VIDRAIL")
 
-		
-		liz.addContextMenuItems([('Show All Sources',cmd6),('Play Vidrail video',cmd7),('Play Ebound video',cmd5),('Play Playwire video',cmd4),('Play Youtube video',cmd3),('Play DailyMotion video',cmd1),('Play Tune.pk video',cmd2)])
-	if linkType:
-		u="XBMC.RunPlugin(%s&linkType=%s)" % (u, linkType)
-		
-#	if showLiself.wfileveContext==True:
-#		cmd1 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "RTMP")
-#		cmd2 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "HTTP")
-#		liz.addContextMenuItems([('Play RTMP Steam (flash)',cmd1),('Play Http Stream (ios)',cmd2)])
-	
-	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=isItFolder)
-	return ok
+        
+        liz.addContextMenuItems([('Show All Sources',cmd6),('Play Vidrail video',cmd7),('Play Ebound video',cmd5),('Play Playwire video',cmd4),('Play Youtube video',cmd3),('Play DailyMotion video',cmd1),('Play Tune.pk video',cmd2)])
+    if linkType:
+        u="XBMC.RunPlugin(%s&linkType=%s)" % (u, linkType)
+        
+    #	if showLiself.wfileveContext==True:
+    #		cmd1 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "RTMP")
+    #		cmd2 = "XBMC.RunPlugin(%s&linkType=%s)" % (u, "HTTP")
+    #		liz.addContextMenuItems([('Play RTMP Steam (flash)',cmd1),('Play Http Stream (ios)',cmd2)])
+
+    ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=isItFolder)
+    return ok
 
 def PlayChannel ( channelName ): 
 #	print linkType
@@ -169,22 +179,22 @@ def getUrl(url, cookieJar=None,post=None, timeout=20, headers=None,jsonpost=Fals
     return link;
 
 def get_params():
-	param=[]
-	paramstring=sys.argv[2]
-	if len(paramstring)>=2:
-		params=sys.argv[2]
-		cleanedparams=params.replace('?','')
-		if (params[len(params)-1]=='/'):
-			params=params[0:len(params)-2]
-		pairsofparams=cleanedparams.split('&')
-		param={}
-		for i in range(len(pairsofparams)):
-			splitparams={}
-			splitparams=pairsofparams[i].split('=')
-			if (len(splitparams))==2:
-				param[splitparams[0]]=splitparams[1]
-				
-	return param
+    param=[]
+    paramstring=sys.argv[2]
+    if len(paramstring)>=2:
+        params=sys.argv[2]
+        cleanedparams=params.replace('?','')
+        if (params[len(params)-1]=='/'):
+            params=params[0:len(params)-2]
+        pairsofparams=cleanedparams.split('&')
+        param={}
+        for i in range(len(pairsofparams)):
+            splitparams={}
+            splitparams=pairsofparams[i].split('=')
+            if (len(splitparams))==2:
+                param[splitparams[0]]=splitparams[1]
+                
+    return param
 
 
 def DisplayChannelNames(url):
@@ -217,7 +227,7 @@ def Addtypes():
 	addDir('Pakistani Live Channels' ,'PakLive' ,2,'')
 	addDir('Indian Live Channels' ,'IndianLive' ,2,'')
 	addDir('Punjabi Live Channels' ,'PunjabiLive' ,2,'')
-	addDir('Movies' ,'zemmovies',36,'')
+	addDir('Movies' ,'pv2',66,'')
 	addDir('Sports' ,'Live' ,13,'')
 	addDir('Settings' ,'Live' ,6,'',isItFolder=False)
 	addDir('Clear Cache' ,'Live' ,54,'',isItFolder=False)
@@ -406,7 +416,8 @@ def AddSports(url):
         addDir(Colored(cname.capitalize(),'ZM') ,base64.b64encode(curl) ,m,imgurl, False, True,isItFolder=False)		#name,url,mode,icon
     
 #    addDir('IPTV Sports' ,'sss',46,'')
-    addDir('IpBox sports (Beta1 requires F4mTester)' ,'sss',55,'')
+    addDir('IpBox sports Using TSDownloader and HLS' ,'mpegts',55,'')
+    #addDir('IpBox sports Using HLS ' ,'hls',55,'')
     addDir('PTC sports' ,'sss',51,'')
     addDir('Paktv sports' ,'sss',52,'')
     addDir('UniTV sports' ,'sss',53,'')
@@ -414,19 +425,27 @@ def AddSports(url):
     addDir('GTV sports' ,'sss',70,'')
     addDir('Pi sports' ,'sss',71,'')
     addDir('Mona' ,'sss',68,'')
-    addDir('Sport365.live' ,'sss',56,'')
+    addDir('Sport365.live [GeoBlocked]' ,'sss',56,'')
     addDir('SmartCric.com (Live matches only)' ,'Live' ,14,'')
-    addDir('UKTVNow','sss' ,57,'')
+    addDir('UKTVNow [Limited Channels]','sss' ,57,'http://www.uktvnow.net/images/uktvnow_logo.png')
     
 #    addDir('Flashtv.co (Live Channels)' ,'flashtv' ,31,'')
     addDir('Willow.Tv (Subscription required, US Only or use VPN)' ,base64.b64decode('aHR0cDovL3d3dy53aWxsb3cudHYv') ,19,'')
     #addDir(base64.b64decode('U3VwZXIgU3BvcnRz') ,'sss',34,'')
     addDir('PV2 Sports' ,'zemsports',36,'')
+    addDir('Safe' ,'sss',72,'')
+    addDir('TVPlayer [UK Geo Restricted]','sss',74,'https://assets.tvplayer.com/web/images/tvplayer-logo-white.png')
+    addDir('StreamHD','sss',75,'http://www.streamhd.eu/images/logo.png')
+    addDir('Mama HD','http://mamahd.com/',79,'http://mamahd.com/images/logo.png')
+    addDir('HDfree','sss',77,'')
+    addDir('inFinite Streams','sss',78,'')
+    addDir('Euro Streams','sss',81,'')
+
     #addDir('Yupp Asia Cup','Live' ,60,'')
-    addDir('CricHD.tv (Live Channels)' ,'pope' ,26,'')
+    #addDir('CricHD.tv (Live Channels)' ,'pope' ,26,'')
     #addDir('cricfree.sx' ,'sss',41,'')
-    addDir('WatchCric.com-Live matches only' ,base64.b64decode('aHR0cDovL3d3dy53YXRjaGNyaWMubmV0Lw==' ),16,'') #blocking as the rtmp requires to be updated to send gaolVanusPobeleVoKosat
-    addDir('c247.tv-P3G.Tv' ,'P3G'  ,30,'')
+    #addDir('WatchCric.com-Live matches only' ,base64.b64decode('aHR0cDovL3d3dy53YXRjaGNyaWMubmV0Lw==' ),16,'') #blocking as the rtmp requires to be updated to send gaolVanusPobeleVoKosat
+   # addDir('c247.tv-P3G.Tv' ,'P3G'  ,30,'')
     #addDir('Streams' ,'sss',39,'')
 
     
@@ -630,7 +649,7 @@ def GetSSSEvents(url):
     except: traceback.print_exc(file=sys.stdout)
  
 
-def getPV2Cats():
+def getPV2Cats(movies=False):
     ret=[]
     try:
         xmldata=getPV2Url()
@@ -638,7 +657,9 @@ def getPV2Cats():
         #print xmldata
         for source in sources.findall('items'):#Cricket#
             if not source.findtext('programCategory') in ret :
-                    ret.append(source.findtext('programCategory'))   
+                    print source.findtext('programCategory')
+                    if movies==False or source.findtext('programCategory').lower().endswith('movies'):
+                        ret.append(source.findtext('programCategory'))   
         if len(ret)>0:
             ret=sorted(ret,key=lambda s: s[0].lower()   )
     except:
@@ -805,12 +826,16 @@ def get_unwise( str_eval):
     return page_value    
     
     
-def AddSports365Channels(url=None):
+def AddSports365Channels(url=None, recursive=False):
     errored=True
+    forced=False
     try:
-        import live365
-        
+
         addDir(Colored("All times in local timezone.",'red') ,"" ,0,"", False, True,isItFolder=False)		#name,url,mode,icon
+        addDir(Colored("Update parser file!.",'blue') ,"sss" ,80,"", False, True,isItFolder=False)		#name,url,mode,icon
+        addDir(Colored("Refresh listing",'blue') ,"sss" ,156,"", False, True,isItFolder=True)		#name,url,mode,icon
+        import live365
+        forced=not live365.isvalid()        
         videos=live365.getLinks()
         for nm,link,active in videos:
             if active:
@@ -821,9 +846,13 @@ def AddSports365Channels(url=None):
             errored=False
     except: traceback.print_exc(file=sys.stdout)
     if errored:
-       if RefreshResources([('live365.py','https://raw.githubusercontent.com/Shani-08/ShaniXBMCWork2/master/plugin.video.ZemTV-shani/live365.py')]):
+       print 'forced',forced
+       import time
+       if RefreshResources([('live365.py','http://shani.offshorepastebin.com/live365.py',forced)]):
             dialog = xbmcgui.Dialog()
-            ok = dialog.ok('XBMC', 'No Links, so updated files dyamically, try again, just in case!')           
+            ok = dialog.ok('XBMC', 'Updated files dyamically, Try to play again, just in case!')
+            #if not recursive:
+            #    AddSports365Channels(url=url, recursive=True)            
             print 'Updated files'
         
         
@@ -844,6 +873,9 @@ def RefreshResources(resources):
             fileHash=hashlib.md5(fileToDownload+addonversion).hexdigest()
             lastFileTime=selfAddon.getSetting( "Etagid"+fileHash)  
             if lastFileTime=="": lastFileTime=None
+            try:
+                if rfile[2]: lastFileTime=None
+            except: pass
             resCode=200
             #print fileToDownload
             eTag=None        
@@ -884,25 +916,25 @@ def RefreshResources(resources):
     return updated
 
 
-def PlayUKTVNowChannels(url):
-    jsondata=getUKTVPage()
-    cc=[item for item in jsondata["msg"]["channels"]
-            if item["pk_id"]== url]
-            
-    
+def PlayUKTVNowChannels(url):            
+    cc= getUKTVPlayUrl(url)
+    print cc
     listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
     played=False
     ##DO YOU WANT ME TO STOP? lol
     try:
-        import uktvplayer
-        played=uktvplayer.play(listitem,cc)
+        import uktvplayerlimited
+        played=uktvplayerlimited.play(listitem,cc)
             
-    except: pass
-    if not played:
-        if RefreshResources([('uktvplayer.py','https://raw.githubusercontent.com/Shani-08/ShaniXBMCWork2/master/plugin.video.ZemTV-shani/uktvplayer.py')]):
-            dialog = xbmcgui.Dialog()
-            ok = dialog.ok('XBMC', 'Updated files dyamically, try again, just in case!')           
-            print 'Updated files'
+    except: 
+        print 'error in PlayUKTVNowChannels'
+        traceback.print_exc(file=sys.stdout)
+        pass
+    #if not played:
+    #    if RefreshResources([('uktvplayerlimited.py','https://raw.githubusercontent.com/Shani-08/ShaniXBMCWork2/master/plugin.video.ZemTV-shani/uktvplayerlimited.py')]):
+    #        dialog = xbmcgui.Dialog()
+    #        ok = dialog.ok('XBMC', 'Updated files dyamically, try again, just in case!')           
+    #        print 'Updated files'
     return  
 
 def getYuppSportsChannel(Live=True):
@@ -995,7 +1027,7 @@ def AddUKTVNowChannels(url=None):
     return   
 
 def AddIpBoxSources(url=None):
-    for cname,curl in getIpBoxSources():
+    for cname,curl in getIpBoxSources(caller=url):
         try:
             #print cname
             cname=cname#cname.encode('ascii', 'ignore').decode('ascii')
@@ -1060,6 +1092,569 @@ def AddGTVSports(url=None):
             mm=11
         addDir(Colored(cname.capitalize(),'ZM') ,base64.b64encode(curl) ,mm ,imgurl, False, True,isItFolder=False)		#name,url,mode,icon
     return      
+
+    
+def AddSafeLang(url=None):
+    for cname,ctype in [('English','en'),('German','de'),('French','fr'),('Italian','it'),('Dutch','nl'),('Polish','pl')]:        
+        addDir(Colored(cname.capitalize(),'ZM') ,base64.b64encode(cname+','+ctype) ,73 ,'', False, True,isItFolder=True)		#name,url,mode,icon
+    return  
+    
+    
+def getTVPlayerChannels(thesechannels=[]):
+
+    headers=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')]               
+    mainhtml=getUrl('http://tvplayer.com/watch/bbcone',headers=headers)
+    cdata=re.findall('<li .*? class="online.*?free.*?\s*<a href="(.*?)" title="(.*?)".*?\s*<img.*?src="(.*?)',mainhtml)
+    ret=[]
+    for cc in cdata:
+        
+        mm=11
+        col='ZM'
+        logo=cc[2]
+        cname=cc[1]
+        if 'Watch ' in cname:
+            cname=cname.replace('Watch ','')
+        curl=cc[0]
+        if not curl.startswith('http'):
+            curl= 'http://tvplayer.com/'+curl
+        if len(thesechannels)==0 or cname.lower() in thesechannels:
+            ret.append( (cname.capitalize() ,base64.b64encode('tvplayer:'+curl) ,mm ,logo) )		#name,url,mode,icon
+    return ret
+        
+def AddTVPlayerChannels(url, thesechannels=[]):
+    for ch in sorted(getTVPlayerChannels(thesechannels),key=lambda s: s[0].lower() ) :
+        addDir(ch[0] ,ch[1] ,ch[2],ch[3], False, True,isItFolder=False)
+
+def AddStreamHDCats(url):
+
+    cdata=[('Football','http://www.streamhd.eu/football/'),('','')]
+    reg='<li>\s*?<a.*?href="(.*?)".*?src="(.*?)".*?>(.*?)<'
+    headers=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')]               
+    mainhtml=getUrl('http://www.streamhd.eu/',headers=headers)
+    cdata=re.findall(reg,mainhtml)
+    cdata=[('http://www.streamhd.eu/tv/','','Live Sports Channels'),('http://www.streamhd.eu/','','All Sports'),
+        ('http://www.streamhd.eu/football/','http://www.streamhd.eu/images/icons/football.png','Footbal')
+        ]+cdata
+    
+    for cc in cdata:
+        
+        mm=76
+        logo=cc[1]
+        cname=cc[2]
+        curl=cc[0]
+        if not curl.startswith('http'):
+            curl= 'http://www.streamhd.eu'+curl
+        addDir(cname.capitalize() ,curl ,mm ,logo, False, True,isItFolder=True)		#name,url,mode,icon
+        
+def getEuroStreamChannels(url):
+    import time
+    headers=[('User-Agent','Sports%20TV/2 CFNetwork/758.0.2 Darwin/15.0.0')]               
+    mainhtml=getUrl(base64.b64decode('aHR0cDovL3d3dy5ub3RpY2lhc3RlbGVmb25pYS5lcy9zcG9ydHNiaWd0ZWQucGxpc3Q='),headers=headers)
+    ret=[]
+    try:
+        chdata= re.findall( '<string>(.*?)</string>',mainhtml)
+        for cc2 in chdata:
+            try:
+                mm=11            
+                          
+                logo=''         
+                cname,curl=cc2.split(',')                
+                ret.append((cname ,base64.b64encode('direct2:'+curl+'|User-Agent=AppleCoreMedia/1.0.0.13A452 (iPhone; U; CPU OS 9_0_2 like Mac OS X; en_gb)') ,mm ,logo))
+            except:
+                traceback.print_exc(file=sys.stdout)
+    except:
+        traceback.print_exc(file=sys.stdout)
+    return sorted(ret,key=lambda s: s[0].lower()   )
+        
+def AddEuroStreamChannels(url):
+
+    try:
+        for cc2 in getEuroStreamChannels(url):
+            try:
+                addDir(cc2[0] ,cc2[1] ,cc2[2] ,cc2[3], False, True,isItFolder=False)		#name,url,mode,icon
+            except:
+                traceback.print_exc(file=sys.stdout)
+    except:
+        traceback.print_exc(file=sys.stdout)
+        
+def AddMAMAHDChannels(url):
+    import time
+    headers=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')]               
+    mainhtml=getUrl(url,headers=headers)
+    tv=False
+    
+    if 1==2 and '/tv/' in url:
+        tv=True
+        reg='<a href="(.*?)".*?class="re.*?alt="(.*?)".*?'
+        cdata=re.findall(reg,mainhtml)
+    else:
+        #cdata=re.findall('eventsmall">(.*?)<.*?den-xs">(.*?)<.*\s*?<.*?img src="(.*?)".*?>(.*?)<.*\s*.*\s*.*?<span>(.*?)<.*\s*?.*?eventsmall.*?href="(.*?)">(.*?)<',mainhtml)
+        cdata= mainhtml.split('<div class="schedule">')[1]
+        cdata= re.findall( '(<a.*?<div class="row">.*?)<\/a>',cdata, re.DOTALL)
+    try:
+        addDir(Colored('Live Channels', 'blue') ,'sss' ,0 ,'', False, True,isItFolder=False)		#name,url,mode,icon
+        chdata= mainhtml.split('<div class="standard row channels">')[1].split('</div>')[0]
+        chdata= re.findall( '<a href="([^"]+)".*?\s*.*?src="([^"]+)".*?<span>([^<]+)<',chdata)
+        for cc2 in chdata:
+            try:
+                mm=11            
+                          
+                logo=cc2[1]            
+                cname=cc2[2]
+                curl=cc2[0]
+                
+
+                addDir(cname ,base64.b64encode('mamahd:'+curl) ,mm ,logo, False, True,isItFolder=False)		#name,url,mode,icon
+            except:
+                traceback.print_exc(file=sys.stdout)
+    except:
+        traceback.print_exc(file=sys.stdout)
+
+    addDir(Colored('Scheduled Games', 'blue') ,'sss' ,0 ,'', False, True,isItFolder=False)		#name,url,mode,icon        
+    for cc in cdata[:30]:
+        try:
+            mm=11
+            
+            if tv:
+                logo=''
+                cname=cc[1]
+                curl=cc[0]
+                if curl=='#': continue
+                
+            else:
+                cc2=re.findall('<a href="([^"]+)".*?<img src="([^"]+)".*?start="([^"]+)".*?home cell.*?<span>([^<]+)<.*?<span>([^<]+)<',cc, re.DOTALL)[0]
+                logo=cc2[1]            
+                cname=cc2[3]+' vs '+cc2[4]
+                curl=cc2[0]
+                timing=cc2[2]
+                livetxt=""
+                try:
+                    if time.time()>int(timing):
+                        livetxt="\nLIVE NOW"
+                    else:
+                        hrs=str(int((int(timing)-time.time())/60/60))
+                        if hrs=="0":
+                            livetxt="\nLIVE in %s Minutes"% str(int((int(timing)-time.time())/60))
+                        else:
+                            livetxt="\nLIVE in %s Hrs"% str(int((int(timing)-time.time())/60/60))
+                except:
+                    traceback.print_exc(file=sys.stdout)
+                    pass
+                cname+=Colored(livetxt,'red')
+
+            addDir(cname ,base64.b64encode('mamahd:'+curl) ,mm ,logo, False, True,isItFolder=False)		#name,url,mode,icon
+        except:
+            traceback.print_exc(file=sys.stdout)
+        
+def AddStreamHDChannels(url):
+
+    headers=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')]               
+    mainhtml=getUrl(url,headers=headers)
+    tv=False
+    if '/tv/' in url:
+        tv=True
+        reg='<a href="(.*?)".*?class="re.*?alt="(.*?)".*?'
+        cdata=re.findall(reg,mainhtml)
+    else:
+        cdata=re.findall('eventsmall">(.*?)<.*?den-xs">(.*?)<.*\s*?<.*?img src="(.*?)".*?>(.*?)<.*\s*.*\s*.*?<span>(.*?)<.*\s*?.*?eventsmall.*?href="(.*?)">(.*?)<',mainhtml)
+    for cc in cdata:
+        
+        
+        mm=11
+        
+        if tv:
+            logo=''
+            cname=cc[1]
+            curl=cc[0]
+            if curl=='#': continue
+            
+        else:
+            logo=cc[2]
+        
+            cname=Colored(cc[0]+cc[1],'green')+': '+Colored(cc[3],'red')+' '+cc[4]+'\n'+cc[6]
+
+            curl=cc[5]
+            
+        if not curl.startswith('http'):
+            curl= 'http://www.streamhd.eu'+curl
+        addDir(cname ,base64.b64encode('streamhd:'+curl) ,mm ,logo, False, True,isItFolder=False)		#name,url,mode,icon
+        
+        
+def playInfinite(url):
+    try:
+
+        agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36'
+
+        mainref=base64.b64decode('aHR0cDovL3d3dy5sYW9sYTEudHYvZW4taW50L2xpdmUtc2NoZWR1bGU=')
+        headers=[('Referer',mainref),('User-Agent',agent)]                       
+        result = getUrl(url, headers=headers)
+        url=re.findall('<iframe frameborde.*\s*.*\s*.*?src="(.*?)"',result)
+        if len(url)==0:
+            url=re.findall('<iframe.*?src="(.*?player.php.*?)"',result)[0]
+        else:
+            url=url[0]
+        try:
+            if not url.startswith('http:'):
+                urlnew=base64.b64decode('aHR0cDovL3d3dy5sYW9sYTEudHY=')+url
+            print urlnew
+            page_data = getUrl(urlnew, headers=headers)
+            streamid = re.findall("streamid: \"(.*?)\"", page_data)[0]
+        except:
+            
+            if not url.startswith('http:'):
+                url=base64.b64decode('aHR0cDovL3d3dy5laGZ0di5jb20=')+url
+            print url
+            page_data = getUrl(url, headers=headers)
+            streamid = re.findall("streamid: \"(.*?)\"", page_data)[0]
+        
+        
+        partid = re.findall("partnerid: \"(.*?)\"", page_data)[0]
+        
+        url=base64.b64decode('aHR0cDovL3d3dy5sYW9sYTEudHYvc2VydmVyL2hkX3ZpZGVvLnBocD92PTImcGxheT0lcyZwYXJ0bmVyPSVzJnBvcnRhbD1pbnQmdjVpZGVudD0mbGFuZz1lbg==')%(streamid,partid)
+        page_data=getUrl(url, headers=headers)
+        
+        
+        areaid= re.findall(";area=(.*?)<", page_data)[0]
+        import string,random
+        randomtext=''.join(random.SystemRandom().choice(string.ascii_uppercase) for _ in range(7))
+
+        data=base64.b64decode("MD10diUyRWxhb2xhMSUyRWxhb2xhdHYlMkVwcmVtaXVtY2x1YiYxPXR2JTJFbGFvbGExJTJFbGFvbGF0diUyRXByZW1pdW1jbHViJTVGYWxsJTVGYWNjZXNz")
+        pageurl=base64.b64decode("aHR0cHM6Ly9jbHViLmxhb2xhMS50di9zcC9sYW9sYTEvYXBpL3YzL3VzZXIvc2Vzc2lvbi9wcmVtaXVtL3BsYXllci9zdHJlYW0tYWNjZXNzP3ZpZGVvSWQ9JXMmdGFyZ2V0PTE3JmxhYmVsPSZhcmVhPSVz")%(streamid,areaid)
+
+    
+        swf=base64.b64decode('aHR0cDovL3d3dy5sYW9sYTEudHYvYXNzZXRzL3N3Zi92aWRlb3BsYXllcl83LjAuMzIzMS5zd2Y=')
+        headers=[('Referer',swf),('User-Agent',agent)]                       
+
+        ttext = getUrl(pageurl, headers = headers,post=data)
+        import json
+        url=json.loads(ttext)["data"]["stream-access"][0]
+    
+        headers=[('Referer',pageurl),('User-Agent',agent)]                       
+
+        ttext = getUrl(url, headers = headers)
+        
+        mainurl= re.findall("url=\"(.*?)\"", ttext)[0]
+        if mainurl=="restricted":
+            ttext = getUrlFromUS(url)
+            mainurl= re.findall("url=\"(.*?)\"", ttext)[0]
+        
+        print mainurl
+        auth= re.findall("auth=\"(.*?)\"", ttext)[0]
+        final="plugin://plugin.video.f4mTester/?streamtype=HDS&url=%s&swf=%s&name=%s"%(urllib.quote_plus(mainurl+'?hdnea='+auth+'&g='+randomtext+'&hdcore=3.8.0'+'|User-Agent='+urllib.quote_plus(agent)+'&X-Requested-With=ShockwaveFlash/22.0.0.209'),swf,name)
+        
+        PlayGen(base64.b64encode(final))
+
+    except:
+        traceback.print_exc(file=sys.stdout)
+        return
+        
+def playHDCast(url, mainref, altref=None):
+    try:
+        cookieJar=getHDCASTCookieJar()
+        firstframe=url
+        pageURl=mainref
+        agent='Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36'
+        headers=[('Referer',pageURl),('User-Agent',agent)]                       
+        result = getUrl(firstframe, headers=headers, cookieJar=cookieJar)
+
+        regid='<script.*?id=[\'"](.*?)[\'"].*?width=[\'"]?(.*?)[\'"]?\;.*?height=[\'"]?(.*?)[\'"]?\;.*?src=[\'"](.*?)[\'"]'
+        id,wd,ht, jsurl=re.findall(regid,result)[0]
+        finalpageUrl=''
+        headers=[('Referer',pageURl),('User-Agent',agent)]                       
+
+
+        jsresult = getUrl(jsurl, headers=headers, cookieJar=cookieJar)
+        broadcast=False
+        if not 'bro.adca' in jsresult:
+            regjs='src=[\'"](.*?)[\'"]'
+            embedUrl=re.findall(regjs,jsresult)[0]
+            embedUrl+=id+'&vw='+wd+'&vh='+ht
+        else:
+            broadcast=True
+            regjs="var url = '(.*?)'"
+            embedUrl=re.findall(regjs,jsresult)[0]
+            embedUrl='http://bro.adca.st'+embedUrl+id+'&width='+wd+'&height='+ht
+        headers=[('Referer',altref if not altref==None else mainref),('User-Agent',agent)]                             
+        result=getUrl(embedUrl, headers=headers, cookieJar=cookieJar)
+
+        if not broadcast:# in result:
+            if 'blockscript=' in result: #ok captcha here
+                try:
+                    tries=0
+                    while 'blockscript=' in result and tries<3:
+                        tries+=1
+                        xval=re.findall('name="x" value="(.*?)"',result)[0]
+                        urlval=re.findall('name="url" value="(.*?)"',result)[0]
+                        blocscriptval=re.findall('name="blockscript" value="(.*?)"',result)[0]
+                        imageurl=re.findall('<td nowrap><img src="(.*?)"',result)[0].replace('&amp;','&')             
+                        if not imageurl.startswith('http'):
+                            imageurl='http://hdcast.org'+imageurl
+                        headersforimage=[('Referer',embedUrl),('Origin','http://hdcast.org'),('User-Agent',agent)]                             
+                        post={'blockscript':blocscriptval, 'x':xval, 'url':urlval,'val':getHDCastCaptcha(imageurl,cookieJar,headersforimage )}
+                        post = urllib.urlencode(post)
+                        
+                        result=getUrl(embedUrl,post=post, headers=headersforimage, cookieJar=cookieJar)
+                        cookieJar.save (HDCASTCookie,ignore_discard=True)
+                        result=getUrl(embedUrl, headers=headers, cookieJar=cookieJar)
+                except: 
+                    print 'error in catpcha'
+                    traceback.print_exc(file=sys.stdout)
+            streamurl = re.findall('<div id=[\'"]player.*\s*<iframe.*?src=(.*?)\s',result)
+            if len(streamurl)>0:
+                headers=[('Referer',embedUrl),('User-Agent',agent)]                             
+                html=getUrl(streamurl[0].replace('&amp;','&'),headers=headers, cookieJar=cookieJar)
+                streamurl = re.findall('file:["\'](.*?)["\']',html)[0]
+                cookieJar.save (HDCASTCookie,ignore_discard=True)
+                return PlayGen(base64.b64encode(streamurl+'|User-Agent='+agent+'&Referer='+embedUrl))
+            if 'rtmp' in result:
+                print 'rtmp'
+                streamurl= re.findall('"(rtmp.*?)"' , result)[0]
+                cookieJar.save (HDCASTCookie,ignore_discard=True)
+                return PlayGen(base64.b64encode(streamurl+' timeout=20 live=1')) 
+            else:
+                Msg="Links not found, try again"
+                dialog = xbmcgui.Dialog()
+                ok = dialog.ok('Link parsing failed', Msg)
+                return False
+                
+        else:
+            headers=[('Referer',embedUrl),('User-Agent',agent),('X-Requested-With','XMLHttpRequest')]                             
+            token=getUrl('http://bro.adca.st/getToken.php',headers=headers, cookieJar=cookieJar )
+            token=re.findall('"token":"(.*?)"',token)[0]
+            streamurl = re.findall('curl = "(.*?)"',result)[0]
+            streamurl=base64.b64decode(streamurl)
+            cookieJar.save (HDCASTCookie,ignore_discard=True)
+            return PlayGen(base64.b64encode(streamurl+token+'|User-Agent='+agent+'&Referer='+embedUrl))
+
+    except:
+        traceback.print_exc(file=sys.stdout)
+        return False
+class InputWindow(xbmcgui.WindowDialog):
+    def __init__(self, *args, **kwargs):
+        self.cptloc = kwargs.get('captcha')
+        self.img = xbmcgui.ControlImage(335,30,524,90,self.cptloc)
+
+        self.addControl(self.img)
+        self.setProperty('zorder', "99")
+        #self.kbd = xbmc.Keyboard()
+
+    def get(self):
+        self.show()
+        xbmc.sleep(3000)            
+        #self.kbd.doModal()
+        #if (self.kbd.isConfirmed()):
+        #    text = self.kbd.getText()
+        #    self.close()
+        text=xbmcgui.Dialog().input('Enter Captcha', type=xbmcgui.INPUT_ALPHANUM)
+        self.close()
+        return text
+        
+        return False  
+        
+    def showme():
+        self.setProperty('zorder', "-1")
+
+def tst():
+    retcaptcha=""
+    if 1==1:
+        local_captcha = os.path.join(profile_path, "captchaC.img" )
+        #localFile = open(local_captcha, "wb")
+        #localFile.write(getUrl(imageurl,cookieJar,headers=[('Referer',logonpaged),('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')]))
+        #localFile.close()
+        cap=""#cap=parseCaptcha(local_captcha)
+        #if originalcaptcha:
+        #    cap=parseCaptcha(local_captcha)
+        #print 'parsed cap',cap
+        if cap=="":
+            solver = InputWindow(captcha=local_captcha)
+            retcaptcha = solver.get()
+            
+def getHDCastCaptcha(imageurl,cookieJar, headers):
+    retcaptcha=""
+    if 1==1:
+        local_captcha = os.path.join(profile_path, "captchaC.img" )
+        localFile = open(local_captcha, "wb")
+        localFile.write(getUrl(imageurl,cookieJar,headers=headers))
+        localFile.close()
+        cap=""#cap=parseCaptcha(local_captcha)
+        #if originalcaptcha:
+        #    cap=parseCaptcha(local_captcha)
+        #print 'parsed cap',cap
+        if cap=="":
+            solver = InputWindow(captcha=local_captcha)
+            retcaptcha = solver.get()
+    return retcaptcha
+    
+def playHDFree(url):
+    try:
+
+        #url='http://hdfree.tv/watch/2/sky-sports-1-hd-live-stream.html'
+        pageURl = url
+        mainref='http://hdfree.tv/tvlogos.html'
+        headers=[('Referer',mainref),('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')]                       
+        result = getUrl(url, headers=headers)
+        #print result
+        firstframe=re.findall( '<iframe frameborder="0.*?src="(.*?)"', result)[0]
+        
+        headers=[('Referer',pageURl),('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')]                       
+        result = getUrl(firstframe, headers=headers)
+        #print result
+        regid='<script.*?id=[\'"](.*?)[\'"].*?width=(.*?)\;.*?height=(.*?)\;.*?src=[\'"](.*?)[\'"]'
+        id,wd,ht, jsurl=re.findall(regid,result)[0]
+        finalpageUrl=''
+        headers=[('Referer',firstframe),('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')]                       
+        jsresult = getUrl(jsurl, headers=headers)
+        regjs='src=[\'"](.*?)[\'"]'
+        embedUrl=re.findall(regjs,jsresult)[0]
+        embedUrl+=id+'&vw='+wd+'&vh='+ht
+        headers=[('Referer',firstframe),('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')]                             
+        print embedUrl
+        result=getUrl(embedUrl, headers=headers)
+        
+        result= result.replace('","','').replace('["','').replace('"]','').replace('.join("")',' ').replace(r'\/','/')
+
+        vars = re.findall('var (.+?)\s*=\s*(.+?);',result)
+        inners = re.findall('id=(.+?)>([^<]+)<',result)
+        inners = dict(inners)
+
+        js = re.findall('srcs*=s*(?:\'|\")(.+?player\.js(?:.+?|))(?:\'|\")',result)[0]
+        js = getUrl(js, headers=headers)
+        token = re.findall('securetoken: ([^\n]+)',result)[0]
+        token = re.findall('var\s+%s\s*=\s*(?:\'|\")(.+?)(?:\'|\")' % token, js)[-1]
+
+        for i in range (100):
+            for v in vars:
+                result = result.replace('  + %s'%v[0],v[1])
+        for x in inners.keys():
+            result = result.replace('  + document.getElementById("%s").innerHTML'%x,inners[x])
+
+        
+        fs = re.findall('function (.+?)\(\)\s*\{\s*return\(([^\n]+)',result)
+        url = re.findall('file:(.+?)\s*\}',result)[0]
+        for f in fs:
+                url = url.replace('%s()'%f[0],f[1])
+        url = url.replace(');','').split(" + '/' + ")
+        streamer, file = url[0].replace('rtmpe','rtmp').strip(), url[1]
+        url=streamer + '/ playpath=' + file + ' swfUrl=http://www.hdcast.info/myplayer/jwplayer.flash.swf flashver=' + "WIN\2021,0,0,242" + ' live=1 timeout=20 token=' + token + ' pageUrl=' + embedUrl
+        
+        print url
+        PlayGen(base64.b64encode(url))
+
+    except:
+        traceback.print_exc(file=sys.stdout)
+        return
+
+def AddInfiniteChannels(url):
+
+    headers=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')]               
+    addDir(Colored("All times in UTC, Blue ones are LIVE now","red") ,"" ,0 ,'', False, True,isItFolder=False)		#name,url,mode,icon
+    mainhtml=getUrl(base64.b64decode('aHR0cDovL3d3dy5sYW9sYTEudHYvZW4taW50L2xpdmUtc2NoZWR1bGU='),headers=headers)
+    elements=mainhtml.split('<li class="item list-sport')# re.findall('<time.*?>(.*?)<.*\s*.*\s*.*\s*<span.*?>(.*?)<.*\s*.*\s*.*\s*.*?src="(.*?)".*\s*.*\s*.*\s*.*?href="(.*?)".*\s.*?h3>(.*?)<.*\s*.*?h2>(.*?)<',mainhtml)
+    print 'starting'
+    for el in elements[1:40]:
+        
+        cc=re.findall('<time.*?>(.*?)<.*?displaymo.*?>(.*?)<.*?img.*?src="([^"]+)".*?h3>([^<]+)<.*?h2>([^<]+)<.*?href="([^"]+)".*?data-sstatus="([^"]+)"',el,re.DOTALL)[0]
+        res=re.findall('<dt class="full">Available in.*?<dd>(.*?)<\/dd>',el,re.DOTALL)
+        restext=""
+        try:
+            if len(res)>0:
+                res=res[0]
+                if "Worldwide" in res:
+                    restext="Worldwide"
+                if "except" in res:
+                    restext+=" Except "
+                    restext+=res.split('except')[1].split('>')[1].split('<')[0]
+                if len(restext)==0:
+                    restext="Only in "
+                    restext+=res.split('>')[1].split('<')[0]
+        except: pass
+            
+        mm=11
+        col='ZM'
+        #print 'xxxxxxxxxxx'
+        #print 'name' in cc
+        name='%s %s %s\n%s'%(Colored(cc[0], 'red'),Colored(cc[1],col),cc[4],Colored(cc[4],('blue' if cc[6]=="4" else "white")  ))
+        if len(restext)>0:
+            name+= Colored(' [%s]'%restext, 'red')
+        
+        
+        
+        url=cc[5]
+        logo=cc[2]
+        #print name, logo
+        if not logo.startswith('http'):
+            logo= 'http:'+logo
+        if not url.startswith('http'):
+            url= base64.b64decode('aHR0cDovL3d3dy5sYW9sYTEudHY=')+url
+            
+        addDir(name ,base64.b64encode('infi:'+url) ,mm ,logo, False, True,isItFolder=True)		#name,url,mode,icon
+    
+    
+    
+def AddHDFreeChannels(url):
+
+    headers=[('Referer',"http://customer.safersurf.com/onlinetv.html"),('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36'),('X-Requested-With','XMLHttpRequest')]               
+    headers=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')]               
+    
+    mainhtml=getUrl('http://hdfree.tv/tvlogos.html',headers=headers)
+    #if 'quiv="refresh' in mainhtml:
+    #    mainhtml=getUrl(re.findall('url=(.*?)"',mainhtml)[0])
+    #print jsondata
+    elements=re.findall('<a href=[\'"](.*?)[\'"].*?img.*?src=[\'"](.*?)[\'"]',mainhtml)
+    #print elements
+    #print jsondata
+    #jsondata=json.loads(jsondata)
+    for cc in elements:
+
+        mm=11
+        col='ZM'
+        #print 'xxxxxxxxxxx'
+        #print 'name' in cc
+        name=cc[0]
+        name=name.split('/')[-1]
+        
+        if '-live-stream' in name:
+            name=name.split('-live-stream')[0]
+        url=cc[0]
+        logo=cc[1]
+        #print name, logo
+        if not logo.startswith('http'):
+            logo= 'http://hdfree.tv'+logo
+        addDir(Colored(name.capitalize(),col) ,base64.b64encode('hdfree:'+url) ,mm ,logo, False, True,isItFolder=True)		#name,url,mode,icon
+    
+    
+def AddSafeChannels(url):
+    import time 
+    tt=int(time.time())
+    url=url.decode("base64")
+    
+    cname,curl=url.split(',')
+    headers=[('Referer',"http://customer.safersurf.com/onlinetv.html"),('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36'),('X-Requested-With','XMLHttpRequest')]               
+    jsondata=getUrl('http://customer.safersurf.com/php/getProgForLanguage.php?varName=allChannelsAllCats&noAdd=false&browserLang=%s&displayLang=en&userCountry=United%%20Kingdom&src=all&dtp=%s'%(curl,tt),headers=headers)
+    #print jsondata
+    jsondata=re.findall('=(\[.*\])',jsondata)[0]
+    addDir(Colored('Channel Language [%s]'.capitalize()%cname,'red') ,'' ,0 ,'', False, True,isItFolder=False)
+    #print jsondata
+    jsondata=json.loads(jsondata)
+    for cc in jsondata:
+        cc=json.loads(cc)
+        mm=11
+        col='ZM'
+        #print 'xxxxxxxxxxx'
+        #print 'name' in cc
+        if 'name' in cc:
+            #print 'in name'
+            cname,logo,cid=cc["name"],cc["logo"],cc["cId"]
+        else:
+            mm=0
+            col='red'
+            if 'seperatorText' in cc:
+                cname,logo,cid=cc["seperatorText"],'',''
+            else:
+                continue
+        if not logo.startswith('http'):
+            logo= 'http://customer.safersurf.com/'+logo
+        addDir(Colored(cname.capitalize(),col) ,base64.b64encode('safe:'+cid) ,mm ,logo, False, True,isItFolder=False)		#name,url,mode,icon
     
 def AddPITVSports(url=None):
 
@@ -1118,7 +1713,7 @@ def ShowAllCategories(url):
         cats=getUKTVCats()
         cmode=57    
     elif url=="pv2":
-        cats=getPV2Cats()
+        cats=getPV2Cats(True if name.lower()=="movies" else False)
         cmode=36
     elif url=="mona":
         cats=getMonaCats()
@@ -1291,6 +1886,19 @@ def getZemCookieJar(updatedUName=False):
         cookieJar = cookielib.LWPCookieJar()
         if not updatedUName:
             cookieJar.load(ZEMCOOKIEFILE,ignore_discard=True)
+    except: 
+        cookieJar=None
+
+    if not cookieJar:
+        cookieJar = cookielib.LWPCookieJar()
+    return cookieJar
+    
+def getHDCASTCookieJar(updatedUName=False):
+    cookieJar=None
+    try:
+        cookieJar = cookielib.LWPCookieJar()
+        if not updatedUName:
+            cookieJar.load(HDCASTCookie,ignore_discard=True)
     except: 
         cookieJar=None
 
@@ -1749,18 +2357,25 @@ def getWillowHighlights(matchid):
         matchdata=json.loads(link)
         
         r=[]
+        loginworked,cookieJar= performWillowLogin();
         for m in matchdata["result"]:
-            if "BGUrl" in m and  (not m["BGUrl"]=="") and (base64.b64decode('d3p2b2Q6') in m["BGUrl"] or base64.b64decode('Ymd2b2Q=') in m["BGUrl"] ):
+            if "BGUrl" in m and  (not m["BGUrl"]=="") and (base64.b64decode('d3p2b2Q6') in m["BGUrl"] or base64.b64decode('Ymd2b2Q=') in m["BGUrl"]  or base64.b64decode("d2x2b2Q=") in m["BGUrl"] ):
                 rurl=m["BGUrl"]
+                print 'rurl',rurl
                 if base64.b64decode('d3p2b2Q6') in rurl:
                     rurl=rurl.replace(base64.b64decode('d3p2b2Q6Ly8='),base64.b64decode('aHR0cDovLzM4Ljk5LjY4LjE2MjoxOTM1L3dsbHd2b2QvX2RlZmluc3RfL3dsdm9kL3NtaWw6'));
                     rurl=rurl.replace('.mp4',base64.b64decode('X3dlYi5zbWlsL3BsYXlsaXN0Lm0zdTg='));
+                elif base64.b64decode("d2x2b2Q=")  in m["BGUrl"]:
+                    rurl=base64.b64decode("aHR0cHM6Ly93d3cud2lsbG93LnR2L0V2ZW50TWdtdC93ZWJzZXJ2aWNlcy9nZXRIaWdobGlnaHRVUkwuYXNwP3ZvZHVybD0=")+urllib.quote_plus(rurl)
+                    rurl=getUrl(rurl, cookieJar=cookieJar)
+                    rurl=json.loads(rurl)["url"]
                 else:
                     rurl=rurl.replace('bgvod:/','')
                     data={"bgvodurl":rurl}
-                    rurl=getUrl('https://www.willow.tv/EventMgmt/webservices/getBGHgltUrl.asp?'+urllib.urlencode(data))
+                    rurl=getUrl(base64.b64decode('aHR0cHM6Ly93d3cud2lsbG93LnR2L0V2ZW50TWdtdC93ZWJzZXJ2aWNlcy9nZXRCR0hnbHRVcmwuYXNw?')+urllib.urlencode(data))
                     print rurl
                     rurl=json.loads(rurl)["url"]
+                    
 
                 r.append([m["YTVideoName"],rurl,m["YTThumbId"]])
 #        print 'replays',r
@@ -1988,7 +2603,7 @@ def PlayWatchCric(url):
     app='live'
     pat_js='channel=\'(.*?)\''
     loadbalanacername=sitename
-    
+    print 'link',link
     if 'liveflashplayer.net/resources' in link:
         c='kaskatijaEkonomista'
         swfUrl=base64.b64decode('aHR0cDovL3d3dy5saXZlZmxhc2hwbGF5ZXIubmV0L3Jlc291cmNlcy9zY3JpcHRzL2ZwbGF5ZXIuc3dm')
@@ -2019,13 +2634,22 @@ def PlayWatchCric(url):
         pat_e='channel.*?g=\'(.*?)\''
         app='live'
         pat_js='channel=\'(.*?)\''
-    elif 'c247.tv' or 'crichd.tv' in link:
+    elif 'p3g.tv/resources' in link or '247bay.tv'  in link :
+        c=''
+        ccommand=''
+        swfUrl=base64.b64decode('aHR0cDovL3d3dy4yNDdiYXkudHYvc3RhdGljL3NjcmlwdHMvZXBsYXllci5zd2Y=')
+        sitename='www.247bay.tv'
+        pat_e='channel.*?g=\'(.*?)\''
+        loadbalanacername='www.publish247.xyz'
+        app='stream'
+        pat_js='channel=\'(.*?)\''
+    elif 'janjuaplayer.com/resources' in link:
         c='zenataStoGoPuknalaGavolot'
         ccommand=''
-        swfUrl=base64.b64decode('aHR0cDovL3d3dy5wM2cudHYvcmVzb3VyY2VzL3NjcmlwdHMvZXBsYXllci5zd2Y=')
-        sitename='www.p3g.tv'
+        swfUrl=base64.b64decode('aHR0cDovL3d3dy5qYW5qdWFwbGF5ZXIuY29tL3Jlc291cmNlcy9zY3JpcHRzL2VwbGF5ZXIuc3dm')
+        sitename='www.janjuaplayer.com'
         pat_e='channel.*?g=\'(.*?)\''
-        loadbalanacername='www.p3gpublish.com'
+        loadbalanacername='www.janjuapublisher.com'
         app='live'
         pat_js='channel=\'(.*?)\''
     elif 'zenexplayer.com' in link:
@@ -2067,15 +2691,17 @@ def PlayWatchCric(url):
     response.close()
     
     pat_flash='FlashVars\',.?\'(.*?)\''
+  
     match_flash =re.findall(pat_flash,link)[0]
+    print 'match_flash',match_flash
     matchid=match_flash.split('id=')[1].split('&')[0]
     if 'pk=' in match_flash:
         matchid+="&pk="+match_flash.split('pk=')[1].split('\'')[0].split('\"')[0]
     
-    lb_url='http://%s:1935/loadbalancer?%s'%(loadbalanacername,match_code)
+    lb_url='http://%s:1935/loadbalancer?%s'%(loadbalanacername,matchid.split('&')[0])
         
     req = urllib2.Request(lb_url)
-    req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36')
     req.add_header('Referer', match_urljs)
     response = urllib2.urlopen(req)
     link=response.read()
@@ -2089,8 +2715,10 @@ def PlayWatchCric(url):
     if not ccommand=="":
         ccommand="ccommand="+(ccommand%c)
 #    print 'ccommand',ccommand
-    url='rtmp://%s/%s playpath=%s?id=%s pageUrl=%s swfUrl=%s Conn=S:OK %s flashVer=WIN\2019,0,0,185 timeout=20'%(ip,app,sid,matchid,match_urljs,swfUrl,ccommand)
-#    print url
+    
+    url='rtmp://%s/%s playpath=%s?id=%s pageUrl=%s swfUrl=%s Conn=S:OK %s flashVer=WIN\\2022,0,0,209 live=true timeout=20'%(ip,app,sid,matchid,match_urljs,swfUrl,ccommand)
+    print url
+    
     playlist = xbmc.PlayList(1)
     playlist.clear()
     listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
@@ -2115,10 +2743,15 @@ def getYPUrl(url):
         else:
             videoid=tmp[0]
     
-        pageurl='http://stream.yupptv.com/PreviewPaidChannel.aspx?cid=%s'%videoid  
-        emhtm=getUrl(pageurl)
+        sess= getYPSession()
+        print 'sess',sess
+        pageurl='http://www.yupptv.com/Account/OctoNewFrame.aspx?ChanId=%s'%videoid 
+        print pageurl
+        emhtm=getUrl(pageurl,headers=[('Cookie',sess),('Referer','http://www.yupptv.com/Livetv/'),('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.154 Safari/537.36')])
+        print 'after em'
         rr='file:\'(http.*?)\''    
         finalUrl=re.findall(rr,emhtm)
+        print 'finalUrl',finalUrl
         #if len(finalUrl)==0:
         #    
         #    pageurl='http://stream.yupptv.com/PreviewPaidChannel.aspx?cid=%s'%videoid  
@@ -2128,7 +2761,8 @@ def getYPUrl(url):
         #    finalUrl=re.findall(rr,emhtm)
         ret=finalUrl[0]
         
-    except: pass
+    except: 
+        traceback.print_exc(file=sys.stdout)
     return ret
     
 def PlayYP(url):
@@ -2136,14 +2770,17 @@ def PlayYP(url):
     #print 'gen is '+url
 
     finalUrl=getYPUrl(url)
+    if '.f4m' in finalUrl:
+        finalUrl=urllib.quote_plus(finalUrl+'&g=FLONTKRDWKGI&hdcore=3.2.0&amp;plugin=jwplayer-3.2.0.1|Referer=http://stream.yupptv.com/PreviewPaidChannel.aspx?cid=195')
+        finalUrl='plugin://plugin.video.f4mTester/?url='+finalUrl
+            
+            
+        xbmc.executebuiltin("xbmc.PlayMedia("+finalUrl+")")
+    else:
+        PlayGen(base64.b64encode( finalUrl+'|User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.154 Safari/537.36'))
         
-    finalUrl=urllib.quote_plus(finalUrl+'&g=FLONTKRDWKGI&hdcore=3.2.0&amp;plugin=jwplayer-3.2.0.1|Referer=http://stream.yupptv.com/PreviewPaidChannel.aspx?cid=195')
-    finalUrl='plugin://plugin.video.f4mTester/?url='+finalUrl
-        
-        
-    xbmc.executebuiltin("xbmc.PlayMedia("+finalUrl+")")
 
-def PlayGen(url,checkUrl=False):
+def PlayGen(url,checkUrl=False, followredirect=False):
     url = base64.b64decode(url)
     print 'gen is '+url
 
@@ -2153,7 +2790,10 @@ def PlayGen(url,checkUrl=False):
     
     if checkUrl and url.startswith('http') and '.m3u' in url:
         headers=[('User-Agent','AppleCoreMedia/1.0.0.13A452 (iPhone; U; CPU OS 9_0_2 like Mac OS X; en_gb)')]
-        getUrl(url.split('|')[0],timeout=5,headers=headers)
+        urldata=getUrl(url.split('|')[0],timeout=5,headers=headers)
+        if followredirect:
+            if not urldata.startswith('#EXTM3U'):
+                url=urldata+'|'+url.split('|')[1]
     playlist = xbmc.PlayList(1)
     playlist.clear()
     listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
@@ -2177,7 +2817,7 @@ def AddEnteries(name, type=None):
     elif '(Siasat.pk)' in name:
         AddShowsFromSiasat(url)
     elif type=='ProgTalkShows':
-        AddProgramsAndShows(mainurl)
+        AddProgramsAndShows('http://www.zemtv.com/')
     elif name=='Next Page' or mode==43:
         AddShows(url)
     else:
@@ -2271,7 +2911,12 @@ def getCFChannels(category):
             ss=source
             cname=ss["Title"]
             cimage=ss["ThumbnailURL"]
-            curl="CF:"+ss["ContentId"]
+            if 1==2 and 'HLSURL' in ss and len(ss["HLSURL"])>0 :
+                curl="direct:"+ss["HLSURL"]
+            elif 1==2 and 'SamsungURL' in ss  and len(ss["SamsungURL"])>0 :
+                curl="direct:"+ss["SamsungURL"]
+            else:
+                curl="CF:"+ss["ContentId"]
                     
             ret.append((cname +' CF' ,'manual', curl ,cimage))   
         if len(ret)>0:
@@ -2279,6 +2924,25 @@ def getCFChannels(category):
     except:
         traceback.print_exc(file=sys.stdout)
     return ret  
+    
+def getZengaChannels(url,progress):
+    ret=[]
+    try:
+        
+        jsondata=getZengaPage(url,progress)
+        print 'jsondata',jsondata
+        for js in jsondata:
+
+            cname=js["title"]
+            cimage=base64.b64decode('aHR0cDovL2Qzam5rcDNscnMyaGQ1LmNsb3VkZnJvbnQubmV0L2ltYWdlcy8zMjB4MTgwLyVzLmpwZw==')%js["uid"]
+            curl="zenga:"+js["dvrid"]     
+            print curl            
+            ret.append((cname +' Zenga' ,'manual', curl ,cimage))   
+        if len(ret)>0:
+            ret=sorted(ret,key=lambda s: s[0].lower()   )
+    except:
+        traceback.print_exc(file=sys.stdout)
+    return ret    
     
 def getYPChannels(url,progress):
     ret=[]
@@ -2307,13 +2971,15 @@ def getDittoChannels(categories, forSports=False):
         for source in xmldata:#Cricket#
             if 1==1:#source["categoryName"].strip() in categories or (forSports and ('sport' in source["categoryName"].lower() or 'BarclaysPremierLeague' in source["categoryName"] )    ) :
                 ss=source
-                cname=ss["name"]
-                curl=base64.b64decode("ZGl0dG86aHR0cDovL3d3dy5kaXR0b3R2LmNvbS9saXZldHYvbGluaz9uYW1lPSVz")%urllib.quote_plus(cname)
+                cname=ss[1]#ss["name"]
+                curl=ss[0]#base64.b64decode("ZGl0dG86aHR0cDovL29yaWdpbi5kaXR0b3R2LmNvbS9saXZldHYvJXM=")%urllib.quote_plus(cname)
+                if not curl.startswith("http"): curl='http://origin.dittotv.com'+curl
+                curl='ditto:'+curl
                 try:
                     cname+=" "+ss["manual"]
                 except: pass
                 
-                cimage=ss["poster"].replace('\\/','/')
+                cimage=ss[2]#ss["poster"].replace('\\/','/')
                 
                 
                 if len([i for i, x in enumerate(ret) if x[2] ==curl ])==0:                    
@@ -2323,13 +2989,40 @@ def getDittoChannels(categories, forSports=False):
     except:
         traceback.print_exc(file=sys.stdout)
     return ret    
+
+def getIpBoxSourcesAllOtherSource(caller):
+    ret=[]
+    print 'getIpBoxSourcesAllOtherSource'
+    if not caller=="hls":
+        try:
+
+
+            htmls=getUrl("http://www.oneplaylist.eu.pn/")
+
+            servers=re.findall( '>(http:\/\/(.*?)\/.*?get.php.*?)<', htmls)
+            print servers
+            import time
+
+            for ln in servers[0:25]:
+                try:
+                    surl,servername=ln
+                    servername=servername.split('/')[0].split(':')[0]
+                    ret.append((servername, surl.replace('&amp;','&')  ))   
+                except: traceback.print_exc(file=sys.stdout)
+
+        except:
+            traceback.print_exc(file=sys.stdout)
+
+    return ret
     
-def getIpBoxSources():
+def getIpBoxSources(frompakindia=False , caller=None):
     ret=[]
     try:
 
-
-        servers=getUrl("http://pastebin.com/raw/GrYKMHrF")
+        if caller=="mpegts" or caller==None:
+            servers=getUrl("http://pastebin.com/raw/GrYKMHrF")
+        #else:
+        #    servers=getUrl("http://pastebin.com/raw/SQfcddBn")
         servers=servers.splitlines()
 
         import time
@@ -2337,15 +3030,20 @@ def getIpBoxSources():
             if not ln.startswith("##") and len(ln)>0:
                 try:
                     ##serial:mac:time:text
-                    #print ln
+                    print 'ln',ln
                     servername,surl=ln.split('$')
                     
                     ret.append((servername, surl ))   
                 except: traceback.print_exc(file=sys.stdout)
     except:
         traceback.print_exc(file=sys.stdout)
-    return ret  
+    
+    if frompakindia:
+        return ret
+    else:
+        return ret+getIpBoxSourcesAllOtherSource(caller)
 
+    
 def getIpBoxChannels(url,forSports=False):
     ret=[]
     try:
@@ -2370,7 +3068,7 @@ def getIpBoxChannels(url,forSports=False):
                         ss=source
                         cname=ss[0] if forSports else ss[1] 
                         #print repr(cname), repr(ss)
-                        if '.ts' in ss[2]:
+                        if 1==1:
                             #curl='direct:'+ss[2].replace('.ts','.ts').replace('\r','')
                             #curl='direct:'+ss[2].replace('.ts','.m3u8').replace('\r','')
                             #curl='ipbox:'+ss[2].replace('\r','').replace('.ts','.ts')#+'|Mozilla/5.0 (Windows NT 6.1 WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.103 Safari/537.36'
@@ -2428,6 +3126,7 @@ def getPITVCats():
         traceback.print_exc(file=sys.stdout)
     print ret
     return ret  
+
     
 def getWTVChannels(categories, forSports=False):
     ret=[]
@@ -2470,7 +3169,7 @@ def getPITVChannels(categories, forSports=False):
 
                 ss=source
                 cname=ss["channelName"]
-                #print cname
+                
                 if 'ebound.tv' in ss["channelLink"]:
                     curl='ebound2:'+ss["channelLink"].replace(':1935','')
                 else:
@@ -2560,8 +3259,33 @@ def getUniTVChannels(categories, forSports=False):
         traceback.print_exc(file=sys.stdout)
     return ret  
     
-    
-
+def getUKTVUserAgent():
+    try:
+        username = "-1"#random.choice(usernames)
+        post = {'version':'5.7'}
+        post = urllib.urlencode(post)
+      
+        headers=[('User-Agent','USER-AGENT-UKTVNOW-APP-V2'),('app-token',getAPIToken(base64.b64decode("aHR0cDovL3VrdHZub3cubmV0L2FwcDIvdjMvZ2V0X3VzZXJfYWdlbnQ="),username))]
+        jsondata=getUrl(base64.b64decode("aHR0cDovL3VrdHZub3cubmV0L2FwcDMvdjMvZ2V0X3VzZXJfYWdlbnQ="),post=post,headers=headers)
+        jsondata=json.loads(jsondata)    
+        import pyaes
+        try:
+            if 'useragent' in jsondata["msg"]:
+                return jsondata["msg"]["useragent"]
+        except: 
+            pass
+        key="MDk0NTg3MjEyNDJhZmZkZQ==".decode("base64")
+        iv="ZWVkY2ZhMDQ4OTE3NDM5Mg==".decode("base64")
+        decryptor = pyaes.new(key, pyaes.MODE_CBC, IV=iv)
+        print 'user agent trying'
+        ua= decryptor.decrypt(jsondata["msg"]["54b23f9b3596397b2acf70a81b2da31d"].decode("hex")).split('\0')[0]
+        print ua
+        return ua
+    except: 
+        print 'err in user agent'
+        traceback.print_exc(file=sys.stdout)
+        return 'USER-AGENT-UKTVNOW-APP-V2'
+#    print jsondata
 
 def local_time(zone='Asia/Karachi'):
     from datetime import datetime
@@ -2569,19 +3293,34 @@ def local_time(zone='Asia/Karachi'):
     other_zone = timezone(zone)
     other_zone_time = datetime.now(other_zone)
     return other_zone_time.strftime('%B-%d-%Y')
+
+def getUKTVPlayUrl(channelID ):
+
+    url=base64.b64decode("aHR0cDovL3VrdHZub3cubmV0L2FwcDMvdjMvZ2V0X3ZhbGlkX2xpbms=")
+    username="-1"
+    usernameC=username+channelID
+    s = base64.b64decode("dWt0dm5vdy10b2tlbi0tX3xfLSVzLXVrdHZub3dfdG9rZW5fZ2VuZXJhdGlvbi0lcy1ffF8tMTIzNDU2X3VrdHZub3dfNjU0MzIxLV98Xy11a3R2bm93X2xpbmtfdG9rZW4=")%(url,username)
+    import hashlib
+    token= hashlib.md5(s).hexdigest()
+    
+    post = {'username':username,'channel_id':channelID,'useragent':getUKTVUserAgent(),'version':'5.7'}
+    post = urllib.urlencode(post)
+  
+    headers=[('User-Agent','USER-AGENT-UKTVNOW-APP-V2'),('app-token',token)]
+    jsondata=getUrl(url,post=post+'&',headers=headers)
+    return json.loads(jsondata)
+    
     
 def getAPIToken( url,  username):
-    print url,username
-    from pytz import timezone
-    dt=local_time()
-    s = "uktvnow-token-"+ dt + "-"+ "_|_-" + url + "-" + username +"-" + "_|_"+ "-"+ base64.b64decode("MTIzNDU2IUAjJCVedWt0dm5vd14lJCNAITY1NDMyMQ==")
-    
-    print s
+    #print url,username
+    #from pytz import timezone
+    #dt=local_time()
+    s = base64.b64decode("dWt0dm5vdy10b2tlbi0tX3xfLSVzLXVrdHZub3dfdG9rZW5fZ2VuZXJhdGlvbi0lcy1ffF8tMTIzNDU2X3VrdHZub3dfNjU0MzIx")%(url,  username)
     import hashlib
     return hashlib.md5(s).hexdigest()
 
 def getMonaKey():
-    s=getUrl(base64.b64decode("aHR0cDovL3pvbmEtYXBwLmNvbS96b25hLWFwcC9hcGkucGhwP2FwaV9rZXk="),headers=[('User-Agent','Dalvik/2.1.0 (Linux; U; Android 5.1.1; SM-G920F Build/LMY47X')])
+    s=getUrl(base64.b64decode("aHR0cDovL3pvbmEtbGl2ZS10di5jb20vem9uYWFwcC9hcGkucGhwP2FwaV9rZXk="),headers=[('User-Agent','Dalvik/1.6.0 (Linux; U; Android 4.4.2; SM-G900F Build/KOT49H)')])
     return json.loads(s)["LIVETV"][0]["key"]
     
 def getMonaPage(cat):
@@ -2596,9 +3335,9 @@ def getMonaPage(cat):
         traceback.print_exc(file=sys.stdout)
     
     if cat=="":
-        url=base64.b64decode('aHR0cDovL3pvbmEtYXBwLmNvbS96b25hLWFwcC9hcGkucGhwP2tleT0lcw==')%(getMonaKey())
+        url=base64.b64decode('aHR0cDovL3pvbmEtbGl2ZS10di5jb20vem9uYWFwcC9hcGkucGhwP2tleT0lcw==')%(getMonaKey())
     else:
-        url=base64.b64decode('aHR0cDovL3pvbmEtYXBwLmNvbS96b25hLWFwcC9hcGkucGhwP2NhdF9pZD0lcyZrZXk9JXM=')%(cat,getMonaKey())
+        url=base64.b64decode('aHR0cDovL3pvbmEtbGl2ZS10di5jb20vem9uYWFwcC9hcGkucGhwP2NhdF9pZD0lcyZrZXk9JXM=')%(cat,getMonaKey())
     print url
     headers=[('User-Agent','Dalvik/2.1.0 (Linux; U; Android 5.1.1; SM-G920F Build/LMY47X)')]
     jsondata=getUrl(url,headers=headers)
@@ -2624,13 +3363,13 @@ def getUKTVPage():
         traceback.print_exc(file=sys.stdout)
     usernames=eval(base64.b64decode("WydTZXJnaW8nLCdEYXNoJywnRnJhemVyJywnWmVkJywnQWxhbicsJ0RvbWluaWMnLCdLZW50JywnSG93YXJkJywnRXJpYycsJ0plbidd"))
     import random
-    username = random.choice(usernames)
+    username = "-1"#random.choice(usernames)
     post = {'username':username}
     post = urllib.urlencode(post)
   
     #headers=eval(base64.b64decode("WygnVXNlci1BZ2VudCcsJ1VTRVItQUdFTlQtVUtUVk5PVy1BUFAtVjEnKSwoJ2FwcC10b2tlbicsJ2FmZjE2MTRiNTJhNTM3YmQ3YmEyZDMyODE0ODU1NmFmJyld"))
-    headers=[('User-Agent','USER-AGENT-UKTVNOW-APP-V1'),('app-token',getAPIToken(base64.b64decode("aHR0cDovL2FwcC51a3R2bm93Lm5ldC92MS9nZXRfYWxsX2NoYW5uZWxz"),username))]
-    jsondata=getUrl(base64.b64decode("aHR0cDovL2FwcC51a3R2bm93Lm5ldC92MS9nZXRfYWxsX2NoYW5uZWxz"),post=post,headers=headers)
+    headers=[('User-Agent','USER-AGENT-UKTVNOW-APP-V2'),('app-token',getAPIToken(base64.b64decode("aHR0cHM6Ly9hcHAudWt0dm5vdy5uZXQvdjMvZ2V0X2FsbF9jaGFubmVscw=="),username))]
+    jsondata=getUrl(base64.b64decode("aHR0cDovL3VrdHZub3cubmV0L2FwcDMvdjMvZ2V0X2FsbF9jaGFubmVscw=="),post=post,headers=headers)
     jsondata=json.loads(jsondata)
     
     try:
@@ -2640,6 +3379,7 @@ def getUKTVPage():
         print 'uktv file saving error'
         traceback.print_exc(file=sys.stdout)
     return jsondata
+
 
 def getUKTVCats():
     ret=[]
@@ -2684,11 +3424,11 @@ def getMonaChannels(cat):
             if curl.startswith('vlc://'):
                 curl=curl.split('vlc://')[1]
                 #ua=""
-            curl='direct:'+curl
+            curl='direct3:'+curl
             #print curl
             if 'wiseplay' in cname.lower():
                 ua='Lavf/57.25.100'
-            if  curl.startswith("direct:http"):
+            if  curl.startswith("direct3:http"):
                 curl+='|User-Agent='+ua
             cimage=channel["category_image"]
             if not cimage.startswith("http"):
@@ -2711,9 +3451,11 @@ def getUKTVChannels(categories=[], channels=[]):
             if channel["cat_name"].strip().lower() in categories or  channel["cat_name"] in categories  or channel["channel_name"].strip().lower() in categories  :
                     cname=channel["channel_name"]
                     curl='uktvnow:'+channel["pk_id"]
-                    cimage=channel["img"]
+                    cimage=channel["img"].replace(' ','%20')
+                    print cimage
                     if not cimage.startswith("http"):
                         cimage='https://app.uktvnow.net/'+cimage
+                    print cimage
                     if cname==None: cname=curl
                     if len([i for i, x in enumerate(ret) if x[2] ==curl  ])==0:                    
                         ret.append((cname +' uktv' ,'manual', curl ,cimage))  
@@ -2810,8 +3552,12 @@ def AddChannelsFromOthers(cctype,eboundMatches=[],progress=None):
     isIpBoxff=selfAddon.getSetting( "isIpBoxff" )
     #isIpBoxff="true"
     isYPgenOff= selfAddon.getSetting( "isYPOff" )
+    isYPgenOff="true"
     isUKTVOff=selfAddon.getSetting( "isUKTVOff" )
-
+    
+    isZengaOff=selfAddon.getSetting( "isZengaOff" )
+    
+    
     main_ch='(<section_name>Pakistani<\/section_name>.*?<\/section>)'
 #    v4link='aHR0cDovL3N0YWdpbmcuamVtdHYuY29tL3FhLnBocC8yXzIvZ3htbC9jaGFubmVsX2xpc3QvMQ=='
     v4link='aHR0cDovL2ZlcnJhcmlsYi5qZW10di5jb20vaW5kZXgucGhwLzJfMi9neG1sL2NoYW5uZWxfbGlzdC8x'
@@ -2949,8 +3695,8 @@ def AddChannelsFromOthers(cctype,eboundMatches=[],progress=None):
             
             match.append((base64.b64decode('S1ROIEVudC4gKHdlYnNpdGUp'),'manual','direct:'+"rtmp://103.24.96.74/ktn/ playpath=ktn swfUrl=http://ktntv.tv/wp-content/player/jwplayer.flash.swf pageUrl=http://www.ktntv.tv/ live=1",''))
             match.append((base64.b64decode('S1ROIE5FV1MgKHdlYnNpdGUp'),'manual','direct:'+"rtmp://103.24.96.74/ktn/ playpath=ktnnews swfUrl=http://ktntv.tv/wp-content/player/jwplayer.flash.swf pageUrl=http://www.ktnnews.tv/ live=1",''))
-            match.append(('Makkah (youtube)','manual','','direct:plugin://plugin.video.youtube/?action=play_video&videoid=%s' %'ArVmnth5jB4'))
-            match.append(('Madina (youtube)','manual','direct:plugin://plugin.video.youtube/?action=play_video&videoid=%s' %'4OoKpZWJASY',''))
+            match.append(('Makkah (youtube)','manual','direct:plugin://plugin.video.youtube/?action=play_video&videoid=%s' %'D8YHp37-tp0',''))
+            match.append(('Madina (youtube)','manual','direct:plugin://plugin.video.youtube/?action=play_video&videoid=%s' %'ArVmnth5jB4',''))
             
   
 
@@ -2979,7 +3725,8 @@ def AddChannelsFromOthers(cctype,eboundMatches=[],progress=None):
     ipBoxGen=None
     UKTVGenCat=[]
     UKTVGenCH=[]
-
+    tvplayerChannels=None
+    Zengagen=None
     if cctype==1:
         pg='pakistan'
         iptvgen="pakistani"
@@ -3000,6 +3747,8 @@ def AddChannelsFromOthers(cctype,eboundMatches=[],progress=None):
         ipBoxGen=1
         YPgen=base64.b64decode("aHR0cDovL3d3dy55dXBwdHYuY29tL2hpbmRpLXR2Lmh0bWw=")
         UKTVGenCat,UKTVGenCH=['movies'],['zee tv','colors','sony tv hd', 'star plus hd', 'zee tv']
+        tvplayerChannels=['sony sab','zing']
+        Zengagen='ch'
     else:
         pg='punjabi'
         CFgen="1314"
@@ -3019,7 +3768,10 @@ def AddChannelsFromOthers(cctype,eboundMatches=[],progress=None):
     if isUKTVOff=='true': 
         UKTVGenCat=[]
         UKTVGenCH=[]
+    if isZengaOff=='true': 
+        Zengagen=None
 
+        
     if pg:
         try:
 #            print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxx'
@@ -3112,18 +3864,42 @@ def AddChannelsFromOthers(cctype,eboundMatches=[],progress=None):
             if len(rematch)>0:
                 match+=rematch
         except:
-            traceback.print_exc(file=sys.stdout)     
+            traceback.print_exc(file=sys.stdout)    
+    
+    if Zengagen:
+        try:
+            
+            progress.update( 90, "", "Loading Zenga Channels", "" )
+            
+            rematch=getZengaChannels(base64.b64decode('aHR0cDovL3plbmdhdHZnZXRhcGktZW52LmVsYXN0aWNiZWFuc3RhbGsuY29tL2dldHRyZW5kc2J5Y29udGVudHR5cGU/Y29udGVudHR5cGU9NmZmNDM3OGEtMDdkZC0xMWUyLTg1NWItNzA3MWJjY2M4NWFjJmNvdW50cnljb2RlPUlOJmZyb209MCZpczE4cGx1cz0wJnBsYXRmb3JtPWJmYzY4NWYxLTNkMzQtNDNmOS1hODliLTkzMDUxYzI4OGJjZSZzaXplPTIwMCZzdGF0ZT0yYmViMzJmZS0zM2RiLTQ3YWItYjJlNy1kMmRlOTVmZWM4NTI='),progress)
+            progress.update( 92, "", "Loading Zenga Channels loaded", "" )
+            if len(rematch)>0:
+                match+=rematch
+        except:
+            traceback.print_exc(file=sys.stdout)    
+            
             
     if ipBoxGen:
         try:
             
             progress.update( 90, "", "Loading IpBox Channels", "" )
-            for nm,url in getIpBoxSources():
+            for nm,url in getIpBoxSources(True):
                 rematch=getIpBoxChannels([url])
                 if len(rematch)>0:
                     match+=rematch
         except:
             traceback.print_exc(file=sys.stdout)
+
+    if tvplayerChannels:
+        try:
+            
+            progress.update( 95, "", "Loading TVPlayer Channels", "" )
+
+            for ch in getTVPlayerChannels(tvplayerChannels):
+                match.append((ch[0] +' UK Only' ,'manual', base64.b64decode(ch[1])  ,ch[3]))
+        except:
+            traceback.print_exc(file=sys.stdout)
+            
 
 #    match=sorted(match,key=itemgetter(0)   )
     if len(eboundMatches)>0:
@@ -3159,13 +3935,15 @@ def AddChannelsFromOthers(cctype,eboundMatches=[],progress=None):
                 elif cname.endswith('v8'):
                     cc='purple'
                 elif cname.lower().endswith(' ditto'):
-                    cc='green'
+                    cc='fffc00cc'
                 elif cname.lower().endswith(' cf'):
                     cc='blue'                
                 elif cname.lower().endswith(' yp'):
                     cc='ffdc00cc'                
                 elif cname.lower().endswith(' uktv'):
                     cc='ffdc1111'
+                elif cname.lower().endswith(' zenga'):
+                    cc='ffcc1111'
                 addDir(Colored(cname.capitalize(),cc) ,base64.b64encode(curl) ,mm ,imgurl, False, True,isItFolder=False)		#name,url,mode,icon
     return    
     
@@ -3334,21 +4112,24 @@ def getPTCUrl():
         print 'file getting error'
         traceback.print_exc(file=sys.stdout)
 
-    req = urllib2.Request( base64.b64decode('aHR0cDovL2NsdW9kYmFja2VuZGFwaS5hcHBzcG90LmNvbS9pb3MvcGFrdHYvcGFrdHYuanNvbg==') )      
-    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("UGFrJTIwVFYlMjBDb25uZWN0aWZ5LzQuMyBDRk5ldHdvcmsvNzU4LjAuMiBEYXJ3aW4vMTUuMC4w")) 
+    req = urllib2.Request( base64.b64decode('aHR0cDovL2NsdW9kYmFja2VuZGFwaS5hcHBzcG90LmNvbS9pb3MvcGFrdHYvcGFrdHY0LjQuanNvbg==') )      
+    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("UGFrJTIwVFYlMjBDb25uZWN0aWZ5LzQuNCBDRk5ldHdvcmsvNzU4LjAuMiBEYXJ3aW4vMTUuMC4w")) 
     response = urllib2.urlopen(req)
     link=response.read()
     maindata=json.loads(link)
     print maindata
     decodeddata=maindata["Secret"]
-    #decodeddata='ew0KDQogI'.join(decodeddata.split('ew0KDQogI')[:-1])
-    #data=base64.b64decode(decodeddata)[:-1]
-    decodeddata=decodeddata.replace('nbUioPLk6nbviOP0kjgfreWEur','')
-    decodeddata=decodeddata+'='*(len(decodeddata) % 4)
+    decodeddata='JCQkJIklu'.join(decodeddata.split('JCQkJIklu')[:-1])+'JCQkJIklu'
+    print decodeddata
+    data=base64.b64decode(decodeddata)
+    #decodeddata=decodeddata.replace('nbUioPLk6nbviOP0kjgfreWEur','')
+    #decodeddata=decodeddata+'='*(len(decodeddata) % 4)
+    #data=''
     try:
-        data=base64.b64decode(decodeddata)
+        #data=base64.b64decode(decodeddata)
         jsondata= json.loads(data)
     except:
+        #print 'in except'   ,data
         if '"categoryName":"appsetting"' in data:
             data=data.split('"categoryName":"appsetting"')[0]
             print 'xxxxxxxxxxxxxxxxx',data[-100:]
@@ -3377,8 +4158,12 @@ def clearCache():
     files=[]
     fname='paktvpage.json'
     fname=os.path.join(profile_path, fname)
-    files+=[fname]    
-
+    files+=[fname]   
+    
+    fname='zenga.json'
+    fname=os.path.join(profile_path, fname)
+    files+=[fname]   
+   
     fname='ptcpage.json'
     fname=os.path.join(profile_path, fname)
     files+=[fname]    
@@ -3401,6 +4186,11 @@ def clearCache():
     fname='wtvpage.json'
     fname=os.path.join(profile_path, fname)
     files+=[fname]       
+    fname='dreampage.json'
+    fname=os.path.join(profile_path, fname)
+    files+=[fname]           
+    
+    
     try:
         for cat in getMonaCats():
             fname='monapage_%s.json'%cat[0]
@@ -3440,20 +4230,44 @@ def delfile(fname):
 def getDittoPage():
     r=[]
     try:
-        html= getUrl(base64.b64decode('aHR0cDovL3d3dy5kaXR0b3R2LmNvbS9pbmRleC5waHA/cj1saXZlLXR2JTJGdmlldw=='))
-        links=re.findall('liveTvs = (\[.*\])',html)[0]
-        r+=eval(links)
+        html= getUrl(base64.b64decode('aHR0cDovL29yaWdpbi5kaXR0b3R2LmNvbS9saXZldHYvYWxsLzA='))
+        r=re.findall('<div class="subpattern.*?\s*<a href="(.*?)" title="(.*?)".*?\s*<img src="(.*?)"',html)
+        #r+=eval(links)
         
     except:
         pass
-    r+=eval(base64.b64decode('W3sibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE5MiIsIm5hbWUiOidaZWUgVFYgSEQnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE5Mi5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4OSIsIm5hbWUiOicmVFYgSEQnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE4OS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE5MSIsIm5hbWUiOidaZWUgQ2luZW1hIEhEJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxOTEuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxOTAiLCJuYW1lIjonJlBpY3R1cmVzIEhEJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxOTAuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMDMiLCJuYW1lIjonWmVlIENsYXNzaWMnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAwMy5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAxMyIsIm5hbWUiOidMaXZpbmcgRm9vZHonLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxMy5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4NyIsIm5hbWUiOidabGl2aW5nJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxODcuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMDUiLCJuYW1lIjonWmVlIEJ1c2luZXNzJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMDUuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMTAiLCJuYW1lIjonWmVlIE1hcmF0aGknLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxMC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE2NiIsIm5hbWUiOidaZWUgVGVsdWd1JywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNjYuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxODUiLCJuYW1lIjonTWFzdGlpJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxODUuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNTIiLCJuYW1lIjonRVRDJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNTIuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMDciLCJuYW1lIjonUmFqIFRWJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMDcuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNTciLCJuYW1lIjonUmFqIERpZ2l0YWwgUGx1cycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTU3LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTk5IiwibmFtZSI6J0FsIEphemVlcmEnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE5OS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE5MyIsIm5hbWUiOidNYWtrYWwgVFYnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE5My5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAxNCIsIm5hbWUiOidaZWUgQmFuZ2xhJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTQuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAyMDMiLCJuYW1lIjonWmluZycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMjAzLmpwZyJ9XQ=='))
-    r+=eval(base64.b64decode('W3sibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4MyIsIm5hbWUiOicmIFBpY3R1cmVzJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxODMuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxOTAiLCJuYW1lIjonJlBpY3R1cmVzIEhEJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxOTAuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMDQiLCJuYW1lIjonJlRWJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMDQuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxODkiLCJuYW1lIjonJlRWIEhEJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxODkuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMTkiLCJuYW1lIjonMjQgR2hhbnRhJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTkuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNTkiLCJuYW1lIjonQ1RWTiBBS0QgUGx1cycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTU5LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTcxIiwibmFtZSI6J0RpdnlhIFRWJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNzEuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNTIiLCJuYW1lIjonRVRDJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNTIuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMjIiLCJuYW1lIjonSW5kaWEgMjR4NycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDIyLmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTYwIiwibmFtZSI6J0tvbGthdGEgVFYnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE2MC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAxMyIsIm5hbWUiOidMaXZpbmcgRm9vZHonLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxMy5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE5MyIsIm5hbWUiOidNYWtrYWwgVFYnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE5My5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4NSIsIm5hbWUiOidNYXN0aWknLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE4NS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE2MSIsIm5hbWUiOidSIFBsdXMnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE2MS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE1NyIsIm5hbWUiOidSYWogRGlnaXRhbCBQbHVzJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNTcuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMjUiLCJuYW1lIjonUmFqIE11c2ljJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMjUuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMTciLCJuYW1lIjonUmFqIE11c2l4JywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTcuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMDkiLCJuYW1lIjonUmFqIE11c2l4IFRlbHVndScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDA5LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDE2IiwibmFtZSI6J2FqIE5ld3MgMjR4NycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDE2LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDI2IiwibmFtZSI6J1JhaiBOZXdzIEthbm5hZGEnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAyNi5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAxOCIsIm5hbWUiOidSYWogTmV3cyBNYWxheWFsYW0nLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxOC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAwOCIsIm5hbWUiOidSYWogTmV3cyBUZWx1Z3UnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAwOC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAwNyIsIm5hbWUiOidSYWogVFYnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAwNy5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE2MiIsIm5hbWUiOidUYWF6YSBUViAnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE2Mi5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE2MyIsIm5hbWUiOidVdHRhciBCYW5nbGEgQUtEJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNjMuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNjciLCJuYW1lIjonVmlzc2EgVFYnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE2Ny5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE1NCIsIm5hbWUiOidaRUUgMjQgVGFhcycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTU0LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTY5IiwibmFtZSI6J1plZSBBZmxhbScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTY5LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTcwIiwibmFtZSI6J1plZSBBbHdhbicsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTcwLmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDE0IiwibmFtZSI6J1plZSBCYW5nbGEnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxNC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4OCIsIm5hbWUiOidaZWUgQmFuZ2xhIENpbmVtYScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTg4LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDA1IiwibmFtZSI6J1plZSBCdXNpbmVzcycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDA1LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTkxIiwibmFtZSI6J1plZSBDaW5lbWEgSEQnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE5MS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAwMyIsIm5hbWUiOidaZWUgQ2xhc3NpYycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDAzLmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTU1IiwibmFtZSI6J1plZSBLYWxpbmdhIE5ld3MnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE1NS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAzMSIsIm5hbWUiOidaZWUgS2FubmFkYScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDMxLmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDEwIiwibmFtZSI6J1plZSBNYXJhdGhpJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTAuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMjAiLCJuYW1lIjonWmVlIE1QQ0cnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAyMC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAwNiIsIm5hbWUiOidaZWUgTmV3cycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDA2LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTU2IiwibmFtZSI6J1plZSBQdW5qYWIgSGFyeWFuYSBIaW1hY2hhbCBQcmFkZXNoJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNTYuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMjMiLCJuYW1lIjonWmVlIFB1cnZhaXlhJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMjMuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxOTQiLCJuYW1lIjonWmVlIFNhbGFhbScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTk0LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDExIiwibmFtZSI6J1plZSBUYWxraWVzJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTEuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMTUiLCJuYW1lIjonWmVlIFRhbWlsJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTUuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNjYiLCJuYW1lIjonWmVlIFRlbHVndScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTY2LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTkyIiwibmFtZSI6J1plZSBUViBIRCcsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTkyLmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDEyIiwibmFtZSI6J1ppbmcgSW5kaWEnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxMi5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4NyIsIm5hbWUiOidabGl2aW5nJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxODcuanBnIn1d'))
+    #r+=eval(base64.b64decode('W3sibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE5MiIsIm5hbWUiOidaZWUgVFYgSEQnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE5Mi5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4OSIsIm5hbWUiOicmVFYgSEQnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE4OS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE5MSIsIm5hbWUiOidaZWUgQ2luZW1hIEhEJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxOTEuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxOTAiLCJuYW1lIjonJlBpY3R1cmVzIEhEJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxOTAuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMDMiLCJuYW1lIjonWmVlIENsYXNzaWMnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAwMy5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAxMyIsIm5hbWUiOidMaXZpbmcgRm9vZHonLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxMy5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4NyIsIm5hbWUiOidabGl2aW5nJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxODcuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMDUiLCJuYW1lIjonWmVlIEJ1c2luZXNzJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMDUuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMTAiLCJuYW1lIjonWmVlIE1hcmF0aGknLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxMC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE2NiIsIm5hbWUiOidaZWUgVGVsdWd1JywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNjYuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxODUiLCJuYW1lIjonTWFzdGlpJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxODUuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNTIiLCJuYW1lIjonRVRDJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNTIuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMDciLCJuYW1lIjonUmFqIFRWJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMDcuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNTciLCJuYW1lIjonUmFqIERpZ2l0YWwgUGx1cycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTU3LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTk5IiwibmFtZSI6J0FsIEphemVlcmEnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE5OS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE5MyIsIm5hbWUiOidNYWtrYWwgVFYnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE5My5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAxNCIsIm5hbWUiOidaZWUgQmFuZ2xhJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTQuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAyMDMiLCJuYW1lIjonWmluZycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMjAzLmpwZyJ9XQ=='))
+    #r+=eval(base64.b64decode('W3sibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4MyIsIm5hbWUiOicmIFBpY3R1cmVzJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxODMuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxOTAiLCJuYW1lIjonJlBpY3R1cmVzIEhEJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxOTAuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMDQiLCJuYW1lIjonJlRWJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMDQuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxODkiLCJuYW1lIjonJlRWIEhEJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxODkuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMTkiLCJuYW1lIjonMjQgR2hhbnRhJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTkuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNTkiLCJuYW1lIjonQ1RWTiBBS0QgUGx1cycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTU5LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTcxIiwibmFtZSI6J0RpdnlhIFRWJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNzEuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNTIiLCJuYW1lIjonRVRDJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNTIuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMjIiLCJuYW1lIjonSW5kaWEgMjR4NycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDIyLmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTYwIiwibmFtZSI6J0tvbGthdGEgVFYnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE2MC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAxMyIsIm5hbWUiOidMaXZpbmcgRm9vZHonLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxMy5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE5MyIsIm5hbWUiOidNYWtrYWwgVFYnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE5My5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4NSIsIm5hbWUiOidNYXN0aWknLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE4NS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE2MSIsIm5hbWUiOidSIFBsdXMnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE2MS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE1NyIsIm5hbWUiOidSYWogRGlnaXRhbCBQbHVzJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNTcuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMjUiLCJuYW1lIjonUmFqIE11c2ljJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMjUuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMTciLCJuYW1lIjonUmFqIE11c2l4JywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTcuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMDkiLCJuYW1lIjonUmFqIE11c2l4IFRlbHVndScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDA5LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDE2IiwibmFtZSI6J2FqIE5ld3MgMjR4NycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDE2LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDI2IiwibmFtZSI6J1JhaiBOZXdzIEthbm5hZGEnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAyNi5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAxOCIsIm5hbWUiOidSYWogTmV3cyBNYWxheWFsYW0nLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxOC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAwOCIsIm5hbWUiOidSYWogTmV3cyBUZWx1Z3UnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAwOC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAwNyIsIm5hbWUiOidSYWogVFYnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAwNy5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE2MiIsIm5hbWUiOidUYWF6YSBUViAnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE2Mi5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE2MyIsIm5hbWUiOidVdHRhciBCYW5nbGEgQUtEJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNjMuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNjciLCJuYW1lIjonVmlzc2EgVFYnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE2Ny5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE1NCIsIm5hbWUiOidaRUUgMjQgVGFhcycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTU0LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTY5IiwibmFtZSI6J1plZSBBZmxhbScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTY5LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTcwIiwibmFtZSI6J1plZSBBbHdhbicsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTcwLmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDE0IiwibmFtZSI6J1plZSBCYW5nbGEnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxNC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4OCIsIm5hbWUiOidaZWUgQmFuZ2xhIENpbmVtYScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTg4LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDA1IiwibmFtZSI6J1plZSBCdXNpbmVzcycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDA1LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTkxIiwibmFtZSI6J1plZSBDaW5lbWEgSEQnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE5MS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAwMyIsIm5hbWUiOidaZWUgQ2xhc3NpYycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDAzLmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTU1IiwibmFtZSI6J1plZSBLYWxpbmdhIE5ld3MnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDE1NS5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAzMSIsIm5hbWUiOidaZWUgS2FubmFkYScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDMxLmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDEwIiwibmFtZSI6J1plZSBNYXJhdGhpJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTAuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMjAiLCJuYW1lIjonWmVlIE1QQ0cnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAyMC5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDAwNiIsIm5hbWUiOidaZWUgTmV3cycsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMDA2LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTU2IiwibmFtZSI6J1plZSBQdW5qYWIgSGFyeWFuYSBIaW1hY2hhbCBQcmFkZXNoJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxNTYuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMjMiLCJuYW1lIjonWmVlIFB1cnZhaXlhJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMjMuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxOTQiLCJuYW1lIjonWmVlIFNhbGFhbScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTk0LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDExIiwibmFtZSI6J1plZSBUYWxraWVzJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTEuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAwMTUiLCJuYW1lIjonWmVlIFRhbWlsJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAwMTUuanBnIn0sCiAgICB7Im1hbnVhbCI6Im1hbnVhbCIsImlkIjoiMTAxNjYiLCJuYW1lIjonWmVlIFRlbHVndScsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTY2LmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMTkyIiwibmFtZSI6J1plZSBUViBIRCcsInBvc3RlciI6Imh0dHA6XC9cLzg5LjM1LjE1OC4zNFwvaW1hZ2VzX2RpdHRvXC9uZXdfaW1hZ2VzXC9saXZldHZcLzEwMTkyLmpwZyJ9LAogICAgeyJtYW51YWwiOiJtYW51YWwiLCJpZCI6IjEwMDEyIiwibmFtZSI6J1ppbmcgSW5kaWEnLCJwb3N0ZXIiOiJodHRwOlwvXC84OS4zNS4xNTguMzRcL2ltYWdlc19kaXR0b1wvbmV3X2ltYWdlc1wvbGl2ZXR2XC8xMDAxMi5qcGcifSwKICAgIHsibWFudWFsIjoibWFudWFsIiwiaWQiOiIxMDE4NyIsIm5hbWUiOidabGl2aW5nJywicG9zdGVyIjoiaHR0cDpcL1wvODkuMzUuMTU4LjM0XC9pbWFnZXNfZGl0dG9cL25ld19pbWFnZXNcL2xpdmV0dlwvMTAxODcuanBnIn1d'))
 
     return r
-
-def getYPPage(url,progress):
     
+def getZengaPage(url,progress):
+ 
+    print 'url',url
+    fname='zenga.json'
+    fname=os.path.join(profile_path, fname)
+    jj=None
+    try:
+        jsondata=getCacheData(fname,60*60*2)
+        if not jsondata==None:
+            return json.loads(jsondata)
+    except:
+        print 'file getting error'
+        traceback.print_exc(file=sys.stdout)
+        
+    headers=[('User-Agent','Mozilla/5.0 (iPhone; CPU iPhone OS 9_0_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13A452 (5215161440)'), ('Origin','file://')]
 
+    try:
+        print 'url',url
+        jj= json.loads(getUrl(url,headers=headers,post=""))
+        storeCacheData(json.dumps(jj),fname)
+    except:
+        print 'zenga file saving error'
+        traceback.print_exc(file=sys.stdout)
+    return jj
+    
+def getYPPage(url,progress):
+     
     p="u" if 'urdu' in url.lower() else 'h' if 'hindi' in url.lower() else 'p'
     
     fname='yptvpage_%s.json'%p
@@ -3475,7 +4289,7 @@ def getYPPage(url,progress):
         ln+=1
         progress.update( int((ln*100)/len(links)), "", "Filtering YP links..%d of %d"%(ln, len(links) ))
         if progress.iscanceled(): return []
-        if not getYPUrl(l[0])==None:
+        if 1==1:# not getYPUrl(l[0])==None:
             ret+=[l]
     links=ret
     jj=json.dumps(links)
@@ -3485,7 +4299,46 @@ def getYPPage(url,progress):
         print 'yp file saving error'
         traceback.print_exc(file=sys.stdout)
     return links
- 
+    
+def getYpCookieJar(updatedUName=False):
+    cookieJar=None
+    try:
+        cookieJar = cookielib.LWPCookieJar()
+        if not updatedUName:
+            cookieJar.load(YPLoginFile,ignore_discard=True)
+    except: 
+        cookieJar=None
+
+    if not cookieJar:
+        cookieJar = cookielib.LWPCookieJar()
+    return cookieJar 
+    
+#def getYPSession():
+#    cookieJar=getYpCookieJar()
+#    try:
+#        headers=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36')]
+#        mainpage=getUrl('http://www.yupptv.com/Default.aspx',headers=headers,cookieJar=cookieJar )
+#        if 'Login / Register' in mainpage:
+#            headers=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'),
+#            ('Origin','http://www.yupptv.com') ,
+#              ('Referer','http://www.yupptv.com/Default.aspx') ,
+#                ('X-Requested-With','XMLHttpRequest')             ]
+#            
+#            post="ctl00%24header1%24sm1=ctl00%24header1%24upLocation%7Cctl00%24header1%24btnSubmit&__LASTFOCUS=&__EVENTTARGET=&__EVENTARGUMENT=&ctl00%24header1%24txtSearch1280=&ctl00%24header1%24txtSearch1600=&ctl00%24header1%24txtLogin=cdn54447%40zasod.com&ctl00%24header1%24txtpassword=NOPWD&ctl00%24header1%24txtName=&ctl00%24header1%24txtEmail=&ctl00%24header1%24txtPwd=&ctl00%24header1%24txtretypwd=&ctl00%24header1%24ddlLangugae=0&ctl00%24header1%24TxtBoxCountry=0&ctl00%24header1%24txtCountryCode=&ctl00%24header1%24txtphoneno=&ctl00%24header1%24chkRterm=option3&ctl00%24header1%24txtFLogin=&ctl00%24header1%24lblCountryName=&ctl00%24header1%24lblCountryValue=&ctl00%24header1%24lblCountryNameindia=&ctl00%24header1%24lblCountryValueindia=&ctl00%24header1%24txtOtp=&ctl00%24header1%24dpdotplogin=0&ctl00%24header1%24txtlogincountrycode=&ctl00%24header1%24txtloginphone=&ctl00%24header1%24txtloginotp=&ctl00%24ContentPlaceHolder1%24header3%24txtActDiv=divHindi&__ASYNCPOST=true&ctl00%24header1%24btnSubmit=Login"
+#            mainpage=getUrl('http://www.yupptv.com/Default.aspx',post=post,cookieJar=cookieJar,headers=headers)
+#        cookieJar.save (YPLoginFile,ignore_discard=True)
+#    except: pass
+#    return cookieJar
+def getYPSession():
+    cookieJar=getYpCookieJar()
+    try:
+        import time
+        headers=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36')]
+        mainpage=getUrl('http://shani.offshorepastebin.com/yppsession.php?i'+str(time.time()),headers=headers )
+        sess=re.findall('ASP.NET_SessionId\s(.*)',mainpage)[0]
+        return "ASP.NET_SessionId="+sess+";"
+    except: pass
+    return ""
     
 def getCFPage(catId):
     headers=[('User-Agent',base64.b64decode('Q0ZVTlRWLzMuMSBDRk5ldHdvcmsvNzU4LjAuMiBEYXJ3aW4vMTUuMC4w'))]
@@ -3549,26 +4402,26 @@ def getUniTVPage():
         print 'file getting error'
         traceback.print_exc(file=sys.stdout)
         
-    req = urllib2.Request( base64.b64decode('aHR0cDovL3VuaXZlcnNhbHR2LmRkbnMubmV0L1VuaXZlcnNhbC1UVi1IRC9jbXMvWFZlci9nZXRDb250dFYxLTAucGhw') )      
-    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("VW5pdmVyc2FsVFZIRC8xLjAgQ0ZOZXR3b3JrLzc1OC4wLjIgRGFyd2luLzE1LjAuMA==")) 
-    req.add_header(base64.b64decode("QXV0aG9yaXphdGlvbg=="),base64.b64decode("QmFzaWMgYWpOMGRtVnljMkZzT21SeVFHY3diakZ2YzBBM09EWT0=")) 
+    req = urllib2.Request( base64.b64decode('aHR0cDovL25ld2NtczZocHBhay5keW5kbnMudHYvQ01TNi9jbXMvWFZlci9nZXRDb250dFYxLTAucGhw') )      
+    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("VW5pdmVyc2FsJTIwU3BvcnRzJTIwSEQlMjBUVi8xLjAuMSBDRk5ldHdvcmsvNzU4LjAuMiBEYXJ3aW4vMTUuMC4w")) 
+    req.add_header(base64.b64decode("QXV0aG9yaXphdGlvbg=="),base64.b64decode("QmFzaWMgUTIxVE5qWlZjMlZTT2tOdFV6WTJWWE5sVWtCd1lYTlRkMDl5UkE9PQ==")) 
     response = urllib2.urlopen(req)
     link=response.read()
     import rc
     cryptor=rc.RNCryptor()
     d=base64.b64decode(link)    
-    decrypted_data = cryptor.decrypt(d, base64.b64decode("dGVsYzA5OVBAc3N3b3JkNzg2"))
+    decrypted_data = cryptor.decrypt(d, base64.b64decode("Q21TNjZQQDNzU3cwcmQ3ODY="))
     decrypted_data=json.loads(decrypted_data)
     dataUrl=decrypted_data[0]["LiveLink"]
 
     req = urllib2.Request( dataUrl)      
-    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("VW5pdmVyc2FsVFZIRC8xLjAgQ0ZOZXR3b3JrLzc1OC4wLjIgRGFyd2luLzE1LjAuMA==")) 
-    req.add_header(base64.b64decode("QXV0aG9yaXphdGlvbg=="),base64.b64decode("QmFzaWMgYWpOMGRtVnljMkZzT21SeVFHY3diakZ2YzBBM09EWT0=")) 
+    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("VW5pdmVyc2FsJTIwU3BvcnRzJTIwSEQlMjBUVi8xLjAuMSBDRk5ldHdvcmsvNzU4LjAuMiBEYXJ3aW4vMTUuMC4w")) 
+    req.add_header(base64.b64decode("QXV0aG9yaXphdGlvbg=="),base64.b64decode("QmFzaWMgUTIxVE5qWlZjMlZTT2tOdFV6WTJWWE5sVWtCd1lYTlRkMDl5UkE9PQ==")) 
     response = urllib2.urlopen(req)
     link=response.read()
 
     d=base64.b64decode(link)    
-    decrypted_data = cryptor.decrypt(d, base64.b64decode("dGVsYzA5OVBAc3N3b3JkNzg2"))
+    decrypted_data = cryptor.decrypt(d, base64.b64decode("Q21TNjZQQDNzU3cwcmQ3ODY="))
     #print decrypted_data
     jsondata=json.loads(decrypted_data)
     try:
@@ -3577,7 +4430,7 @@ def getUniTVPage():
         print 'unitv file saving error'
         traceback.print_exc(file=sys.stdout)
     return jsondata
-
+    
 def getWTVPage():
     fname='wtvpage.json'
     fname=os.path.join(profile_path, fname)
@@ -3629,26 +4482,26 @@ def getGTVPage():
         print 'file getting error'
         traceback.print_exc(file=sys.stdout)
         
-    req = urllib2.Request( base64.b64decode('aHR0cDovL3d3dy5zb2Z0bWFnbmF0ZS5jb20vQ01TLVNlcnZlci1TcG9ydHMtVFYvWFZlci9nZXRDb250dFYxLTAucGhw') )      
-    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("U3BvcnRzVFYvMS4wIENGTmV0d29yay83NTguMC4yIERhcndpbi8xNS4wLjA=")) 
+    req = urllib2.Request( base64.b64decode('aHR0cDovL3d3dy5zb2Z0bWFnbmF0ZS5jb20vQ01TLVNlcnZlci1TcG9ydHMtVFYvWFZlci9QVFYtU3BvcnRzLVRWL2dldENvbnR0VjEtMC5waHA=') )      
+    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("UFRWU3BvcnRzLzEuMCBDRk5ldHdvcmsvNzU4LjAuMiBEYXJ3aW4vMTUuMC4w")) 
     req.add_header(base64.b64decode("QXV0aG9yaXphdGlvbg=="),base64.b64decode("QmFzaWMgVFRCcU1FdEFhMEU2Y0VGd2NIVkFOamczUUVReFkzUXhiMjVCY25rPQ==")) 
     response = urllib2.urlopen(req)
     link=response.read()
     import rc
     cryptor=rc.RNCryptor()
     d=base64.b64decode(link)    
-    decrypted_data = cryptor.decrypt(d, base64.b64decode("dFcxbjNsZUIzbnpANjg3QGQwbGw="))
+    decrypted_data = cryptor.decrypt(d, base64.b64decode("dFcxbjNsZUIzbnpANDc1QGQwMzM="))#first
     decrypted_data=json.loads(decrypted_data)
     dataUrl=decrypted_data[0]["LiveLink"]
 
     req = urllib2.Request( dataUrl)      
-    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("U3BvcnRzVFYvMS4wIENGTmV0d29yay83NTguMC4yIERhcndpbi8xNS4wLjA=")) 
+    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("UFRWU3BvcnRzLzEuMCBDRk5ldHdvcmsvNzU4LjAuMiBEYXJ3aW4vMTUuMC4w")) 
     req.add_header(base64.b64decode("QXV0aG9yaXphdGlvbg=="),base64.b64decode("QmFzaWMgVFRCcU1FdEFhMEU2Y0VGd2NIVkFOamczUUVReFkzUXhiMjVCY25rPQ==")) 
     response = urllib2.urlopen(req)
     link=response.read()
 
     d=base64.b64decode(link)    
-    decrypted_data = cryptor.decrypt(d, base64.b64decode("dFcxbjNsZUIzbnpANjg3QGQwbGw="))
+    decrypted_data = cryptor.decrypt(d, base64.b64decode("dFcxbjNsZUIzbnpANDc1QGQwMzM="))#second
     #print decrypted_data
     jsondata=json.loads(decrypted_data)
     try:
@@ -3698,6 +4551,35 @@ def getPITVPage():
         print 'pitv file saving error'
         traceback.print_exc(file=sys.stdout)
     return jsondata
+
+def getPv2Code(newcode=False):
+    currentcode=selfAddon.getSetting( id="pv2DeviceID")
+    if currentcode=="" or newcode:
+        import os,binascii
+        currentcode=binascii.b2a_hex(os.urandom(16)).upper()
+        print 'code is ',currentcode
+        selfAddon.setSetting( id="pv2DeviceID" ,value=currentcode)
+    return currentcode
+    
+def getPV2UserAgent(option):
+    if option==1:
+        #headers=[('User-Agent',base64.b64decode('UGFrJTIwVFYvMS4wIENGTmV0d29yay83NTguMi44IERhcndpbi8xNS4wLjA=')),('Authorization',base64.b64decode('QmFzaWMgWVcxMU9rQmtia0J1T0RRNQ=='))]
+        headers=[('User-Agent',getPv2Code()),('Authorization',base64.b64decode('QmFzaWMgWVcxMU9rQmtia0J1T0RRNQ=='))]
+        return getUrl('https://app.dynns.com/keys/pakindiahdv2ff.php',headers=headers)
+    else:
+        return getPv2Code();
+
+def getPV2Device(option):
+    useragent=''
+    if option==1:
+        #headers=[('User-Agent',base64.b64decode('UGFrJTIwVFYvMS4wIENGTmV0d29yay83NTguMi44IERhcndpbi8xNS4wLjA=')),('Authorization',base64.b64decode('QmFzaWMgWVcxMU9rQmtia0J1T0RRNQ=='))]
+        headers=[('User-Agent',base64.b64decode('UGFrJTIwVFYvMS4wIENGTmV0d29yay83NTguMi44IERhcndpbi8xNS4wLjA=')),('Authorization',base64.b64decode('QmFzaWMgWVcxMU9rQmtia0J1T0RRNQ=='))]
+        useragent=getUrl(base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2tleXMvYXJhYmljdHZoZHYxcC5waHA='),headers=headers)
+    else:
+        headers=[('User-Agent',getPv2Code()),('Authorization',base64.b64decode('QmFzaWMgWVcxMU9rQmtia0J1T0RRNQ=='))]
+        useragent=getUrl(base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2tleXMvYXJhYmljdHZoZHYxZmYucGhw'),headers=headers)
+    return useragent.split('.')[-1]
+
     
 def getPV2Url():
     fname='pv2tvpage.json'
@@ -3710,25 +4592,75 @@ def getPV2Url():
         print 'file getting error'
         traceback.print_exc(file=sys.stdout)
 
-
-    import time
-    TIME = time.time()
-    second= str(TIME).split('.')[0]
-    first =int(second)+int(base64.b64decode('NjkyOTY5Mjk='))
-    token=base64.b64encode(base64.b64decode('JXNAMm5kMkAlcw==') % (str(first),second))
-    #req = urllib2.Request( base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPXBha2luZGlhaGRwYWlkMi42JnRva2VuPSVz')  %token)      
-    req = urllib2.Request( base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPTI0NCZ0b2tlbj0lcw==')  %token)    
-    req.add_header('Authorization', base64.b64decode('QmFzaWMgWVdSdGFXNDZRV3hzWVdneFFBPT0=')) 
-    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("dW1hci8xMjQuMCBDRk5ldHdvcmsvNzU5LjIuOCBEYXJ3aW4vMTUuMTEuMjM=")) 
-    response = urllib2.urlopen(req)
-    link=response.read()
-    if 'Sky sports' not in link:
-        req = urllib2.Request( base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPXBha2luZGlhaGRwYWlkMi42JnRva2VuPSVz')  %token)    
-        req.add_header('Authorization', base64.b64decode('QmFzaWMgWVdSdGFXNDZRV3hzWVdneFFBPT0=')) 
-        req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("dW1hci8xMjQuMCBDRk5ldHdvcmsvNzU5LjIuOCBEYXJ3aW4vMTUuMTEuMjM=")) 
-        response = urllib2.urlopen(req)
-        link=response.read()
-
+    link=''
+    for pvopt in [(1,2),(2,2)]:#[(0,1),(1,1),(1,2)]:
+        pvitr,pv2option=pvopt  ##pv2option==2=soapxml with, =1 with 
+        try:
+            selfAddon.setSetting( id="pv2PlayOption" ,value=str(pv2option))
+            mainurl=''
+            nm=getPv2Code(True)
+            deviceid=''
+            if pv2option==1:#not in use
+                
+                if pvitr==0:
+                    mainurl='aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPTEyMyZ0b2tlbj0lcw=='
+                else:                    
+                    mainurl='aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPXBha2luZGlhaGRwYWlkMi42JnRva2VuPSVz'
+            else: #soap xml
+                headers=[('User-Agent',base64.b64decode('dW1hci8xLjEgQ0ZOZXR3b3JrLzc1OC4wLjIgRGFyd2luLzE1LjAuMA=='))]
+                iphtml=getUrl(base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2tleXMvaXBfY2hlY2sucGhw'),headers=headers)
+                ipaddrs=re.findall('Address: (.*)',iphtml)[0]
+                
+                headers=[('User-Agent',nm),('SOAPAction',base64.b64decode('aHR0cDovL2FwcC5keW5ucy5jb20vc2F2ZURldmljZUlkU2VydmljZS90bnM6ZGIuc2F2ZUlk')),('Content-Type','text/xml; charset=ISO-8859-1')]
+                
+                xmldata=base64.b64decode("PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iSVNPLTg4NTktMSI/Pgo8U09BUC1FTlY6RW52ZWxvcGUgU09BUC1FTlY6ZW5jb2RpbmdTdHlsZT0iaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvc29hcC9lbmNvZGluZy8iIHhtbG5zOlNPQVAtRU5WPSJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy9zb2FwL2VudmVsb3BlLyIgeG1sbnM6eHNkPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYSIgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM6U09BUC1FTkM9Imh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3NvYXAvZW5jb2RpbmcvIiB4bWxuczp0bnM9Imh0dHA6Ly9zY3JpcHRiYWtlci5jb20vc2F2ZURldmljZUlkU2VydmljZSI+CjxTT0FQLUVOVjpCb2R5Pgo8dG5zOmRiLnNhdmVJZCB4bWxuczp0bnM9Imh0dHA6Ly9hcHAuZHlubnMuY29tL3NhdmVEZXZpY2VJZFNlcnZpY2UiPgo8aWQgeHNpOnR5cGU9InhzZDpzdHJpbmciPiVzIEBkbkBuMDMzMTwvaWQ+CjxuYW1lIHhzaTp0eXBlPSJ4c2Q6c3RyaW5nIj4lczwvbmFtZT4KPC90bnM6ZGIuc2F2ZUlkPgo8L1NPQVAtRU5WOkJvZHk+CjwvU09BUC1FTlY6RW52ZWxvcGU+")%(ipaddrs,nm)
+                #if pvitr==1: print 1/0
+                try:
+                    getUrl(base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwaXNvYXAvaW5kZXgucGhw'),post=xmldata,headers=headers)
+                except: pass
+                
+                deviceid=getPV2Device(pvitr)
+                #if pvitr==1: print 1/0
+                if pvitr==3:                    
+                    link=getUrl(base64.b64decode('aHR0cDovL3NoYW5pLm9mZnNob3JlcGFzdGViaW4uY29tL3B2Mkxhc3RXb3JraW5nLnhtbA==')).decode("base64")
+                else:
+                    mainurl=base64.b64encode(base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPSVz')%deviceid+'&token=%s')
+                
+                #else:
+                #    mainurl='aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPTEyMyZ0b2tlbj0lcw=='    
+                #mainurl='aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPXBha2luZGlhaGRwYWlkMi42JnRva2VuPSVz'
+                    import time
+                    TIME = time.time()
+                    second= str(TIME).split('.')[0]
+                    first =int(second)+int(base64.b64decode('NjkyOTY5Mjk='))
+                    token=base64.b64encode(base64.b64decode('JXNAMm5kMkAlcw==') % (str(first),second))
+                    #req = urllib2.Request( base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPXBha2luZGlhaGRwYWlkMi42JnRva2VuPSVz')  %token)      
+                    #req = urllib2.Request( base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPTI0NCZ0b2tlbj0lcw==')  %token)    
+                    
+                    req = urllib2.Request( base64.b64decode(mainurl)  %(token))    
+                    req.add_header('Authorization', base64.b64decode('QmFzaWMgWVdSdGFXNDZRV3hzWVdneFFBPT0=')) 
+                    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),getPV2UserAgent(pv2option)) 
+                    #req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("QkVCNDNDOENDNUU5NDVFOTk4QjI3MjM4MDFFQjk0RkY=")) 
+                    response = urllib2.urlopen(req)
+                    link=response.read()
+                if 'items' in link.lower():
+                    break;
+                #if 'sky sports' in link.lower():
+                #    break
+        except:
+            traceback.print_exc(file=sys.stdout)
+            pass
+        #    req = urllib2.Request( base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2FwcF9wYW5lbG5ldy9vdXRwdXQucGhwL3BsYXlsaXN0P3R5cGU9eG1sJmRldmljZVNuPXBha2luZGlhaGRwYWlkMi42JnRva2VuPSVz')  %token)    
+        #    req.add_header('Authorization', base64.b64decode('QmFzaWMgWVdSdGFXNDZRV3hzWVdneFFBPT0=')) 
+        #    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("dW1hci8xMjQuMCBDRk5ldHdvcmsvNzU5LjIuOCBEYXJ3aW4vMTUuMTEuMjM=")) 
+        #    response = urllib2.urlopen(req)
+        #    link=response.read()
+    if not 'sky sports' in link.lower():
+        try:
+            dummyxml=getUrl(base64.b64decode('aHR0cDovL3NoYW5pLm9mZnNob3JlcGFzdGViaW4uY29tL3B2MnNwb3J0cy54bWw=')).decode("base64")
+            link='<channel>'+dummyxml+link.split('<channel>')[1]
+            
+        except: pass
     try:
         if 'items' in link:
             storeCacheData(base64.b64encode(link),fname)
@@ -3737,21 +4669,31 @@ def getPV2Url():
         traceback.print_exc(file=sys.stdout)
     return link
 
+def getPV2Option():
+    return int(selfAddon.getSetting( "pv2PlayOption" ) )
     
 def getPV2Auth():
     import base64
     import time
-    TIME = time.time()
-    second= str(TIME).split('.')[0]
-    first =int(second)+int(base64.b64decode('NjkyOTY5Mjk='))
-    token=base64.b64encode(base64.b64decode('JXNAMm5kMkAlcw==') % (str(first),second))
+    
+    for url,pv2option in [('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2tleXMvYmFrLnBocD90b2tlbj0=',2),('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2tleXMvUGFrLnBocD90b2tlbj0=',1)]:
+        try:
+            TIME = time.time()
+            second= str(TIME).split('.')[0]
+            first =int(second)+int(base64.b64decode('NjkyOTY5Mjk='))
+            token=base64.b64encode(base64.b64decode('JXNAMm5kMkAlcw==') % (str(first),second))
+            #pv2option=getPV2Option()
 
-    req = urllib2.Request( base64.b64decode('aHR0cHM6Ly9hcHAuZHlubnMuY29tL2tleXMvUGFrLnBocD90b2tlbj0=')+token)
-    req.add_header('Authorization', "Basic %s"%base64.b64decode('Wkdsc1pHbHNaR2xzT2xCQWEybHpkRUJ1')) 
-    req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),base64.b64decode("dW1hci8xMjQuMCBDRk5ldHdvcmsvNzU5LjIuOCBEYXJ3aW4vMTUuMTEuMjM=")) 
-    response = urllib2.urlopen(req)
-    link=response.read()
-    return link
+            
+            req = urllib2.Request( base64.b64decode(url)+token)
+            req.add_header('Authorization', "Basic %s"%base64.b64decode('Wkdsc1pHbHNaR2xzT2xCQWEybHpkRUJ1')) 
+            req.add_header(base64.b64decode("VXNlci1BZ2VudA=="),getPV2UserAgent(pv2option)) 
+            response = urllib2.urlopen(req)
+            link=response.read()
+            return link
+        except: 
+            print 'auth error',url
+            traceback.print_exc(file=sys.stdout)
     
 def tryplay(url,listitem):    
     import  CustomPlayer,time
@@ -3769,7 +4711,27 @@ def tryplay(url,listitem):
         xbmc.sleep(1000)
     print 'not played',url
     return False
-                
+              
+def tryplaywithping(url,listitem,pingurl,cookiejar, timeout):    
+    import  CustomPlayer,time
+
+    player = CustomPlayer.MyXBMCPlayer()
+    start = time.time() 
+    #xbmc.Player().play( liveLink,listitem)
+    player.play( url, listitem)
+    xbmc.sleep(1000)
+    useragent='Mozilla/5.0 (iPhone; CPU iPhone OS 9_0_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13A452 Safari/601.1'
+
+    headers=[('User-Agent',useragent)]
+    getUrl(pingurl, cookieJar = cookiejar,headers=headers)
+    import time
+    lastpingdone=time.time()
+    while player.is_active:
+        xbmc.sleep(3000)
+        if time.time()-lastpingdone>timeout:
+            getUrl(pingurl, cookieJar = cookiejar,headers=headers)
+            lastpingdone=time.time()
+    return False              
 def PlayStreamSports(url):
 
     urlToPlay=base64.b64decode(url)
@@ -3816,8 +4778,12 @@ def getiptvmac():
 #    return maccode,base64.b64decode("aHR0cDovL3BvcnRhbC5pcHR2cHJpdmF0ZXNlcnZlci50dg==")
 
 def playipbox(finalUrl):
-    finalUrl='plugin://plugin.video.f4mTester/?name=%s&url=%s&streamtype=TSDOWNLOADER'%(name,urllib.quote_plus(finalUrl))
-    
+    print 'finalUrl',finalUrl
+    if '.ts' in finalUrl:
+        finalUrl='plugin://plugin.video.f4mTester/?name=%s&url=%s&streamtype=TSDOWNLOADER'%(urllib.quote_plus(name),urllib.quote_plus(finalUrl))
+    elif '.m3u8' in finalUrl:
+        finalUrl='plugin://plugin.video.f4mTester/?name=%s&url=%s&streamtype=HLSRETRY'%(urllib.quote_plus(name),urllib.quote_plus(finalUrl))
+        
 #    finalUrl='plugin://plugin.video.f4mTester/?url=%s&streamtype=HLS'%(urllib.quote_plus(finalUrl))
     xbmc.executebuiltin('XBMC.RunPlugin('+finalUrl+')') 
     
@@ -3853,22 +4819,74 @@ def PlayiptvLink(url):
         listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
     #    print "playing stream name: " + str(name) 
         xbmc.Player(  ).play( urlToPlay, listitem)  
+def get365CookieJar(updatedUName=False):
+    cookieJar=None
+    try:
+        cookieJar = cookielib.LWPCookieJar()
+        if not updatedUName:
+            cookieJar.load(S365COOKIEFILE,ignore_discard=True)
+    except: 
+        cookieJar=None
 
-def playSports365(url):
+    if not cookieJar:
+        cookieJar = cookielib.LWPCookieJar()
+    return cookieJar 
+    
+def playSports365(url,progress):
     #print ('playSports365')
-    import live365
-    urlToPlay=live365.selectMatch(url)
-    if urlToPlay and len(urlToPlay)>0:
-        listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
-    #    print   "playing stream name: " + str(name) 
-        xbmc.Player(  ).play( urlToPlay, listitem)  
-    else:
-       if RefreshResources([('live365.py','https://raw.githubusercontent.com/Shani-08/ShaniXBMCWork2/master/plugin.video.ZemTV-shani/live365.py')]):
-            dialog = xbmcgui.Dialog()
-            ok = dialog.ok('XBMC', 'No Links, so updated files dyamically, try again, just in case!')           
-            print 'Updated files'
+    played=False
+    forced=False
+    try:
+        import live365
+        forced=not live365.isvalid()
+        urlToPlay=live365.selectMatch(url)
+        if urlToPlay and len(urlToPlay)>0:
+            
+            listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
+            if 'f4mtester' in urlToPlay:
+                xbmc.executebuiltin('XBMC.RunPlugin('+urlToPlay+')') 
+            else:        
+        #    print   "playing stream name: " + str(name) 
+                #xbmc.Player().play( urlToPlay, listitem)  
+                progress.close()
+                #xbmc.Player().play( urlToPlay, listitem)  
+                played=tryplay(urlToPlay,listitem) 
+    except:
+        pass
+    import time
+    if not played and RefreshResources([('live365.py','http://shani.offshorepastebin.com/live365.py',forced)]):
+        
+        dialog = xbmcgui.Dialog()
+        ok = dialog.ok('XBMC', 'Updated files dyamically, Try to play again, just in case!')          
+        print 'Updated files'
     return
     
+def PlaySafeLink(url):
+
+
+    #print 'safe url',url    
+    import websocket
+    ws = websocket.WebSocket()
+    
+    header=[base64.b64decode("T3JpZ2luOiBodHRwOi8vY3VzdG9tZXIuc2FmZXJzdXJmLmNvbQ=="),"User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36"]
+    ws.connect(base64.b64decode("d3M6Ly81Mi40OC44Ni4xMzU6MTMzOC90Yi9tM3U4L21hc3Rlci9zaXRlaWQvY3VzdG9tZXIub25saW5ldHYudjM="),header=header)
+    jsdata='[{"key":"type","value":"info"},{"key":"info","value":"speedtest"},{"key":"country","value":""},{"key":"language","value":"en"},{"key":"speedTestSize","value":"210"},{"key":"kbPs","value":"3554.38"},{"key":"speedResKb","value":"4G"},{"key":"speedResTime","value":"4G"},{"key":"websocketSupport","value":"true"},{"key":"speedTestInTime","value":"true"},{"key":"flash","value":"true"},{"key":"touchScreen","value":"false"},{"key":"rotationSupport","value":"false"},{"key":"pixelRatio","value":"1"},{"key":"width","value":"1920"},{"key":"height","value":"1080"},{"key":"mobilePercent","value":"0"}]'
+    ws.send(jsdata)
+    result = ws.recv()   
+
+    jsdata='[{"key":"type","value":"channelrequest"},{"key":"dbid","value":"%s"},{"key":"tbid","value":""},{"key":"format","value":"masterm3u8"},{"key":"proxify","value":"true"},{"key":"bitrate","value":"1368000"},{"key":"maxbitrate","value":"3305000"}]'%url
+    ws.send(jsdata)
+    result = ws.recv()
+    #print repr(result)
+    #ws.close()
+    headers = [('Referer', base64.b64decode('aHR0cDovL2N1c3RvbWVyLnNhZmVyc3VyZi5jb20vb25saW5ldHYuaHRtbA==')),('User-Agent','Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'),('Origin',base64.b64decode('aHR0cDovL2N1c3RvbWVyLnNhZmVyc3VyZi5jb20='))]
+    url=re.findall('[\'"](http.*?)[\'"]',result)[0]
+    result=getUrl(url,headers=headers)
+    urlToPlay=re.findall('(http.*?)\s',result)[-1]
+    import random
+    listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
+    xbmc.Player(  ).play( urlToPlay+base64.b64decode('fE9yaWdpbj1odHRwOi8vY3VzdG9tZXIuc2FmZXJzdXJmLmNvbSZVc2VyLUFnZW50PU1vemlsbGEvNS4wIChXaW5kb3dzIE5UIDYuMSkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzUyLjAuMjc0My4xMTYgU2FmYXJpLzUzNy4zNiZSZWZlcmVyPWh0dHA6Ly9jdXN0b21lci5zYWZlcnN1cmYuY29tL29ubGluZXR2Lmh0bWw='), listitem)
+     
 def PlayPV2Link(url):
 
     if not mode==37:
@@ -3882,39 +4900,42 @@ def PlayPV2Link(url):
     if '|' not in urlToPlay:
         urlToPlay+='|'
     import random
-    useragent='User-Agent: AppleCoreMedia/1.%s.%s (iPhone; U; CPU OS 9_3_2%s like Mac OS X; en_gb)'%(binascii.b2a_hex(os.urandom(2))[:2],binascii.b2a_hex(os.urandom(2))[:2],binascii.b2a_hex(os.urandom(2))[:3])
+    useragent='User-Agent=AppleCoreMedia/1.0.0.%s (%s; U; CPU OS %s like Mac OS X; en_gb)'%(random.choice(['13G34' ,'13G36']),random.choice(['iPhone','iPad','iPod']),random.choice(['9_3_3','9_3_4','9_3_5']))
     urlToPlay+=useragent
-    try:
-        if 'iptvaus.dynns.com' in urlToPlay:# quickfix
-            a=urllib.urlopen('http://iptvaus.dynns.com/')
-            if a.getcode()==502: #server not found
-                urlToPlay=urlToPlay.replace('iptvaus.dynns.com','130.185.144.63')
-    except:
-        pass
-    print 'before ind',urlToPlay
-    try:
-        if ('indaus.dynns.com' in urlToPlay) and 'm3u8' in urlToPlay:# quickfix
-            testh=getUrl(urlToPlay.split('|')[0],headers=[('User-Agent',useragent)])
-    except:
-        urlToPlay=urlToPlay.replace('indaus.dynns.com','130.185.144.63')
+    #try:
+    #    if 'iptvaus.dynns.com' in urlToPlay:# quickfix
+    #        a=urllib.urlopen('http://iptvaus.dynns.com/')
+    #        if a.getcode()==502: #server not found
+    #            urlToPlay=urlToPlay.replace('iptvaus.dynns.com','130.185.144.63')
+    #except:
+    #    pass
+    #print 'before ind',urlToPlay
+    #try:
+    #    if ('indaus.dynns.com' in urlToPlay) and 'm3u8' in urlToPlay:# quickfix
+    #        testh=getUrl(urlToPlay.split('|')[0],headers=[('User-Agent',useragent)])
+    #except:
+    #    urlToPlay=urlToPlay.replace('indaus.dynns.com','130.185.144.63')
         
-    try:
-        if ('movaus.dynns.com' in urlToPlay) and 'm3u8' in urlToPlay:# quickfix
-            testh=getUrl(urlToPlay.split('|')[0],headers=[('User-Agent',useragent)])
-    except:
-        urlToPlay=urlToPlay.replace('movaus.dynns.com','130.185.144.112')
+    #try:
+    #    if ('movaus.dynns.com' in urlToPlay) and 'm3u8' in urlToPlay:# quickfix
+    #        testh=getUrl(urlToPlay.split('|')[0],headers=[('User-Agent',useragent)])
+    #except:
+    #    urlToPlay=urlToPlay.replace('movaus.dynns.com','130.185.144.112')
         
 
 #    print 'urlToPlay',urlToPlay
     listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
 #    print "playing stream name: " + str(name) 
+#88.150.206.7 last ip
     if not tryplay(urlToPlay, listitem):
-        if '130.185.144.63' not in urlToPlay:
-            urlToPlay='http://130.185.144.63:8081'+'/'.join(urlToPlay.split('/')[3:])
-            if not tryplay(urlToPlay, listitem):
-                urlToPlay='http://130.185.144.112:8081'+'/'.join(urlToPlay.split('/')[3:])
-                tryplay(urlToPlay, listitem)
- 
+        if '130.185.144.112' not in urlToPlay:
+            urlToPlay2='http://130.185.144.112:8081'+'/'.join(urlToPlay.split('/')[3:])          
+            if not tryplay(urlToPlay2, listitem):
+                return False
+                #if 'live2.dynns.com' not in urlToPlay:
+                #    urlToPlay2='http://live2.dynns.com:8081'+'/'.join(urlToPlay.split('/')[3:])                      
+                #    tryplay(urlToPlay2, listitem)
+    
 def PlayOtherUrl ( url ):
     checkbad.do_block_check(False)
     url=base64.b64decode(url)
@@ -3937,7 +4958,7 @@ def PlayOtherUrl ( url ):
         PlayDittoLive(url.split('ditto:')[1])
         return
     if "Sports365:" in url:
-        playSports365(url.split('Sports365:')[1])
+        playSports365(url.split('Sports365:')[1],progress)
         return
     if "CF:" in url:
         PlayCFLive(url.split('CF:')[1])
@@ -3947,6 +4968,9 @@ def PlayOtherUrl ( url ):
         return
     if "direct:" in url:
         PlayGen(base64.b64encode(url.split('direct:')[1]))
+        return    
+    if "direct3:" in url:
+        PlayGen(base64.b64encode(url.split('direct3:')[1]),True,followredirect=True)
         return    
     if "ipbox:" in url:
         playipbox(url.split('ipbox:')[1])
@@ -3958,25 +4982,59 @@ def PlayOtherUrl ( url ):
         PlayGen(base64.b64encode(url.split('direct2:')[1]),True)
         return
     if "ptc:" in url:
-        PlayGen(base64.b64encode(url.split('ptc:')[1]+getPTCAuth()))
+        PlayGen(base64.b64encode(url.split('ptc:')[1]+getPTCAuth()+'|User-Agent=AppleCoreMedia/1.0.0.13A452 (iPhone; U; CPU OS 9_0_2 like Mac OS X; en_gb)'))
         return    
     if "pv2:" in url:
         PlayPV2Link(url.split('pv2:')[1])
-        return    
+        return 
+    if "safe:" in url:
+        PlaySafeLink(url.split('safe:')[1])
+        return        
+    if "tvplayer:" in url:
+        playtvplayer(url.split('tvplayer:')[1])
+        return  
+    if "streamhd:" in url:
+        playstreamhd(url.split('streamhd:')[1])
+        return
+    if "mamahd:" in url:
+        playmamahd(url.split('mamahd:')[1])
+        return
+        
+    if "hdfree:" in url:
+        playHDFree(url.split('hdfree:')[1])
+        return                       
+    if "infi:" in url:
+        playInfinite(url.split('infi:')[1])
+        return                       
+    if "zenga:" in url:
+        playzenga(url.split('zenga:')[1],progress)
+        return          
+        
+       
     if url in [base64.b64decode('aHR0cDovL2xpdmUuYXJ5bmV3cy50di8='),
             base64.b64decode('aHR0cDovL2xpdmUuYXJ5emluZGFnaS50di8='),
             base64.b64decode('aHR0cDovL2xpdmUuYXJ5cXR2LnR2Lw=='),
             base64.b64decode('aHR0cDovL2xpdmUuYXJ5bXVzaWsudHYv'),
             base64.b64decode('aHR0cDovL2xpdmUuYXJ5ZGlnaXRhbC50di8=')]:
         req = urllib2.Request(url)
+        
         req.add_header('User-Agent', base64.b64decode('TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgNi4xOyBXT1c2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzQ3LjAuMjUyNi4xMTEgU2FmYXJpLzUzNy4zNg==')) 
         response = urllib2.urlopen(req)
         link=response.read()
+        print link
+        paa='(content.jwplatform.com.players.*?.js)'
+        ln=re.findall(paa,link)
+        if len(ln)>0:
+            print ln, 'ln val'
+            link=getUrl('http://'+ln[0])
+        
 #        curlpatth='file: "(htt.*?)"' if 'qtv' not in url else 'file: \'(.*?)\''
-        curlpatth='file: [\'"](.*?)[\'"]'
-        if curlpatth.startswith('rtmp'): curlpatth+=' timeout=20'
+        curlpatth='file[\'"]?: [\'"](.*?)[\'"]'
+        
         progress.update( 50, "", "Preparing url..", "" )
-        dag_url =re.findall(curlpatth,link)[0]
+        dag_url =re.findall(curlpatth,link)[-1]
+        if dag_url.startswith('rtmp'): dag_url+=' timeout=20'
+        direct=True
     elif url=='etv':
         req = urllib2.Request(base64.b64decode('aHR0cDovL20ubmV3czE4LmNvbS9saXZlLXR2L2V0di11cmR1'))
         req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
@@ -4137,7 +5195,7 @@ def AddChannelsFromEbound():
 
     match.append(('Quran TV Urdu','aHR0cDovL2lzbDEuaXNsYW00cGVhY2UuY29tL1F1cmFuVXJkdVRW','gen'))
     match.append(('Channel 24','cnRtcDovL2RzdHJlYW1vbmUuY29tOjE5MzUvbGl2ZS8gcGxheXBhdGg9Y2l0eTQyIHN3ZlVybD1odHRwOi8vZHN0cmVhbW9uZS5jb20vanAvandwbGF5ZXIuZmxhc2guc3dmIHBhZ2VVcmw9aHR0cDovL2RzdHJlYW1vbmUuY29tL2NpdHk0Mi9pZnJhbWUuaHRtbCB0aW1lb3V0PTIw','gen'))
-    match.append(('QTV','cnRtcDovLzkzLjExNS44NS4xNzoxOTM1L0FSWVFUVi9teVN0cmVhbSB0aW1lb3V0PTEw','gen'))
+    match.append(('QTV','aHR0cDovLzE1OC42OS4yMjkuMzA6MTkzNS9BUllRVFYvbXlTdHJlYW0vcGxheWxpc3QubTN1OA==','gen'))
     match.append(('SEE TV','cnRtcDovLzM2Nzc4OTg4Ni5yLm15Y2RuOTIubmV0LzM2Nzc4OTg4Ni9fZGVmaW5zdF8vIHBsYXlwYXRoPXNlZXR2IHN3ZlVybD1odHRwOi8vZHN0cmVhbW9uZS5jb20vanAvandwbGF5ZXIuZmxhc2guc3dmIHBhZ2VVcmw9aHR0cDovL2RzdHJlYW1vbmUuY29tL3NlZXR2L2lmcmFtZS5odG1sIHRpbWVvdXQ9MTA=','gen'))
 
 
@@ -4219,19 +5277,20 @@ def AddProgramsAndShows(Fromurl):
         link=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
 
     CookieJar.save (ZEMCOOKIEFILE,ignore_discard=True)
-    link=link.split('<select data-placeholder="Choose a Program..."')[1].split('</select>')[0]
-#    print link    
-    match =re.findall('<optgroup label=\'(.*?)\'', link, re.UNICODE)
+    link=link.split('<div class="title mb10">Programs')[1].split('</select>')[0]
+    print link    
+    match =re.findall('<optgroup label="(.*?)"', link, re.UNICODE)
+    print match
     h = HTMLParser.HTMLParser()
     #'<option value="(.*?)">(.*?)<'
     #<optgroup label='(.*?)'
     for cname in match:
         addDir(Colored(cname,'ZM'),cname ,-9,'', True,isItFolder=False)
-        subprogs=link.split('<optgroup label=\'%s\''%cname)[1].split('</optgroup>')[0]
+        subprogs=link.split('<optgroup label="%s"'%cname)[1].split('</optgroup>')[0]
         submatch=re.findall('<option value="(.*?)">(.*?)<', subprogs, re.UNICODE)
         for csubname in submatch:
     #		tname=cname[2]#
-            addDir('    '+csubname[1],mainurl+ csubname[0] ,43,'', True,isItFolder=True)
+            addDir('    '+csubname[1],'http://www.zemtv.com'+ csubname[0] ,43,'', True,isItFolder=True)
     return
 
     
@@ -4251,7 +5310,12 @@ def AddShows(Fromurl):
         import cloudflare
         cloudflare.createCookie(Fromurl,CookieJar,'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
         linkfull=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
-
+    pageNumber=1
+    catid=''
+    if not 'loopHandler' in Fromurl:
+        catid=re.findall("currentcat = (.*?);",linkfull)[0]
+        Fromurl='http://www.zemtv.com/wp-content/themes/zemresponsive/loopHandler.php?pageNumber=%s&catNumber=%s'%(str(pageNumber),catid)
+        linkfull=getUrl(Fromurl,cookieJar=CookieJar, headers=headers)
 
     #	print link
     #cloudflare.createCookie('http://www.movie25.ag/',Cookie_Jar,'Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1')
@@ -4265,29 +5329,11 @@ def AddShows(Fromurl):
     #	match =re.findall('<img src="(.*?)" alt=".*".+<\/a>\n*.+<div class="post-title"><a href="(.*?)".*<b>(.*)<\/b>', link, re.UNICODE)
     CookieJar.save (ZEMCOOKIEFILE,ignore_discard=True)
 
-    link=linkfull
-    if '<div id="top-articles">' in linkfull:
-        link=linkfull.split('<div id="top-articles">')[0]
-        
-    match =re.findall('<div class="thumbnail">\\s*<a href="(.*?)".*\s*<img class="thumb".*?src="(.*?)" alt="(.*?)"', link, re.UNICODE)
-    if len(match)==0:
-        match =re.findall('<div class="thumbnail">\s*<a href="(.*?)".*\s*<img.*?.*?src="(.*?)".* alt="(.*?)"', link, re.UNICODE)
+    
 
-    if not '/page/' in Fromurl:
-        try:
-            pat='\\<a href="(.*?)".*>\\s*<img.*?src="(.*?)".*\\s?.*?\\s*?<h1.*?>(.*?)<'
-    #        print linkfull
-            matchbanner=re.findall(pat, linkfull, re.UNICODE)
-    #        print 'matchbanner',matchbanner,match
-            if len(matchbanner)>0:
-                match=matchbanner+match
-        except: pass
-
-        
-    #	print link
-    #	print match
-
-    #	print match
+    match =re.findall('<div class="card">.*?<img src="(.*?)".*?<a href="(.*?)".*?>(.*?)<', linkfull, re.UNICODE|re.DOTALL)
+    #if len(match)==0:
+    #    match =re.findall('<div class="thumbnail">\s*<a href="(.*?)".*\s*<img.*?.*?src="(.*?)".* alt="(.*?)"', link, re.UNICODE)
     h = HTMLParser.HTMLParser()
 
     
@@ -4298,13 +5344,14 @@ def AddShows(Fromurl):
         except:
             tname=re.sub(r'[\x80-\xFF]+', convert,tname )
         #tname=repr(tname)
-        addDir(tname,cname[0] ,3,cname[1]+'|Cookie=%s'%getCookiesString(CookieJar)+'&User-Agent=Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10', True,isItFolder=False)
+        addDir(tname,cname[1] ,3,cname[0]+'|Cookie=%s'%getCookiesString(CookieJar)+'&User-Agent=Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10', True,isItFolder=False)
         
-
-    match =re.findall('<a class="nextpostslink" rel="next" href="(.*?)">', link, re.IGNORECASE)
-
-    if len(match)==1:
-        addDir('Next Page' ,match[0] ,2,'',isItFolder=True)
+    
+    pageNumber=re.findall("pageNumber=(.*?)&",Fromurl)[0]
+    catid=re.findall("&catNumber=(.*?)",Fromurl)[0]
+    pageNumber=int(pageNumber)+1
+    Fromurl='http://www.zemtv.com/wp-content/themes/zemresponsive/loopHandler.php?pageNumber=%s&catNumber=%s'%(str(pageNumber),catid)
+    addDir('Next Page' ,Fromurl ,2,'',isItFolder=True)
     #       print match
 
     return
@@ -4313,7 +5360,7 @@ def AddShowsFromSiasat(Fromurl):
 
     headers=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36')]       
     link=getUrl(Fromurl, headers=headers)
-    match =re.findall('href="(.*?)".*id="thread_title.*?>(.*?)<', link)
+    match =re.findall('<div class="threadinfo".*?<img src="(.*?)".*?href="(.*?)" id="thread_title.*?>(.*?)<', link, re.DOTALL)
     #if len(match)==0:
     #    match =re.findall('<div class="thumbnail">\s*<a href="(.*?)".*\s*<img.*?.*?src="(.*?)".* alt="(.*?)"', link, re.UNICODE)
 
@@ -4324,10 +5371,12 @@ def AddShowsFromSiasat(Fromurl):
     #	print match
     h = HTMLParser.HTMLParser()
 
-    #print match
+    print match
+    
     for cname in match:
-        tname=cname[1]
-        url=cname[0]
+        tname=cname[2]
+        url=cname[1]
+        imageurl=cname[0].replace('&amp;','&')
         try:
             tname=h.unescape(tname).encode("utf-8")
         except:
@@ -4335,9 +5384,12 @@ def AddShowsFromSiasat(Fromurl):
             
         if not url.startswith('http'):
             url='http://www.siasat.pk/forum/'+url
-        
+
+        if not imageurl.startswith('http'):
+            url='http://www.siasat.pk/forum/'+url
+            
         #tname=repr(tname)
-        addDir(tname,url,3,'', True,isItFolder=False)
+        addDir(tname,url,3,imageurl, True,isItFolder=False)
         
 
     match =re.findall('title="Results.*?<a href="(.*?)" title', link, re.IGNORECASE)
@@ -4363,27 +5415,27 @@ def getCookiesString(cookieJar):
     #print 'cookieString',cookieString
     return cookieString
 def AddChannels():
-	req = urllib2.Request(liveURL)
-	req.add_header('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
-	response = urllib2.urlopen(req)
-	link=response.read()
-	response.close()
-#	print link
-#	match=re.compile('<param name="URL" value="(.+?)">').findall(link)
-#	match=re.compile('<a href="(.+?)"').findall(link)
-#	match=re.compile('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>').findall(link)
-#	match =re.findall('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
-#	match =re.findall('onclick="playChannel\(\'(.*?)\'\);".?>(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
-#	match =re.findall('<div class=\"post-title\"><a href=\"(.*?)\".*<b>(.*)<\/b><\/a>', link, re.IGNORECASE)
-#	match =re.findall('<img src="(.*?)" alt=".*".+<\/a>\n*.+<div class="post-title"><a href="(.*?)".*<b>(.*)<\/b>', link, re.UNICODE)
+    req = urllib2.Request(liveURL)
+    req.add_header('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+    response = urllib2.urlopen(req)
+    link=response.read()
+    response.close()
+    #	print link
+    #	match=re.compile('<param name="URL" value="(.+?)">').findall(link)
+    #	match=re.compile('<a href="(.+?)"').findall(link)
+    #	match=re.compile('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>').findall(link)
+    #	match =re.findall('onclick="playChannel\(\'(.*?)\'\);">(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
+    #	match =re.findall('onclick="playChannel\(\'(.*?)\'\);".?>(.*?)</a>', link, re.DOTALL|re.IGNORECASE)
+    #	match =re.findall('<div class=\"post-title\"><a href=\"(.*?)\".*<b>(.*)<\/b><\/a>', link, re.IGNORECASE)
+    #	match =re.findall('<img src="(.*?)" alt=".*".+<\/a>\n*.+<div class="post-title"><a href="(.*?)".*<b>(.*)<\/b>', link, re.UNICODE)
 
-	match =re.findall('<div class="epic-cs">\s*<a href="(.+)" rel=.*<img src="(.+)" alt="(.+)" \/>', link, re.UNICODE)
+    match =re.findall('<div class="epic-cs">\s*<a href="(.+)" rel=.*<img src="(.+)" alt="(.+)" \/>', link, re.UNICODE)
 
-#	print match
-	h = HTMLParser.HTMLParser()
-	for cname in match:
-		addDir(Colored(h.unescape(cname[2].replace("Watch Now Watch ","").replace("Live, High Quality Streaming","").replace("Live &#8211; High Quality Streaming","").replace("Watch Now ","")) ,'ZM'),cname[0] ,4,cname[1],False,True,isItFolder=False)		
-	return	
+    #	print match
+    h = HTMLParser.HTMLParser()
+    for cname in match:
+        addDir(Colored(h.unescape(cname[2].replace("Watch Now Watch ","").replace("Live, High Quality Streaming","").replace("Live &#8211; High Quality Streaming","").replace("Watch Now ","")) ,'ZM'),cname[0] ,4,cname[1],False,True,isItFolder=False)		
+    return	
 
 	
 	
@@ -4442,6 +5494,11 @@ def PlayShowLink ( url, redirect=True ):
         listitem.setProperty('mimetype', 'video/x-msvideo')
         listitem.setProperty('IsPlayable', 'true')
         print 'playURL',playURL
+        try: 
+            import urlresolver  
+        except: 
+            print 'urlresolver err'
+            traceback.print_exc(file=sys.stdout)
         stream_url = urlresolver.HostedMediaFile(playURL).resolve()
         print stream_url
         playlist.add(stream_url,listitem)
@@ -4483,7 +5540,11 @@ def PlayShowLink ( url, redirect=True ):
                 return 
             playURL=match[0][0]
             pat='<source src="(.*?)"'
+            #print 'source is',playURL
+            if playURL.startswith('//'): playURL='http:'+playURL
+            #print playURL
             link=getUrl(playURL,cookieJar=CookieJar, headers=headers)
+            #print link
             playURL=re.findall(pat, link)
             stream_url=playURL[0]
         playlist = xbmc.PlayList(1)
@@ -4545,6 +5606,11 @@ def PlayShowLink ( url, redirect=True ):
         listitem.setInfo("Video", {"Title":name})
         listitem.setProperty('mimetype', 'video/x-msvideo')
         listitem.setProperty('IsPlayable', 'true')
+        try: 
+            import urlresolver  
+        except: 
+            print 'urlresolver err'
+            traceback.print_exc(file=sys.stdout)
         stream_url = urlresolver.HostedMediaFile(playURL).resolve()
     #		print stream_url
         playlist.add(stream_url,listitem)
@@ -4623,85 +5689,253 @@ def PlayShowLink ( url, redirect=True ):
         xbmc.executebuiltin("xbmc.PlayMedia("+uurl+")")
 
     return
+    
+def get_treabaAia():
+    val=""
+    import math
+    for d in [5.6
+            ,12.1
+            ,7.5
+            ,3.3
+            ,11.8
+            ,7
+            ,11.6
+            ,9
+            ,10.7
+            ,6.6
+            ,3.5
+            ,10.1
+            ,11.8
+            ,7.1
+            ,11.5]:
+        val +=  chr(int(math.floor(d * 10)));
+    return val
 
+#print 
+
+def generateKey(tokenexpiry):
+    import hashlib
+    return hashlib.md5(tokenexpiry+get_treabaAia()).hexdigest()
+
+
+def playstreamhd(url):
+    import re,urllib,json
+    headers=[('Referer','http://streamhdeu.com/'),('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36')]
+
+    watchHtml=getUrl(url,headers=headers)
+    videframe=re.findall('"videoiframe" src="(.*?)"' ,watchHtml)[0]
+    
+    videoframedata=getUrl(videframe,headers=headers)
+    iframe=re.findall('iframe src="(.*?)"' ,videoframedata)
+    if len(iframe)>0:
+        
+        iframdata=getUrl(iframe[0],headers=headers)
+        iframe=iframe[0]
+    else:
+        if 'hdcast' in videoframedata or 'static.bro' in videoframedata:
+            return playHDCast(videframe, "http://streamhdeu.com/","http://streamhd.eu/")
+        iframdata=videoframedata
+    m3ufile=re.findall('file: "(.*?)"' ,iframdata)[0]
+
+    PlayGen(base64.b64encode(m3ufile+'|User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'))
+    return 
+    
+def playmamahd(url):
+    import re,urllib,json
+    headers=[('Referer','http://mamahd.com/index.html'),('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36')]
+
+    watchHtml=getUrl(url,headers=headers)
+    videframe=re.findall('<iframe wid.*?src="(.*?)"' ,watchHtml)[0]
+    watchHtml=getUrl(videframe,headers=headers)
+    if 'hdcast' in watchHtml or 'static.bro' in watchHtml:
+        return playHDCast(videframe, "http://mamahd.com/")
+    return 
+    
+def playzenga(url,progress):
+    import re,urllib,json
+    listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
+
+    playurl=''
+    try:
+
+        headers=[('Referer','http://ada.zengatv.com/'),('User-Agent','Mozilla/5.0 (iPhone; CPU iPhone OS 9_0_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13A452 (5215161440)')]
+        
+        jsfile=getUrl(base64.b64decode('aHR0cDovL2FkYS56ZW5nYXR2LmNvbS9jb250cm9sbGVycy9MaXZlUGxheWVyQ29udHJvbGxlci5qcw=='),headers=headers)
+        reg= "var dvrid.*?\s.*?\"(http.*)\s"
+        
+        churl=re.findall(reg,jsfile)[0]
+        churl=churl.replace('" + dvrid + "',url)
+        headers=[('Referer','http://ada.zengatv.com/'),('Origin','http://ada.zengatv.com/'),('User-Agent','Mozilla/5.0 (iPhone; CPU iPhone OS 9_0_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13A452 (5215161440)')]
+        xmlfile=getUrl(churl,headers=headers)
+        reg= "(http.*?)\]?\]?>"
+        m3uurl=re.findall(reg,xmlfile)[0]
+        
+        playurl=m3uurl+'|User-Agent=Mozilla/5.0 (iPhone; CPU iPhone OS 9_0_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13A452 (5215161440)&Referer=http://ada.zengatv.com/'
+        
+    except: 
+        traceback.print_exc(file=sys.stdout)
+        playurl=''
+    progress.close()
+    xbmc.Player().play( playurl, listitem)
+        
+    
+def playtvplayer(url):
+    import re,urllib,json
+    listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
+
+    playurl=''
+    try:
+        watchHtml=getUrl(url)
+        channelid=re.findall('resourceId = "(.*?)"' ,watchHtml)[0]
+        validate=re.findall('var validate = "(.*?)"' ,watchHtml)[0]
+       
+        cj = cookielib.LWPCookieJar()
+        data = urllib.urlencode({'service':'1','platform':'website','token':'null','validate':validate ,'id' : channelid})
+        headers=[('Referer','http://tvplayer.com/watch/'),('Origin','http://tvplayer.com'),('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36')]
+        retjson=getUrl("http://api.tvplayer.com/api/v2/stream/live",post=data, headers=headers,cookieJar=cj);
+        jsondata=json.loads(retjson)
+    #    print cj
+        cj = cookielib.LWPCookieJar()
+        playurl1=jsondata["tvplayer"]["response"]["stream"]
+        m3utext=getUrl(playurl1, headers=headers,cookieJar=cj);
+        #playurl1=re.findall('(http.*)',m3utext)[-1]
+        playurl=playurl1+'|Cookie=%s&User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36&X-Requested-With=ShockwaveFlash/22.0.0.209&Referer=http://tvplayer.com/watch/'%getCookiesString(cj)
+        
+    except: 
+        traceback.print_exc(file=sys.stdout)
+        playurl=''
+    if playurl=='' or not tryplay(playurl+'|Cookie=%s&User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36&X-Requested-With=ShockwaveFlash/22.0.0.209&Referer=http://tvplayer.com/watch/'%getCookiesString(cj),listitem):
+        playtvplayerfallback(url)
+    return 
+    
+def playtvplayerfallback(url):
+    import re,urllib,json
+    watchHtml=getUrl(url.replace('/watch/','/watch/fallback/'))
+    channelid=re.findall('var initialChannelId = "(.*?)"' ,watchHtml)[0]
+    hashval=urllib.unquote(re.findall('hash = "(.*?)"' ,watchHtml)[0])
+    expval=re.findall('exp = "(.*?)"' ,watchHtml)[0]
+    keyval=generateKey(expval)
+    cj = cookielib.LWPCookieJar()
+    data = urllib.urlencode({'id' : channelid})
+    headers=[('Token-Expiry',expval) ,('Hash',hashval),('Key',keyval),('Referer','http://assets.tvplayer.com/web/flash/tvplayer/TVPlayer-DFP-3.swf'),('X-Requested-With','ShockwaveFlash/22.0.0.209')]
+    retjson=getUrl("http://live.tvplayer.com/stream-web-encrypted.php",post=data, headers=headers,cookieJar=cj);
+    jsondata=json.loads(retjson)
+#    print cj
+    playurl=jsondata["tvplayer"]["response"]["stream"]
+    listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
+
+    return tryplay(playurl+'|Cookie=%s&User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36&X-Requested-With=ShockwaveFlash/22.0.0.209&Referer=http://tvplayer.com/watch/'%getCookiesString(cj),listitem)
+    
+    
 def ShowAllSources(url, loadedLink=None):
-	global linkType
-#	print 'show all sources',url
-	link=loadedLink
-	if not loadedLink:
-		req = urllib2.Request(url)
-		req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
-		response = urllib2.urlopen(req)
-		link=response.read()
-		response.close()
-	available_source=[]
-	playURL =re.findall('src=".*?(playwire).*?data-publisher-id="(.*?)"\s*data-video-id="(.*?)"', link)
-#	print 'playURL',playURL
-	if not len(playURL)==0:
-		available_source.append('Playwire Source')
+    global linkType
+    #	print 'show all sources',url
+    link=loadedLink
+    if not loadedLink:
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')
+        response = urllib2.urlopen(req)
+        link=response.read()
+        response.close()
+    available_source=[]
+    playURL =re.findall('src=".*?(playwire).*?data-publisher-id="(.*?)"\s*data-video-id="(.*?)"', link)
+    #	print 'playURL',playURL
+    if not len(playURL)==0:
+        available_source.append('Playwire Source')
 
-	playURL =re.findall('data-config="(.*?config.playwire.com.*?)"', link)
-#	print 'playURL',playURL
-	if not len(playURL)==0:
-		available_source.append('Playwire Source')
+    playURL =re.findall('data-config="(.*?config.playwire.com.*?)"', link)
+    #	print 'playURL',playURL
+    if not len(playURL)==0:
+        available_source.append('Playwire Source')
 
-	playURL =re.findall('src="(.*?ebound\\.tv.*?)"', link)
-#	print 'playURL',playURL
-	if not len(playURL)==0:
-		available_source.append('Ebound Source')		
-	else:
-		playURL =re.findall('src="(.*?poovee\.net.*?)"', link)
-		if not len(playURL)==0:
-			available_source.append('Ebound Source')		
+    playURL =re.findall('src="(.*?ebound\\.tv.*?)"', link)
+    #	print 'playURL',playURL
+    if not len(playURL)==0:
+        available_source.append('Ebound Source')		
+    else:
+        playURL =re.findall('src="(.*?poovee\.net.*?)"', link)
+        if not len(playURL)==0:
+            available_source.append('Ebound Source')		
         
-	playURL= match =re.findall('src="(.*?(dailymotion).*?)"',link)
-	if not len(playURL)==0:
-		available_source.append('Daily Motion Source')
+    playURL= match =re.findall('src="(.*?(dailymotion).*?)"',link)
+    if not len(playURL)==0:
+        available_source.append('Daily Motion Source')
 
-	playURL= match =re.findall('src="(.*?(vidrail\.com).*?)"',link)
-	if not len(playURL)==0:
-		available_source.append('Vidrail Source')
+    playURL= match =re.findall('src="(.*?(vidrail\.com).*?)"',link)
+    if not len(playURL)==0:
+        available_source.append('Vidrail Source')
         
-	playURL= match =re.findall('src="(.*?(tune\.pk).*?)"', link)
-	if not len(playURL)==0:
-		available_source.append('Link Source')
+    playURL= match =re.findall('src="(.*?(tune\.pk).*?)"', link)
+    if not len(playURL)==0:
+        available_source.append('Link Source')
 
-	playURL= match =re.findall('<strong>Youtube<\/strong>.*?src=\".*?embed\/(.*?)\?.*\".*?<\/iframe>', link,re.DOTALL| re.IGNORECASE)
-	if not len(playURL)==0:
-		available_source.append('Youtube Source')
+    playURL= match =re.findall('<strong>Youtube<\/strong>.*?src=\".*?embed\/(.*?)\?.*\".*?<\/iframe>', link,re.DOTALL| re.IGNORECASE)
+    if not len(playURL)==0:
+        available_source.append('Youtube Source')
 
-	if len(available_source)>0:
-		if len(available_source)==1:
-			linkType=available_source[0].replace(' Source','').replace('Daily Motion','DM').upper()
-			PlayShowLink(url, redirect=False);
-		else:    
-			dialog = xbmcgui.Dialog()
-			index = dialog.select('Choose your stream', available_source)
-			if index > -1:
-				linkType=available_source[index].replace(' Source','').replace('Daily Motion','DM').upper()
-#				print 'linkType',linkType
-				PlayShowLink(url);
+    if len(available_source)>0:
+        if len(available_source)==1:
+            linkType=available_source[0].replace(' Source','').replace('Daily Motion','DM').upper()
+            PlayShowLink(url, redirect=False);
+        else:    
+            dialog = xbmcgui.Dialog()
+            index = dialog.select('Choose your stream', available_source)
+            if index > -1:
+                linkType=available_source[index].replace(' Source','').replace('Daily Motion','DM').upper()
 
+                PlayShowLink(url);
+def findInDic(lst, key, value):
+    for i, dic in enumerate(lst):
+        if dic[key] == value:
+            return dic
+    return None
 def PlayDittoLive(url):
     progress = xbmcgui.DialogProgress()
     progress.create('Progress', 'Fetching Streaming Info')
     progress.update( 10, "", "Finding links..", "" )
 
     req = urllib2.Request(url)
-    req.add_header('Referer', base64.b64decode('aHR0cDovL3d3dy5kaXR0b3R2LmNvbS9pbmRleC5waHA/cj1saXZlLXR2L3ZpZXcmaWQ9MTAwMTk='))
+    req.add_header('Referer', base64.b64decode('aHR0cDovL29yaWdpbi5kaXR0b3R2LmNvbS8='))
     req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36')
     response = urllib2.urlopen(req)
     link=response.read()
     response.close()
+    #pro_reg='class="live-program-id" value="(.*?)"'
+    pl_reg='window.pl_data = (\{.*?"key":.*?\}\})'
+    #videoid=re.findall(pro_reg, link)[0]
+    videoid=url.split('/')[-1]
+    playdata=re.findall(pl_reg, link)[0]
+
+    
     progress.update( 50, "", "Finding links..", "" )
     try:
-        import json
-        data=json.loads(link)
-        playfile=data["link"]+'|User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36&Referer=http://www.dittotv.com/index.php?r=live-tv/link'#+urllib.unquote(url)
-    except:
+        #print videoid
+        #print 'string data',playdata
+        playdata=playdata.replace('null','None')
+        playdata=playdata.replace('false','False')
+        playdata=playdata.replace('true','True')
+        playdata=eval(playdata)
+
+        vobject=findInDic(playdata["live"]["channel_list"], 'videoid',videoid)
+        #print vobject
+        url=vobject["file"]
+        if not (url.startswith('http') or url.startswith('rtmp')):
+            import pyaes
+            url=url.decode("base64")
+            key=playdata["live"]["key"].decode("base64")
     
-        playlink=re.findall('source type="application/x-mpegurl"  src="(.*?)"',link)[0]
-        playfile=playlink+'|User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36&Referer=http://www.dittotv.com/index.php?r=live-tv/link'#+urllib.unquote(url)
+            de = pyaes.new(key, pyaes.MODE_CBC, IV='\0'*16)
+            url =de.decrypt(url).replace('\x00', '').split('\0')[0]
+            url=re.sub('[^\s!-~]', '', url)
+            print url
+            playfile=url+'|User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36&Referer=http://origin.dittotv.com/livetv/zee-tv-uk'
+        #import json
+        #data=json.loads(link)
+        #playfile=data["link"]+'|User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36&Referer=http://www.dittotv.com/index.php?r=live-tv/link'#+urllib.unquote(url)
+    except:
+        traceback.print_exc(file=sys.stdout)
+        #playlink=re.findall('source type="application/x-mpegurl"  src="(.*?)"',link)[0]
+        #playfile=playlink+'|User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36&Referer=http://www.dittotv.com/index.php?r=live-tv/link'#+urllib.unquote(url)
 #    playfile =url+'?wmsAuthSign='+link+'|User-Agent=AppleCoreMedia/1.0.0.13A452 (iPhone; U; CPU OS 9_0_2 like Mac OS X; en_gb)'
     progress.update( 100, "", "Almost done..", "" )
     listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
@@ -4712,24 +5946,37 @@ def PlayCFLive(url):
     progress.create('Progress', 'Fetching Streaming Info')
     progress.update( 10, "", "Finding links..", "" )
 
-    req = urllib2.Request(base64.b64decode('aHR0cHM6Ly9jaW5lZnVudHYuY29tL3NtdGFsbmMvY29udGVudC5waHA/Y21kPWRldGFpbHMmQCZkZXZpY2U9aW9zJnZlcnNpb249MCZjb250ZW50aWQ9JXMmc2lkPSZ1PWMzMjgxOTMwQHRyYnZuLmNvbQ==')%url)
+    try:
+        #headers=[('User-Agent','Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')]
+        opener = urllib2.build_opener(NoRedirection)
+        opener.addheaders = [('User-agent', 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10')]
+        response = opener.open('https://cinefuntv.com/watchnow.php?content='+url)
+        html= response.read();#getUrl('https://cinefuntv.com/watchnow.php?content='+url,headers=headers)
+        #print html
+        playfile=re.findall('var cms_url = [\'"](.*?)[\'"]', html)[0]+'|User-Agent=Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10'
+    except: 
+        traceback.print_exc(file=sys.stdout)
+        playfile=''
+        
+    if playfile=='':
+        req = urllib2.Request(base64.b64decode('aHR0cHM6Ly9jaW5lZnVudHYuY29tL3NtdGFsbmMvY29udGVudC5waHA/Y21kPWRldGFpbHMmQCZkZXZpY2U9aW9zJnZlcnNpb249MCZjb250ZW50aWQ9JXMmc2lkPSZ1PWMzMjgxOTMwQHRyYnZuLmNvbQ==')%url)
+        req.add_header('User-Agent', base64.b64decode('Q0ZVTlRWLzMuMSBDRk5ldHdvcmsvNzU4LjAuMiBEYXJ3aW4vMTUuMC4w'))
+        response = urllib2.urlopen(req)
+        link=response.read()
+        response.close()
+        progress.update( 50, "", "Finding links..", "" )
+        import json
+        data=json.loads(link)
+        playfile=""
+        
+        playfile=data[0]["HLSURL"]
+        if playfile=="":
+            playfile=data[0]["SamsungURL"]
+        if playfile=="":
+            playfile=data[0]["PanasonicURL"]
 
-    req.add_header('User-Agent', base64.b64decode('Q0ZVTlRWLzMuMSBDRk5ldHdvcmsvNzU4LjAuMiBEYXJ3aW4vMTUuMC4w'))
-    response = urllib2.urlopen(req)
-    link=response.read()
-    response.close()
-    progress.update( 50, "", "Finding links..", "" )
-    import json
-    data=json.loads(link)
-    playfile=""
-    
-    playfile=data[0]["HLSURL"]
-    if playfile=="":
-        playfile=data[0]["SamsungURL"]
-    if playfile=="":
-        playfile=data[0]["PanasonicURL"]
-                
-    playfile+='|User-Agent=AppleCoreMedia/1.0.0.13A452 (iPhone; U; CPU OS 9_0_2 like Mac OS X; en_gb)'
+        
+        playfile+='|User-Agent=AppleCoreMedia/1.0.0.13A452 (iPhone; U; CPU OS 9_0_2 like Mac OS X; en_gb)'
 #    playfile =url+'?wmsAuthSign='+link+'|User-Agent=AppleCoreMedia/1.0.0.13A452 (iPhone; U; CPU OS 9_0_2 like Mac OS X; en_gb)'
     progress.update( 100, "", "Almost done..", "" )
     listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
@@ -4751,7 +5998,7 @@ def PlayEboundFromIOS(url):
     response.close()
     progress.update( 50, "", "Finding links..", "" )
 
-    playfile =url+'?wmsAuthSign='+link+'|User-Agent=AppleCoreMedia/1.0.0.13A452 (iPhone; U; CPU OS 9_0_2 like Mac OS X; en_gb)'
+    playfile =url+'?wmsAuthSign='+link+'|User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'
     progress.update( 100, "", "Almost done..", "" )
     listitem = xbmcgui.ListItem( label = str(name), iconImage = "DefaultVideo.png", thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ) )
     xbmc.Player(  ).play( playfile, listitem)
@@ -4803,181 +6050,223 @@ mode=None
 linkType=None
 
 try:
-	url=urllib.unquote_plus(params["url"])
+    url=urllib.unquote_plus(params["url"])
 except:
-	pass
+    pass
 try:
-	name=urllib.unquote_plus(params["name"])
+    name=urllib.unquote_plus(params["name"])
 except:
-	pass
+    pass
 try:
-	mode=int(params["mode"])
+    mode=int(params["mode"])
 except:
-	pass
+    pass
 
 
 args = cgi.parse_qs(sys.argv[2][1:])
 linkType=''
 try:
-	linkType=args.get('linkType', '')[0]
+    linkType=args.get('linkType', '')[0]
 except:
-	pass
+    pass
 
 
 print 	mode,url,linkType
-		
+
 try:
-	if mode==None or url==None or len(url)<1:
-		print "InAddTypes"
-		checkbad.do_block_check(False)
-		Addtypes()
-	elif mode==2 or mode==43:
-		print "Ent url is ",name,url        
-		AddEnteries(name, url)
+    if mode==None or url==None or len(url)<1:
+        print "InAddTypes"
+        checkbad.do_block_check(False)
+        Addtypes()
+    elif mode==2 or mode==43:
+        print "Ent url is ",name,url        
+        AddEnteries(name, url)
 
-	elif mode==3:
-		print "Play url is "+url
-		PlayShowLink(url)
+    elif mode==3:
+        print "Play url is "+url
+        PlayShowLink(url)
 
-	elif mode==4 or mode==9:
-		print "Play url is "+url
-		PlayLiveLink(url)
-	elif mode==11:
-		print "Play url is "+url
-		PlayOtherUrl(url)
+    elif mode==4 or mode==9:
+        print "Play url is "+url
+        PlayLiveLink(url)
+    elif mode==11:
+        print "Play url is "+url
+        PlayOtherUrl(url)
 
-	elif mode==6 :
-		print "Play url is "+url
-		ShowSettings(url)
-	elif mode==13 :
-		print "Play url is "+url
-		AddSports(url)
-	elif mode==14 or mode==144:
-		print "Play url is "+url
-		AddSmartCric(url)
-	elif mode==15 :
-		print "Play url is "+url
-		PlaySmartCric(url)
-	elif mode==16 :
-		print "Play url is "+url
-		AddWatchCric(url)
-	elif mode==17 :
-		print "Play url is "+url
-		PlayWatchCric(url)
-	elif mode==19 :
-		print "Play url is "+url
-		AddWillowCric(url)
-	elif mode==20:
-		print "Play url is "+url
-		AddWillSportsOldSeries(url)
-	elif mode==21 or mode==22:
-		print "Play url is "+url
-		PlayWillowMatch(url)        
-	elif mode==23:
-		print "Play url is "+url
-		AddWillowReplayParts(url)        
-	elif mode==24:
-		print "Play url is "+url
-		AddWillSportsOldSeriesMatches(url)        
+    elif mode==6 :
+        print "Play url is "+url
+        ShowSettings(url)
+    elif mode==13 :
+        print "Play url is "+url
+        AddSports(url)
+    elif mode==14 or mode==144:
+        print "Play url is "+url
+        AddSmartCric(url)
+    elif mode==15 :
+        print "Play url is "+url
+        PlaySmartCric(url)
+    elif mode==16 :
+        print "Play url is "+url
+        AddWatchCric(url)
+    elif mode==17 :
+        print "Play url is "+url
+        PlayWatchCric(url)
+    elif mode==19 :
+        print "Play url is "+url
+        AddWillowCric(url)
+    elif mode==20:
+        print "Play url is "+url
+        AddWillSportsOldSeries(url)
+    elif mode==21 or mode==22:
+        print "Play url is "+url
+        PlayWillowMatch(url)        
+    elif mode==23:
+        print "Play url is "+url
+        AddWillowReplayParts(url)        
+    elif mode==24:
+        print "Play url is "+url
+        AddWillSportsOldSeriesMatches(url)        
 
-	elif mode==26 :
-		print "Play url is "+url
-		AddCricHD(url)
-	elif mode==27 :
-		print "Play url is "+url
-		PlayCricHD(url)                
-	elif mode==31 :
-		print "Play url is "+url
-		AddFlashtv(url)                
-	elif mode==30 :
-		print "Play url is "+url
-		AddP3gSports(url)                
-	elif mode==32 :
-		print "Play url is "+url
-		PlayFlashTv(url)                
-	elif mode==33 :
-		print "Play url is "+url
-		PlayGen(url)                
-	elif mode==34 :
-		print "Play url is "+url
-		GetSSSEvents(url)                
-	elif mode==35 :
-		print "Play url is "+url
-		PlaySSSEvent(url)                
-	elif mode==36 :
-		print "Play url is "+url
-		AddPv2Sports(url) 
-	elif mode==37 :
-		print "Play url is "+url
-		PlayPV2Link(url) 
+    elif mode==26 :
+        print "Play url is "+url
+        AddCricHD(url)
+    elif mode==27 :
+        print "Play url is "+url
+        PlayCricHD(url)                
+    elif mode==31 :
+        print "Play url is "+url
+        AddFlashtv(url)                
+    elif mode==30 :
+        print "Play url is "+url
+        AddP3gSports(url)                
+    elif mode==32 :
+        print "Play url is "+url
+        PlayFlashTv(url)                
+    elif mode==33 :
+        print "Play url is "+url
+        PlayGen(url)                
+    elif mode==34 :
+        print "Play url is "+url
+        GetSSSEvents(url)                
+    elif mode==35 :
+        print "Play url is "+url
+        PlaySSSEvent(url)                
+    elif mode==36 :
+        print "Play url is "+url
+        AddPv2Sports(url) 
+    elif mode==37 :
+        print "Play url is "+url
+        PlayPV2Link(url) 
 
-	elif mode==39 :
-		print "Play url is "+url
-		AddStreamSports(url) 
-	elif mode==40 :
-		print "Play url is "+url
-		PlayStreamSports(url)         
-	elif mode==41 :
-		print "Play url is "+url
-		AddCricFree(url) 
-	elif mode==42 :
-		print "Play url is "+url
-		PlayCricFree(url) 
-	elif mode==45 :
-		print "Play url is "+url
-		PlayiptvLink(url) 
-	elif mode==46 :
-		print "Play url is "+url
-		addiptvSports(url) 
-	elif mode==51 :
-		print "Play url is "+url
-		AddPTCSports(url) 
-	elif mode==52 :
-		print "Play url is "+url
-		AddPakTVSports(url) 
-	elif mode==53 :
-		print "Play url is "+url
-		AddUniTVSports(url)       
-	elif mode==54 :
-		print "Play url is "+url
-		clearCache()
-	elif mode==55 :
-		print "Play url is "+url
-		AddIpBoxSources(url)     
-	elif mode==61 or mode==67:
-		print "Play url is "+url
-		AddIpBoxChannels(url)     
-	elif mode==56 :
-		print "Play url is 56"+url
-		AddSports365Channels(url) 
-	elif mode==57 :
-		print "Play url is 57"+url
-		AddUKTVNowChannels(url)     
-	elif mode==60 :
-		print "Play url is 60"+url
-		AddYuppSports(url)     
-	elif mode==62 :
-		print "Play url is "+url
-		AddWTVSports(url)
-	elif mode==66 :
-		print "Play url is "+url
-		ShowAllCategories(url)    
-	elif mode==68 :
-		print "Play url is "+url
-		AddMonaChannels(url)            
-	elif mode==70:
-		print "Play url is "+url
-		AddGTVSports(url)  
-	elif mode==71:
-		print "Play url is "+url
-		AddPITVSports(url)  
+    elif mode==39 :
+        print "Play url is "+url
+        AddStreamSports(url) 
+    elif mode==40 :
+        print "Play url is "+url
+        PlayStreamSports(url)         
+    elif mode==41 :
+        print "Play url is "+url
+        AddCricFree(url) 
+    elif mode==42 :
+        print "Play url is "+url
+        PlayCricFree(url) 
+    elif mode==45 :
+        print "Play url is "+url
+        PlayiptvLink(url) 
+    elif mode==46 :
+        print "Play url is "+url
+        addiptvSports(url) 
+    elif mode==51 :
+        print "Play url is "+url
+        AddPTCSports(url) 
+    elif mode==52 :
+        print "Play url is "+url
+        AddPakTVSports(url) 
+    elif mode==53 :
+        print "Play url is "+url
+        AddUniTVSports(url)       
+    elif mode==54 :
+        print "Play url is "+url
+        clearCache()
+    elif mode==55 :
+        print "Play url is "+url
+        AddIpBoxSources(url)     
+    elif mode==61 or mode==67:
+        print "Play url is "+url
+        AddIpBoxChannels(url)     
+    elif mode in [56,156]  :
+        print "Play url is 56"+url
+        AddSports365Channels(url) 
+    elif mode==57 :
+        print "Play url is 57"+url
+        AddUKTVNowChannels(url)     
+    elif mode==60 :
+        print "Play url is 60"+url
+        AddYuppSports(url)     
+    elif mode==62 :
+        print "Play url is "+url
+        AddWTVSports(url)
+    elif mode==66 :
+        print "Play url is "+url
+        ShowAllCategories(url)    
+    elif mode==68 :
+        print "Play url is "+url
+        AddMonaChannels(url)            
+    elif mode==70:
+        print "Play url is "+url
+        AddGTVSports(url)  
+    elif mode==71:
+        print "Play url is "+url
+        AddPITVSports(url)  
+    elif mode==72:
+        print "Play url is "+url
+        AddSafeLang(url)  
+    elif mode==73:
+        print "Play url is "+url
+        AddSafeChannels(url)  
+    elif mode==74:
+        print "Play url is "+url
+        AddTVPlayerChannels(url)        
+    elif mode==75:
+        print "Play url is "+url
+        #tst()
+        AddStreamHDCats(url)  
+    elif mode==76:
+        print "Play url is "+url
+        AddStreamHDChannels(url)
+    elif mode==77:
+        print "Play url is "+url
+        AddHDFreeChannels(url)    
+    elif mode==78:
+        print "Play url is "+url
+        AddInfiniteChannels(url)               
+    elif mode==79:
+        print "Play url is "+url
+        AddMAMAHDChannels(url)               
+    elif mode==80:
+        print "Play url is "+url
+        import time        
+        try:
+            if not recursive and  RefreshResources([('live365.py','http://shani.offshorepastebin.com/live365.py?t=%s'%str(int(time.time())),True)]):
+                dialog = xbmcgui.Dialog()
+                ok = dialog.ok('XBMC', 'Updated files! Try click Refresh Listing to see if it works')   
+            else:
+                dialog = xbmcgui.Dialog()
+                ok = dialog.ok('XBMC', 'Not updated, perhaps no change?')  
+                print 'Updated files'
+        except: traceback.print_exc(file=sys.stdout)
+    elif mode==81:
+        print "Play url is "+url
+        AddEuroStreamChannels(url)      
+        
 except:
-	print 'somethingwrong'
-	traceback.print_exc(file=sys.stdout)
-	
+
+    print 'somethingwrong'
+    traceback.print_exc(file=sys.stdout)
+
 
 if not ( (mode==3 or mode==4 or mode==9 or mode==11 or mode==15 or mode==21 or mode==22 or mode==27 or mode==33 or mode==35 or mode==37 or mode==40 or mode==42 or mode==45)  )  :
-	if mode==144:
-		xbmcplugin.endOfDirectory(int(sys.argv[1]),updateListing=True)
-	else:
-		xbmcplugin.endOfDirectory(int(sys.argv[1]))
+    if mode in [144,156]:
+        xbmcplugin.endOfDirectory(int(sys.argv[1]),updateListing=True)
+    else:
+        xbmcplugin.endOfDirectory(int(sys.argv[1]))
