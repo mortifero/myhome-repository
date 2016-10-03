@@ -28,7 +28,7 @@ class NoRedirection(urllib2.HTTPErrorProcessor):
        return response
    https_response = http_response
        
-Q1RWQmFzZQ0K = base64.b64decode('aHR0cDovL3d3dy5tYXRzYnVpbGRzLmNvLnVrL2hhbmsvZmN1a29mZi5YTUw=')
+Q1RWQmFzZQ0K = base64.b64decode('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL1dBTEtJTkdERUFEOTg3NDU2L3JpY2svbWFzdGVyL2ZvcmtvZmY=')
 addon = xbmcaddon.Addon('plugin.video.MoneySports')
 addon_version = addon.getAddonInfo('version')
 profile = xbmc.translatePath(addon.getAddonInfo('profile').decode('utf-8'))
