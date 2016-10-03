@@ -24,8 +24,8 @@ from urlresolver.resolver import UrlResolver, ResolverError
 
 class FastplayResolver(UrlResolver):
     name = 'fastplay.sx'
-    domains = ['fastplay.sx']
-    pattern = '(?://|\.)(fastplay\.sx)/(?:flash-|embed-)?([0-9a-zA-Z]+)'
+    domains = ['fastplay.sx', 'fastplay.cc']
+    pattern = '(?://|\.)(fastplay\.(?:sx|cc))/(?:flash-|embed-)?([0-9a-zA-Z]+)'
 
     def __init__(self):
         self.net = common.Net()
@@ -55,13 +55,3 @@ class FastplayResolver(UrlResolver):
 
     def get_url(self, host, media_id):
         return 'http://%s/embed-%s.html' % (host, media_id)
-
-    def get_host_and_id(self, url):
-        r = re.search(self.pattern, url)
-        if r:
-            return r.groups()
-        else:
-            return False
-
-    def valid_url(self, url, host):
-        return re.search(self.pattern, url) or self.name in host

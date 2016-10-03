@@ -44,13 +44,6 @@ class TwitchResolver(UrlResolver):
     def get_url(self, host, media_id):
         return 'https://%s/%s' % (host, media_id)
 
-    def get_host_and_id(self, url):
-        r = re.search(self.pattern, url, re.I)
-        if r:
-            return r.groups()
-        else:
-            return False
-
     @classmethod
     def _is_enabled(cls):
         if not common.has_addon('plugin.video.twitch'):
@@ -60,7 +53,7 @@ class TwitchResolver(UrlResolver):
     def valid_url(self, url, host):
         if common.has_addon('plugin.video.twitch'):
             if re.search(self.pattern, url, re.I):
-                return not re.match(self.exclusion_pattern, url, re.I) or self.name in host
+                return not re.match(self.exclusion_pattern, url, re.I) or any(host in domain.lower() for domain in self.domains)
         return False
 
     @classmethod
