@@ -35,45 +35,24 @@ icon = xbmc.translatePath(os.path.join(home, 'icon.png'))
 #############################
 f_music = xbmc.translatePath(os.path.join(artfolder, 'music.jpg'))
 f_sport = xbmc.translatePath(os.path.join(artfolder, 'sport.jpg'))
-f_beach = xbmc.translatePath(os.path.join(artfolder, 'beach.jpg'))
-f_child = xbmc.translatePath(os.path.join(artfolder, 'child.jpg'))
-f_movie = xbmc.translatePath(os.path.join(artfolder, 'movie.jpg'))
 f_nasa = xbmc.translatePath(os.path.join(artfolder, 'nasa.jpg'))
-f_news = xbmc.translatePath(os.path.join(artfolder, 'news.jpg'))
 f_pt = xbmc.translatePath(os.path.join(artfolder, 'pt.jpg'))
 f_ru = xbmc.translatePath(os.path.join(artfolder, 'radio.jpg'))
-f_tvshow = xbmc.translatePath(os.path.join(artfolder, 'tvshow.jpg'))
-f_inter = xbmc.translatePath(os.path.join(artfolder, 'inter.jpg'))
 f_search = xbmc.translatePath(os.path.join(artfolder, 'search.jpg'))
-f_motor = xbmc.translatePath(os.path.join(artfolder, 'motor.jpg'))
 ##############################3
 i_music = xbmc.translatePath(os.path.join(artfolder, 'music.png'))
 i_sport = xbmc.translatePath(os.path.join(artfolder, 'sport.png'))
-i_beach = xbmc.translatePath(os.path.join(artfolder, 'beach.png'))
-i_child = xbmc.translatePath(os.path.join(artfolder, 'child.png'))
-i_movie = xbmc.translatePath(os.path.join(artfolder, 'movie.png'))
 i_nasa = xbmc.translatePath(os.path.join(artfolder, 'nasa.png'))
-i_news = xbmc.translatePath(os.path.join(artfolder, 'news.png'))
 i_pt = xbmc.translatePath(os.path.join(artfolder, 'pt.png'))
 i_ru = xbmc.translatePath(os.path.join(artfolder, 'radio.png'))
-i_tvshow = xbmc.translatePath(os.path.join(artfolder, 'tvshow.png'))
-i_inter = xbmc.translatePath(os.path.join(artfolder, 'inter.png'))
 i_search = xbmc.translatePath(os.path.join(artfolder, 'search.png'))
-i_motor = xbmc.translatePath(os.path.join(artfolder, 'motor.png'))
 
 
 online_m3u = mysettings.getSetting('online_m3u')
-filmes_m3u = mysettings.getSetting('filmes_m3u')
-infantil_m3u = mysettings.getSetting('infantil_m3u')
 nasa_m3u = mysettings.getSetting('nasa_m3u')
-noticias_m3u = mysettings.getSetting('noticias_m3u')
 pt_m3u = mysettings.getSetting('pt_m3u')
 ru_m3u = mysettings.getSetting('ru_m3u')
 desporto_m3u = mysettings.getSetting('desporto_m3u')
-series_m3u = mysettings.getSetting('series_m3u')
-inter_m3u = mysettings.getSetting('inter_m3u')
-praias_m3u = mysettings.getSetting('praias_m3u')
-motor_m3u = mysettings.getSetting('motor_m3u')
 pessoal_m3u = mysettings.getSetting('pessoal_m3u')
 pessoal_local_m3u = mysettings.getSetting('pessoal_local_m3u')
 online_xml = mysettings.getSetting('online_xml')
@@ -83,6 +62,8 @@ martunis_m3u = mysettings.getSetting('martunis_m3u')
 argivai_m3u = mysettings.getSetting('argivai_m3u')
 iptvbrasil_m3u = mysettings.getSetting('iptvbrasil_m3u')
 algas_m3u = mysettings.getSetting('algas_m3u')
+tblue_m3u = mysettings.getSetting('tblue_m3u')
+iptvnac_m3u = mysettings.getSetting('iptvnac_m3u')
 ####################################
 log_m3u = mysettings.getSetting('log_m3u')
 
@@ -122,20 +103,13 @@ def make_request(url):
 			print 'Reason: ', e.reason
 			
 def main():
-	add_dir('[COLOR red][B] Versao: 1.0.3  (changelog) [/B][/COLOR]', u_tube, 111, icon, fanart)	
+	add_dir('[COLOR red][B] Versao: 1.0.5  (changelog) [/B][/COLOR]', u_tube, 111, icon, fanart)	
 	add_dir('[B] PROCURAR[/B]', 'searchlink', 99, i_search, f_search)
 	add_dir('[COLOR blue][B] MUSICA [/B][/COLOR]', u_tube, 2, i_music, f_music)
-	add_dir('[COLOR blue][B] FILMES [/B][/COLOR]', u_tube, 3, i_movie, f_movie)
-	add_dir('[COLOR blue][B] INFANTIL [/B][/COLOR]', u_tube, 4, i_child, f_child)
 	add_dir('[COLOR green][B] NASA [/B][/COLOR]', u_tube, 5, i_nasa, f_nasa)	
-	add_dir('[COLOR yellow][B] NOTICIAS [/B][/COLOR]', u_tube, 6, i_news, f_news)
-	add_dir('[COLOR yellow][B] PORTUGAL [/B][/COLOR]', u_tube, 7, i_pt, f_pt)
+	add_dir('[COLOR yellow][B] myIPTVChannels [/B][/COLOR]', u_tube, 7, i_pt, f_pt)
 	add_dir('[COLOR yellow][B] RADIOS [/B][/COLOR]', u_tube, 8, i_ru, f_ru)
 	add_dir('[COLOR red][B] DESPORTO [/B][/COLOR]', u_tube, 9, i_sport, f_sport)
-	add_dir('[COLOR red][B] DESPORTO MOTORIZADO [/B][/COLOR]', u_tube, 20, i_motor, f_motor)
-	add_dir('[COLOR red][B] SERIES [/B][/COLOR]', u_tube, 10, i_tvshow, f_tvshow)
-	add_dir('[COLOR red][B] INTERNACIONAL[/B][/COLOR]', u_tube, 11, i_inter, f_inter)
-	add_dir('[COLOR orange][B] MUNDO e PRAIAS (CAM)[/B][/COLOR]', u_tube, 12, i_beach, f_beach)
 	if len(pessoal_m3u) > 0:	
 		add_dir('[COLOR orange][B] MINHA LISTA ONLINE [/B][/COLOR]', u_tube, 13, icon, fanart)
 	if len(pessoal_local_m3u) > 0:	
@@ -150,11 +124,15 @@ def main():
 		add_dir('[COLOR gray][B]MARTUNIS[/B][/COLOR]', u_tube, 18, icon, fanart)
 	if len(argivai_m3u) > 0:	
 		add_dir('[COLOR gray][B]ARGIVAI[/B][/COLOR]', u_tube, 19, icon, fanart)	
-	if len(iptvbrasil_m3u) > 0:	
-		add_dir('[COLOR gray][B] IPTVBRASILHD[/B][/COLOR]', u_tube, 21, icon, fanart)
+	if len(tblue_m3u) > 0:	
+		add_dir('[COLOR gray][B]TEAMBLUE[/B][/COLOR]', u_tube, 23, icon, fanart)
 	if len(algas_m3u) > 0:	
-		add_dir('[COLOR gray][B]TV ALGAS[/B][/COLOR]', u_tube, 22, icon, fanart)		
-	if (len(online_m3u) < 1 and len(filmes_m3u) < 1 and len(infantil_m3u) < 1 and len(nasa_m3u) < 1 and len(noticias_m3u) < 1 and len(pt_m3u) < 1 and len(ru_m3u) < 1 and len(desporto_m3u) < 1 and len(series_m3u) < 1 and len(inter_m3u) < 1 and len(praias_m3u) < 1 and len(pessoal_m3u) < 1 and len(pessoal_local_m3u) < 1 and len(online_xml) < 1 and len(local_xml) < 1 and len(log_m3u) < 1 and len(kitina_m3u) < 1 and len(martunis_m3u) < 1 and len(argivai_m3u) < 1 and len(algas_m3u) < 1 ):
+		add_dir('[COLOR gray][B]TV ALGAS[/B][/COLOR]', u_tube, 22, icon, fanart)
+	if len(iptvnac_m3u) > 0:	
+		add_dir('[COLOR gray][B] IPTV NACIONAL[/B][/COLOR]', u_tube, 24, icon, fanart)
+	if len(iptvbrasil_m3u) > 0:	
+		add_dir('[COLOR gray][B] IPTVBRASILHD[/B][/COLOR]', u_tube, 21, icon, fanart)			
+	if (len(online_m3u) < 1 and len(nasa_m3u) < 1 and len(pt_m3u) < 1 and len(ru_m3u) < 1 and len(desporto_m3u) < 1 and len(pessoal_m3u) < 1 and len(pessoal_local_m3u) < 1 and len(online_xml) < 1 and len(local_xml) < 1 and len(log_m3u) < 1 and len(kitina_m3u) < 1 and len(martunis_m3u) < 1 and len(argivai_m3u) < 1 and len(algas_m3u) < 1 ):
 		mysettings.openSettings()
 		xbmc.executebuiltin("Container.Refresh")		
 
@@ -169,25 +147,7 @@ def search():
 			match = re.compile(m3u_regex).findall(content)
 			for thumb, name, url in match:
 				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
-					m3u_playlist(name, url, thumb)	
-		if len(filmes_m3u) > 0:		
-			content = make_request(filmes_m3u)
-			match = re.compile(m3u_regex).findall(content)
-			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
-					m3u_playlist(name, url, thumb)	
-		if len(infantil_m3u) > 0:		
-			content = make_request(infantil_m3u)
-			match = re.compile(m3u_regex).findall(content)		
-			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
-					m3u_playlist(name, url, thumb)
-		if len(noticias_m3u) > 0:		
-			content = make_request(noticias_m3u)
-			match = re.compile(m3u_regex).findall(content)		
-			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
-					m3u_playlist(name, url, thumb)
+					m3u_playlist(name, url, thumb)		
 		if len(pt_m3u) > 0:		
 			content = make_request(pt_m3u)
 			match = re.compile(m3u_regex).findall(content)		
@@ -199,19 +159,7 @@ def search():
 			match = re.compile(m3u_regex).findall(content)		
 			for thumb, name, url in match:
 				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
-					m3u_playlist(name, url, thumb)
-		if len(inter_m3u) > 0:		
-			content = make_request(inter_m3u)
-			match = re.compile(m3u_regex).findall(content)		
-			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
 					m3u_playlist(name, url, thumb)	
-		if len(motor_m3u) > 0:		
-			content = make_request(motor_m3u)
-			match = re.compile(m3u_regex).findall(content)		
-			for thumb, name, url in match:
-				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
-					m3u_playlist(name, url, thumb)		
 		if len(iptvbrasil_m3u) > 0:		
 			content = make_request(iptvbrasil_m3u)
 			match = re.compile(m3u_regex).findall(content)		
@@ -220,6 +168,18 @@ def search():
 					m3u_playlist(name, url, thumb)		
 		if len(algas_m3u) > 0:		
 			content = make_request(algas_m3u)
+			match = re.compile(m3u_regex).findall(content)		
+			for thumb, name, url in match:
+				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+					m3u_playlist(name, url, thumb)
+		if len(tblue_m3u) > 0:		
+			content = make_request(tblue_m3u)
+			match = re.compile(m3u_regex).findall(content)		
+			for thumb, name, url in match:
+				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
+					m3u_playlist(name, url, thumb)
+		if len(iptvnac_m3u) > 0:		
+			content = make_request(iptvnac_m3u)
 			match = re.compile(m3u_regex).findall(content)		
 			for thumb, name, url in match:
 				if re.search(searchText, removeAccents(name.replace('Đ', 'D')), re.IGNORECASE):
@@ -247,35 +207,8 @@ def m3u_online():
 		except:
 			pass
 			
-def m3u_filmes():		
-	content = make_request(filmes_m3u)
-	match = re.compile(m3u_regex).findall(content)
-	for thumb, name, url in match:
-		try:
-			m3u_playlist(name, url, thumb)
-		except:
-			pass
-			
-def m3u_infantil():
-	content = make_request(infantil_m3u)
-	match = re.compile(m3u_regex).findall(content)
-	for thumb, name, url in match:	
-		try:
-			m3u_playlist(name, url, thumb)
-		except:
-			pass
-			
 def m3u_nasa():
 	content = make_request(nasa_m3u)
-	match = re.compile(m3u_regex).findall(content)
-	for thumb, name, url in match:	
-		try:
-			m3u_playlist(name, url, thumb)
-		except:
-			pass
-			
-def m3u_noticias():
-	content = make_request(noticias_m3u)
 	match = re.compile(m3u_regex).findall(content)
 	for thumb, name, url in match:	
 		try:
@@ -303,33 +236,6 @@ def m3u_ru():
 			
 def m3u_desporto():
 	content = make_request(desporto_m3u)
-	match = re.compile(m3u_regex).findall(content)
-	for thumb, name, url in match:	
-		try:
-			m3u_playlist(name, url, thumb)
-		except:
-			pass
-			
-def m3u_series():
-	content = make_request(series_m3u)
-	match = re.compile(m3u_regex).findall(content)
-	for thumb, name, url in match:	
-		try:
-			m3u_playlist(name, url, thumb)
-		except:
-			pass
-			
-def m3u_inter():
-	content = make_request(inter_m3u)
-	match = re.compile(m3u_regex).findall(content)
-	for thumb, name, url in match:	
-		try:
-			m3u_playlist(name, url, thumb)
-		except:
-			pass
-			
-def m3u_praias():
-	content = make_request(praias_m3u)
 	match = re.compile(m3u_regex).findall(content)
 	for thumb, name, url in match:	
 		try:
@@ -400,15 +306,6 @@ def m3u_argivai():
 		except:
 			pass
 			
-def m3u_motor():
-	content = make_request(motor_m3u)
-	match = re.compile(m3u_regex).findall(content)
-	for thumb, name, url in match:	
-		try:
-			m3u_playlist(name, url, thumb)
-		except:
-			pass
-			
 def m3u_iptvbrasil():
 	content = make_request(iptvbrasil_m3u)
 	match = re.compile(m3u_regex).findall(content)
@@ -427,6 +324,23 @@ def m3u_algas():
 		except:
 			pass
 			
+def m3u_tblue():
+	content = make_request(tblue_m3u)
+	match = re.compile(m3u_regex).findall(content)
+	for thumb, name, url in match:	
+		try:
+			m3u_playlist(name, url, thumb)
+		except:
+			pass
+			
+def m3u_iptvnac():
+	content = make_request(iptvnac_m3u)
+	match = re.compile(m3u_regex).findall(content)
+	for thumb, name, url in match:	
+		try:
+			m3u_playlist(name, url, thumb)
+		except:
+			pass
 			
 def m3u_playlist(name, url, thumb):	
 	name = re.sub('\s+', ' ', name).strip()			
@@ -557,17 +471,8 @@ elif mode == 111:
 elif mode == 2:
 	m3u_online()
 	
-elif mode == 3:
-	m3u_filmes()
-	
-elif mode == 4:
-	m3u_infantil()
-	
 elif mode == 5:
 	m3u_nasa()
-	
-elif mode == 6:
-	m3u_noticias()
 	
 elif mode == 7:
 	m3u_pt()
@@ -577,18 +482,6 @@ elif mode == 8:
 	
 elif mode == 9:
 	m3u_desporto()
-	
-elif mode == 20:
-	m3u_motor()
-	
-elif mode == 10:
-	m3u_series()
-	
-elif mode == 11:
-	m3u_inter()
-	
-elif mode == 12:
-	m3u_praias()
 	
 elif mode == 13:
 	m3u_pessoal()
@@ -611,11 +504,17 @@ elif mode == 18:
 elif mode == 19:
 	m3u_argivai()
 	
+elif mode == 23:
+	m3u_tblue()
+	
 elif mode == 21:
 	m3u_iptvbrasil()
 	
 elif mode == 22:
 	m3u_algas()
+	
+elif mode == 24:
+	m3u_iptvnac()
 
 elif mode == 99:
 	search()
