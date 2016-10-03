@@ -38,7 +38,7 @@
 
 <addon id="plugin.video.adryanlist"
        name="AdryanList"
-       version="2.3.4"
+       version="2.5.1"
        provider-name="Doc Shadrach">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
