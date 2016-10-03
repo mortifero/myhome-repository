@@ -21,6 +21,12 @@ except:
 import SimpleDownloader as downloader
 import time
 
+try:
+   import ssl
+   ssl._create_default_https_context = ssl._create_unverified_context
+except:
+   pass
+   
 import zipfile
 
 def ExtractAll(_in, _out):
@@ -36,7 +42,7 @@ def ExtractAll(_in, _out):
 
 def SportsDevil():
     print "SportsDevil"
-    url = "http://shadrach.pcriot.com/Add-ons/plugin.video.SportsDevil-2016-03-21.zip"
+    url = "http://repo.adryanlist.org/plugin.video.SportsDevil-2016-07-20.zip"
     addonsDir = xbmc.translatePath(os.path.join('special://home', 'addons')).decode("utf-8")
     packageFile = os.path.join(addonsDir, 'packages', 'spd.zip')
     
@@ -56,7 +62,7 @@ def Dutch():
     if os.path.exists(os.path.join(xbmc.translatePath("special://home/addons/").decode("utf-8"), 'repository.dss')):
         return
         
-    url = "https://github.com/dutchsportstreams/DSS/raw/master/repo/repository.dss/repository.dss.zip"
+    url = "http://repo.adryanlist.org/repository.shani-2.8.zip"
     addonsDir = xbmc.translatePath(os.path.join('special://home', 'addons')).decode("utf-8")
     packageFile = os.path.join(addonsDir, 'packages', 'isr.zip')
     

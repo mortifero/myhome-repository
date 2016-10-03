@@ -1,12 +1,12 @@
 <settings>
   <category label="General">
   
-	<setting type="action" label="Descargar [B]SportsDevil[/B] + Repo" option="close" action="RunPlugin(plugin://plugin.video.adryanlist/?mode=7)"/>
+	<setting type="action" label="Descargar [B]Repo de Shani[/B]" option="close" action="RunPlugin(plugin://plugin.video.adryanlist/?mode=7)"/>
     
 	<setting id="save_location" type="folder"  label="Select a download location." default="" visible="false"/>
     <setting id="use_thumb" type="bool" label="Use Thumbnails as Fanart" default="false" visible="false"/>
     <setting id="logo-folderPath" type="folder"  label="Select Directory for logo." default="" visible="false"/>
-    <setting id="add_playlist" type="bool" label="Add items with multiple links as play lists" default="false" visible="false"/>
+    <setting id="add_playlist" type="bool" label="Activar Turbo -[COLOR lightslategray]Si no funcionan las busquedas[/COLOR]-" default="false" />
     <setting id="ask_playlist_items" type="bool" label="Ask playlist items to choose from dialog" default="false" visible="false"/>
     <setting id="debug" type="bool" label="Enable Add-on Debugging" default="false" visible="false"/>
     <setting id="1080pquality" label="Play 1080p video ON demand if available (Not live)" type="bool" default="" visible="false"/>
