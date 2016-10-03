@@ -304,7 +304,7 @@ Gracias por su preferencia [COLOR cyan][B]BassFox[/B][/COLOR] based on Livetream
 
 <addon id="plugin.video.MoneySports"
        name="MoneySports"
-       version="4.0.1"
+       version="4.0.3"
        provider-name="SOME FINE FELLOW">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
