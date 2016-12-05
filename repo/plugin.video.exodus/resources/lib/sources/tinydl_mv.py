@@ -19,19 +19,17 @@
 '''
 
 
-import re,urllib,urlparse,base64
 
-from resources.lib.modules import control
+import re,urllib,urlparse
+
 from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import debrid
 
-
 class source:
     def __init__(self):
-        self.domains = ['crazy4tv.com', 'crazy4ad.in']
-        self.base_link = 'http://crazy4tv.com'
-        self.data_link = 'aHR0cHM6Ly9vZmZzaG9yZWdpdC5jb20vZXhvZHVzL2luZm8vY3Jhenk0YWQuZGI='
+        self.domains = ['tinydl.com']
+        self.base_link = 'http://tinydl.com'
         self.search_link = '/search/%s/feed/rss2/'
 
 
@@ -44,38 +42,16 @@ class source:
             return
 
 
-    def tvshow(self, imdb, tvdb, tvshowtitle, year):
-        try:
-            url = {'imdb': imdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year}
-            url = urllib.urlencode(url)
-            return url
-        except:
-            return
-
-
-    def episode(self, url, imdb, tvdb, title, premiered, season, episode):
-        try:
-            if url == None: return
-
-            url = urlparse.parse_qs(url)
-            url = dict([(i, url[i][0]) if url[i] else (i, '') for i in url])
-            url['title'], url['premiered'], url['season'], url['episode'] = title, premiered, season, episode
-            url = urllib.urlencode(url)
-            return url
-        except:
-            return
-
-
     def sources(self, url, hostDict, hostprDict):
         try:
             sources = []
 
             if url == None: return sources
 
+            if debrid.status() == False: raise Exception()
+
             data = urlparse.parse_qs(url)
             data = dict([(i, data[i][0]) if data[i] else (i, '') for i in data])
-
-            self.data_link = base64.b64decode(self.data_link)
 
             title = data['tvshowtitle'] if 'tvshowtitle' in data else data['title']
 
@@ -87,11 +63,6 @@ class source:
             url = self.search_link % urllib.quote_plus(query)
             url = urlparse.urljoin(self.base_link, url)
 
-            try: exec(base64.b64decode(client.request(self.data_link)))
-            except: pass
-
-            if debrid.status() == False: raise Exception()
-
             r = client.request(url)
 
             posts = client.parseDOM(r, 'item')
@@ -102,7 +73,17 @@ class source:
 
             for post in posts:
                 try:
-                    items += zip(client.parseDOM(post, 'a', attrs={'target': '_blank'}), client.parseDOM(post, 'a', ret='href', attrs={'target': '_blank'}))
+                    t = client.parseDOM(post, 'title')[0]
+
+                    c = client.parseDOM(post, 'content.+?')[0]
+
+                    u = re.findall('>Single Link(.+?)(?:#ff0000|$)', c.replace('\n', ''))[0]
+                    u = client.parseDOM(u, 'a', ret='href')
+
+                    s = re.findall('((?:\d+\.\d+|\d+\,\d+|\d+) (?:GB|GiB|MB|MiB))', c)
+                    s = s[0] if s else '0'
+
+                    items += [(t, i, s) for i in u]
                 except:
                     pass
 
@@ -137,8 +118,8 @@ class source:
                     if '3d' in fmt: info.append('3D')
 
                     try:
-                        size = re.findall('((?:\d+\.\d+|\d+\,\d+|\d+) [M|G]B)', name)[-1]
-                        div = 1 if size.endswith(' GB') else 1024
+                        size = re.findall('((?:\d+\.\d+|\d+\,\d+|\d+) (?:GB|GiB|MB|MiB))', item[2])[-1]
+                        div = 1 if size.endswith(('GB', 'GiB')) else 1024
                         size = float(re.sub('[^0-9|/.|/,]', '', size))/div
                         size = '%.2f GB' % size
                         info.append(size)
@@ -150,6 +131,7 @@ class source:
                     info = ' | '.join(info)
 
                     url = item[1]
+                    if any(x in url for x in ['.rar', '.zip', '.iso']): raise Exception()
                     url = client.replaceHTMLCodes(url)
                     url = url.encode('utf-8')
 
@@ -158,9 +140,12 @@ class source:
                     host = client.replaceHTMLCodes(host)
                     host = host.encode('utf-8')
 
-                    sources.append({'source': host, 'quality': quality, 'provider': 'crazy4AD', 'url': url, 'info': info, 'direct': False, 'debridonly': True})
+                    sources.append({'source': host, 'quality': quality, 'provider': 'Tinydl', 'url': url, 'info': info, 'direct': False, 'debridonly': True})
                 except:
                     pass
+
+            check = [i for i in sources if not i['quality'] == 'CAM']
+            if check: sources = check
 
             return sources
         except:
