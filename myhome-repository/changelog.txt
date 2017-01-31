@@ -1,2 +1,4 @@
 Version 0.0.1
     some bug fixes
+Version 1.0
+    Version Stable
