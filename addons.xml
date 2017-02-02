@@ -345,7 +345,7 @@ Gracias por su preferencia [COLOR cyan][B]BassFox[/B][/COLOR] based on Livetream
     <import addon="xbmc.python" version="2.1.0"/>
 	<import addon="script.module.metahandler" version="2.5.1"/>
 	<import addon="script.module.muckys.common"/>
-	<import addon="repository.mdrepo" />
+	<?<import addon="repository.mdrepo" />?>
   </requires>
   <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
