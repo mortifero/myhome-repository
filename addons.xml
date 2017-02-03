@@ -48,7 +48,7 @@
     <import addon="script.module.urlresolver"  />
     <import addon="script.common.plugin.cache" version="2.5.2"/>
     <import addon="script.module.metahandler" version="2.5.1"/>
-	<import addon="repository.TheMisterRepository" />
+	<?<import addon="repository.TheMisterRepository" />?>
   </requires>
   <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
