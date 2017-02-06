@@ -541,7 +541,7 @@ Gracias por su preferencia [COLOR cyan][B]BassFox[/B][/COLOR] based on Livetream
 		<import addon="script.module.metahandler" version="2.9.0" />
 		<import addon="plugin.video.youtube" optional="true" />
 		<import addon="script.mrknow.urlresolver" />
-		<import addon="script.specto.media" />
+		<?<import addon="script.specto.media" />?>
 
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="default.py">
