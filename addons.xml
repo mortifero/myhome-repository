@@ -3,6 +3,7 @@
 <addon id="myhome-repository" name="MyHome Repository" version="1.0" provider-name="sousinha">
 <requires>
 		<import addon="repository.exodus" version="1.0.1" />
+		<import addon="tvsupertuga.repository" version="0.0.7" />
 </requires>
 	<extension point="xbmc.addon.repository" name="MyHome Add-on Repository">
 		<info compressed="false">https://raw.github.com/msousinha/myhome-repository/master/addons.xml</info>
@@ -534,32 +535,6 @@ Gracias por su preferencia [COLOR cyan][B]BassFox[/B][/COLOR] based on Livetream
  </extension>
 </addon>
 
-<addon id="plugin.video.specto" name="Specto - ... Fork"  version="2016.09.25.1" provider-name="mrknow" >
-	<requires>
-		<import addon="xbmc.python" version="2.1.0" />
-		<import addon="script.module.requests" version="1.0.0" />
-		<import addon="script.module.metahandler" version="2.9.0" />
-		<import addon="plugin.video.youtube" optional="true" />
-		<import addon="script.mrknow.urlresolver" />
-		<?<import addon="script.specto.media" />?>
-
-	</requires>
-	<extension point="xbmc.python.pluginsource" library="default.py">
-		<provides>video</provides>
-	</extension>
-	<extension point="xbmc.service" library="service.py" start="startup" />
-	<extension point="xbmc.addon.metadata">
-		<summary lang="en">Mrknow fork of ...</summary>
-		<description lang="en">Specto - ... Fork. Website http://filmkodi.com . Our suport forum https://github.com/mrknow/filmkodi/issues.</description>
-		<disclaimer lang="en">The author does not host or distribute any of the content displayed by this addon. The author does not have any affiliation with the content provider.
-		</disclaimer>
-		<forum>https://github.com/mrknow/filmkodi/issues</forum>
-		<source>http://filmkodi.com/repository/</source>
-		<website>http://filmkodi.com/en/wtyczka-specto-fork-genesis/</website>
-		<platform>all</platform>
-	</extension>
-</addon>
-
 <addon
   id="plugin.video.SportsDevil"
   version="2016.09.24"
@@ -987,5 +962,30 @@ SoP is the abbreviation for Streaming over P2P. Sopcast is a Streaming Direct Br
     <platform>all</platform>
         <website>http://www.husham.com</website>
   </extension>
+</addon>
+
+<addon id="tvsupertuga.repository" name="[COLOR cyan]TV[/COLOR][COLOR red]supertuga[/COLOR].[COLOR limegreen]Repository[/COLOR]" version="0.0.7" provider-name="TVsupertuga">
+    <extension point="xbmc.addon.repository" name="TVsupertuga Repository">
+        <dir>
+            <info compressed="false">https://ftgyhujiko.000webhostapp.com/tvsupertuga.repository/addons.xml</info>
+            <checksum>https://ftgyhujiko.000webhostapp.com/tvsupertuga.repository/addons.xml.md5</checksum>
+            <datadir zip="true">https://ftgyhujiko.000webhostapp.com/tvsupertuga.repository/instal/</datadir>
+        </dir>
+        <dir>
+            <info compressed="false">https://raw.githubusercontent.com/PROJECTOTEAM/base/master/baseaddons.repository/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/PROJECTOTEAM/base/master/baseaddons.repository/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/PROJECTOTEAM/base/master/baseaddons.repository/instal/</datadir>
+        </dir>
+        <info compressed="false">https://raw.githubusercontent.com/repotvsupertuga/tvsupertuga.repository/master/addons.xml</info>
+        <checksum>https://raw.githubusercontent.com/repotvsupertuga/tvsupertuga.repository/master/addons.xml.md5</checksum>
+        <datadir zip="true">https://raw.githubusercontent.com/repotvsupertuga/tvsupertuga.repository/instal/</datadir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+		<summary lang="pt">TVsupertuga </summary>
+		<description lang="pt">rdftgyhu</description>
+		<forum>http://tvsupertuga.forum-gratuito.com/</forum>
+		<website>https://www.facebook.com/TVsupertuga.PT/</website>
+        <platform>all</platform>
+    </extension>
 </addon>
 </addons>
