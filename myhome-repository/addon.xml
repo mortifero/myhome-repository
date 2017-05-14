@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="myhome-repository" name="MyHome Repository" version="1.0" provider-name="sousinha">
+<addon id="myhome-repository" name="MyHome Repository" version="1.0.1" provider-name="sousinha">
 <requires>
 		<import addon="repository.exodus" version="1.0.1" />
 		<import addon="tvsupertuga.repository" version="0.0.7" />
